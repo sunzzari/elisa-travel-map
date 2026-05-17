@@ -1,11 +1,12 @@
 import { Client } from '@notionhq/client'
-import type { Trip, TripItem, ItemType, ItemPriority, ItemStatus, TripStatus } from './types'
+import type { Trip, TripItem, TripNewsletter, ItemType, ItemPriority, ItemStatus, TripStatus } from './types'
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 
 const TRAVEL_PLANNING_DB = '72792a7e-eb9e-468a-a376-fd1e7284401c'
 const TRIP_ITEMS_DB = '9947ef07-3483-472b-b452-f2ebc23edabe'
 const TRIP_LEGS_DB = 'fee283c0-9ee7-46ff-8758-fbc58fba496d'
+const TRIP_NEWSLETTERS_DB = 'ecb29b52-040e-4765-aa39-a12f22b25472'
 
 function getCheckbox(prop: any): boolean {
   if (!prop) return false
@@ -20,6 +21,14 @@ function getText(prop: any): string {
   if (prop.type === 'select') return prop.select?.name ?? ''
   if (prop.type === 'date') return prop.date?.start ?? ''
   return ''
+}
+
+function getDateStart(prop: any): string | null {
+  return prop?.type === 'date' ? prop.date?.start ?? null : null
+}
+
+function getDateEnd(prop: any): string | null {
+  return prop?.type === 'date' ? prop.date?.end ?? null : null
 }
 
 export async function fetchAllTrips(): Promise<Trip[]> {
@@ -70,8 +79,10 @@ export async function fetchTripItems(tripId: string): Promise<TripItem[]> {
         venue: getText(page.properties['Provider / Venue']),
         notes: getText(page.properties['Notes']),
         tripUrl: page.url,
-        date: page.properties['Date']?.date?.start ?? null,
-        assignedToDate: page.properties['Assigned to Date']?.date?.start ?? null,
+        date: getDateStart(page.properties['Date']),
+        dateEnd: getDateEnd(page.properties['Date']),
+        assignedToDate: getDateStart(page.properties['Assigned to Date']),
+        assignedToDateEnd: getDateEnd(page.properties['Assigned to Date']),
         reservationRequired: getCheckbox(page.properties['Reservation Required']),
       })
     }
@@ -119,8 +130,10 @@ export async function fetchAllTripItems(): Promise<TripItem[]> {
         venue: getText(page.properties['Provider / Venue']),
         notes: getText(page.properties['Notes']),
         tripUrl: `https://www.notion.so/${tripRelation[0].id.replace(/-/g, '')}`,
-        date: page.properties['Date']?.date?.start ?? null,
-        assignedToDate: page.properties['Assigned to Date']?.date?.start ?? null,
+        date: getDateStart(page.properties['Date']),
+        dateEnd: getDateEnd(page.properties['Date']),
+        assignedToDate: getDateStart(page.properties['Assigned to Date']),
+        assignedToDateEnd: getDateEnd(page.properties['Assigned to Date']),
         reservationRequired: getCheckbox(page.properties['Reservation Required']),
       })
     }
@@ -129,4 +142,43 @@ export async function fetchAllTripItems(): Promise<TripItem[]> {
   } while (cursor)
 
   return allItems
+}
+
+async function fetchPageProse(pageId: string): Promise<string> {
+  const response: any = await notion.blocks.children.list({
+    block_id: pageId,
+    page_size: 100,
+  })
+
+  return response.results
+    .filter((block: any) => block.type === 'paragraph')
+    .map((block: any) => block.paragraph?.rich_text?.map((t: any) => t.plain_text).join('') ?? '')
+    .filter(Boolean)
+    .join('\n\n')
+}
+
+export async function fetchTripNewsletters(tripId: string): Promise<TripNewsletter[]> {
+  const response: any = await notion.databases.query({
+    database_id: TRIP_NEWSLETTERS_DB,
+    page_size: 100,
+    filter: {
+      property: 'Trip',
+      relation: { contains: tripId },
+    },
+    sorts: [{ property: 'Date', direction: 'ascending' }],
+  })
+
+  const newsletters = await Promise.all(
+    response.results.map(async (page: any): Promise<TripNewsletter> => ({
+      id: page.id,
+      tripId,
+      date: getDateStart(page.properties['Date']) ?? '',
+      prose: await fetchPageProse(page.id),
+      generatedAt: getDateStart(page.properties['Generated At']),
+      stale: getCheckbox(page.properties['Stale']),
+      itemsHash: getText(page.properties['Items Hash']),
+    }))
+  )
+
+  return newsletters.filter(newsletter => newsletter.date)
 }

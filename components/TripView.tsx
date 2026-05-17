@@ -6,8 +6,9 @@ import Sidebar from './Sidebar'
 import Legend from './Legend'
 import BottomSheet from './BottomSheet'
 import DayTimeline from './DayTimeline'
+import DayDetailView from './DayDetailView'
 import { haversineKm } from '@/lib/geo'
-import type { TripItem, ItemStatus, ItemType } from '@/lib/types'
+import type { TripItem, TripNewsletter, ItemStatus, ItemType } from '@/lib/types'
 import type { UserLocation } from '@/lib/geo'
 
 const STATUSES: { value: ItemStatus; label: string; color: string; active: string }[] = [
@@ -22,21 +23,34 @@ const STATUSES: { value: ItemStatus; label: string; color: string; active: strin
 type SortMode = 'type' | 'date' | 'priority'
 
 const PRIORITY_ORDER: Record<string, number> = { Must: 0, High: 1, Optional: 2 }
+const TYPE_ORDER: Record<string, number> = {
+  Hotel: 0,
+  Restaurant: 1,
+  Activity: 2,
+  Flight: 3,
+  Train: 4,
+  Ferry: 5,
+  'Car Rental': 6,
+  Other: 7,
+}
 
 type NearMeState = 'idle' | 'loading' | 'active' | 'error'
 
 interface Props {
   items: TripItem[]
+  newsletters: TripNewsletter[]
   apiKey: string
   legLabel?: string
   onFullscreenChange?: (fs: boolean) => void
 }
 
-export default function TripView({ items, apiKey, legLabel = 'Leg', onFullscreenChange }: Props) {
+export default function TripView({ items, newsletters, apiKey, legLabel = 'Leg', onFullscreenChange }: Props) {
+  const [viewMode, setViewMode] = useState<'map' | 'day'>('map')
   const [selected, setSelected] = useState<TripItem | null>(null)
   const [activeFilters, setActiveFilters] = useState<Set<ItemStatus>>(new Set())
   const [activeLegs, setActiveLegs] = useState<Set<string>>(new Set())
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
+  const [reservationOnly, setReservationOnly] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortMode, setSortMode] = useState<SortMode>('type')
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -116,6 +130,7 @@ export default function TripView({ items, apiKey, legLabel = 'Leg', onFullscreen
     .filter(i => activeLegs.size === 0 || activeLegs.has(i.legCity))
     .filter(i => activeTypes.size === 0 || (i.type && activeTypes.has(i.type)))
     .filter(i => !selectedDate || (i.assignedToDate ?? i.date) === selectedDate)
+    .filter(i => !reservationOnly || i.reservationRequired)
     .filter(i => !q || i.name.toLowerCase().includes(q) || i.venue.toLowerCase().includes(q))
 
   const NEAR_ME_RADIUS_KM = 5
@@ -148,15 +163,19 @@ export default function TripView({ items, apiKey, legLabel = 'Leg', onFullscreen
         })
       case 'type':
       default:
-        return filtered
+        return [...filtered].sort((a, b) => (TYPE_ORDER[a.type ?? ''] ?? 99) - (TYPE_ORDER[b.type ?? ''] ?? 99))
     }
   })()
 
   const displayItems = sorted
   const fitKey = [
+    activeFilters.size > 0 ? Array.from(activeFilters).sort().join(',') : 'all-status',
+    activeTypes.size > 0 ? Array.from(activeTypes).sort().join(',') : 'all-types',
     activeLegs.size > 0 ? Array.from(activeLegs).sort().join(',') : 'all',
     selectedDate ?? 'nodate',
+    q || 'noquery',
     nearMeState,
+    reservationOnly ? 'reservations' : 'all-reservations',
   ].join('|')
 
   const nearMeLabel =
@@ -167,6 +186,29 @@ export default function TripView({ items, apiKey, legLabel = 'Leg', onFullscreen
 
   return (
     <div className="flex flex-1 overflow-hidden flex-col">
+      {!fullscreen && (
+        <div className="flex justify-center bg-gray-800 px-4 py-2 border-b border-white/10">
+          <div className="grid w-full max-w-60 grid-cols-2 rounded-lg bg-white/10 p-0.5">
+            <button
+              onClick={() => setViewMode('map')}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${viewMode === 'map' ? 'bg-amber-400 text-gray-950' : 'text-white/60 hover:text-white'}`}
+            >
+              Map
+            </button>
+            <button
+              onClick={() => { setViewMode('day'); setSelected(null) }}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${viewMode === 'day' ? 'bg-amber-400 text-gray-950' : 'text-white/60 hover:text-white'}`}
+            >
+              Day
+            </button>
+          </div>
+        </div>
+      )}
+
+      {viewMode === 'day' ? (
+        <DayDetailView items={items} newsletters={newsletters} apiKey={apiKey} />
+      ) : (
+        <>
 
       {/* Unified toolbar */}
       <div className={`bg-gray-800 border-b border-white/10 ${fullscreen ? 'hidden' : ''}`}>
@@ -231,6 +273,17 @@ export default function TripView({ items, apiKey, legLabel = 'Leg', onFullscreen
               Clear
             </button>
           )}
+
+          <button
+            onClick={() => { setReservationOnly(value => !value); setSelected(null) }}
+            className={`flex-shrink-0 text-xs font-medium px-3 py-1 rounded-full border transition-all ${
+              reservationOnly
+                ? 'bg-orange-500 border-orange-500 text-white shadow-[0_0_8px_rgba(249,115,22,0.4)]'
+                : 'border-orange-400/30 text-orange-300 bg-transparent hover:bg-white/5'
+            }`}
+          >
+            Reservation
+          </button>
 
           {legs.length > 1 && (
             <>
@@ -338,6 +391,8 @@ export default function TripView({ items, apiKey, legLabel = 'Leg', onFullscreen
         selectedDate={selectedDate}
         onSelectDate={setSelectedDate}
       />}
+        </>
+      )}
     </div>
   )
 }

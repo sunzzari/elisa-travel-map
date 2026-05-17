@@ -11,18 +11,18 @@ import {
 } from '@vis.gl/react-google-maps'
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 import { mapsUrl, haversineKm, formatDistance } from '@/lib/geo'
-import type { TripItem, ItemType } from '@/lib/types'
+import type { TripItem } from '@/lib/types'
 import type { UserLocation } from '@/lib/geo'
 
-const TYPE_STYLES: Record<string, { bg: string; border: string; glyph: string }> = {
-  Hotel:        { bg: '#3B82F6', border: '#1D4ED8', glyph: '🏨' },
-  Restaurant:   { bg: '#EF4444', border: '#B91C1C', glyph: '🍽️' },
-  Activity:     { bg: '#10B981', border: '#047857', glyph: '⚡' },
-  Flight:       { bg: '#8B5CF6', border: '#6D28D9', glyph: '✈️' },
-  Train:        { bg: '#F59E0B', border: '#B45309', glyph: '🚅' },
-  Ferry:        { bg: '#06B6D4', border: '#0E7490', glyph: '⛴️' },
-  'Car Rental': { bg: '#F97316', border: '#C2410C', glyph: '🚗' },
-  default:      { bg: '#6B7280', border: '#374151', glyph: '📍' },
+const TYPE_GLYPHS: Record<string, string> = {
+  Hotel: '🏨',
+  Restaurant: '🍽️',
+  Activity: '⚡',
+  Flight: '✈️',
+  Train: '🚅',
+  Ferry: '⛴️',
+  'Car Rental': '🚗',
+  default: '📍',
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -33,13 +33,20 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   Confirmed:   '#22c55e',
+  Assigned: '#3B82F6',
+  'Reservation Pending': '#F97316',
   Shortlisted: '#eab308',
   Researching: '#9ca3af',
   Cancelled:   '#ef4444',
 }
 
-function markerStyle(type: ItemType | null) {
-  return TYPE_STYLES[type ?? 'default'] ?? TYPE_STYLES.default
+function markerStyle(item: TripItem) {
+  const bg = STATUS_COLORS[item.status ?? ''] ?? '#9ca3af'
+  return {
+    bg,
+    border: bg,
+    glyph: TYPE_GLYPHS[item.type ?? 'default'] ?? TYPE_GLYPHS.default,
+  }
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -189,7 +196,7 @@ function MapContent({
     const newMarkers: google.maps.marker.AdvancedMarkerElement[] = []
     for (const item of withCoords) {
       if (prev.has(item.id)) continue
-      const style = markerStyle(item.type)
+      const style = markerStyle(item)
       const pin = document.createElement('div')
       pin.style.cssText = `
         background: ${style.bg}; border: 2px solid ${style.border};
@@ -220,7 +227,7 @@ function MapContent({
       if (!el) continue
       const item = items.find(i => i.id === id)
       if (!item) continue
-      const style = markerStyle(item.type)
+      const style = markerStyle(item)
       const isSelected = selected?.id === id
       el.style.border = `2px solid ${isSelected ? '#fff' : style.border}`
       el.style.width = isSelected ? '38px' : '32px'

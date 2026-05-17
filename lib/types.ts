@@ -41,9 +41,28 @@ export interface TripItem {
   notes: string
   tripUrl: string
   date: string | null
+  dateEnd: string | null
   assignedToDate: string | null
+  assignedToDateEnd: string | null
   reservationRequired: boolean
   coordinates?: Coordinates
+}
+
+export interface DayBundle {
+  id: string
+  dateString: string
+  confirmed: TripItem[]
+  possibilities: TripItem[]
+}
+
+export interface TripNewsletter {
+  id: string
+  tripId: string
+  date: string
+  prose: string
+  generatedAt: string | null
+  stale: boolean
+  itemsHash: string
 }
 
 export interface TripWithItems extends Trip {

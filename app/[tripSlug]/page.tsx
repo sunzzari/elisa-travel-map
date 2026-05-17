@@ -1,4 +1,4 @@
-import { fetchAllTrips, fetchTripItems, fetchTripLegCount } from '@/lib/notion'
+import { fetchAllTrips, fetchTripItems, fetchTripLegCount, fetchTripNewsletters } from '@/lib/notion'
 import { geocodeVenue } from '@/lib/geocode'
 import TripPageClient from '@/components/TripPageClient'
 import { notFound } from 'next/navigation'
@@ -17,14 +17,16 @@ export default async function TripPage({ params }: { params: Promise<{ tripSlug:
 
   if (!trip) notFound()
 
-  const [rawItems, legCount] = await Promise.all([
+  const [rawItems, legCount, newsletters] = await Promise.all([
     fetchTripItems(trip.id),
     fetchTripLegCount(trip.id),
+    fetchTripNewsletters(trip.id),
   ])
 
   const items = await Promise.all(
     rawItems.map(async item => {
       const coords = await geocodeVenue(item.venue, item.legCity)
+        ?? (item.name !== item.venue ? await geocodeVenue(item.name, item.legCity) : null)
       return { ...item, coordinates: coords ?? undefined }
     })
   )
@@ -37,6 +39,7 @@ export default async function TripPage({ params }: { params: Promise<{ tripSlug:
     <TripPageClient
       trip={trip}
       items={items}
+      newsletters={newsletters}
       apiKey={apiKey}
       mappedCount={mapped.length}
       unmappedCount={unmapped.length}

@@ -4,18 +4,19 @@ import { useState } from 'react'
 import Link from 'next/link'
 import TripView from './TripView'
 import OfflineIndicator from './OfflineIndicator'
-import type { Trip, TripItem } from '@/lib/types'
+import type { Trip, TripItem, TripNewsletter } from '@/lib/types'
 
 interface Props {
   trip: Trip
   items: TripItem[]
+  newsletters: TripNewsletter[]
   apiKey: string
   mappedCount: number
   unmappedCount: number
   legLabel: string
 }
 
-export default function TripPageClient({ trip, items, apiKey, mappedCount, unmappedCount, legLabel }: Props) {
+export default function TripPageClient({ trip, items, newsletters, apiKey, mappedCount, unmappedCount, legLabel }: Props) {
   const [fullscreen, setFullscreen] = useState(false)
 
   return (
@@ -36,7 +37,7 @@ export default function TripPageClient({ trip, items, apiKey, mappedCount, unmap
         </>
       )}
 
-      <TripView items={items} apiKey={apiKey} legLabel={legLabel} onFullscreenChange={setFullscreen} />
+      <TripView items={items} newsletters={newsletters} apiKey={apiKey} legLabel={legLabel} onFullscreenChange={setFullscreen} />
     </div>
   )
 }

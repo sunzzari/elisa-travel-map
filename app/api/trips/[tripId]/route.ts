@@ -20,6 +20,7 @@ export async function GET(
   const geocoded = await Promise.all(
     items.map(async item => {
       const coords = await geocodeVenue(item.venue, item.legCity)
+        ?? (item.name !== item.venue ? await geocodeVenue(item.name, item.legCity) : null)
       return { ...item, coordinates: coords ?? undefined }
     })
   )

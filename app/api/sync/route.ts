@@ -26,6 +26,7 @@ export async function POST(request: Request) {
       await Promise.all(
         batch.map(async (item, j) => {
           const coords = await geocodeVenue(item.venue, item.legCity)
+            ?? (item.name !== item.venue ? await geocodeVenue(item.name, item.legCity) : null)
           if (coords) geocoded[i + j].coordinates = coords
         })
       )
