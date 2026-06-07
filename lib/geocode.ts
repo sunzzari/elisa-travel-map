@@ -36,14 +36,23 @@ export async function geocodeVenue(
   })
   if (cached) return cached
 
-  // Call Geocoding API
+  // Call Geocoding API. Build sandboxes can fail to reach maps.googleapis.com
+  // (the 30-day cache expires, so builds hit a cold miss). Fail soft to null so
+  // prerender never crashes; runtime revalidation backfills coordinates where
+  // the network works.
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(query)}&key=${GEOCODING_API_KEY}`
-  const res = await fetch(url)
-  const data = await res.json()
+  let data: { status?: string; results?: Array<{ geometry: { location: Coordinates } }> }
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
+    data = await res.json()
+  } catch {
+    return null
+  }
 
-  if (data.status !== 'OK' || !data.results[0]) return null
+  const first = data.results?.[0]
+  if (data.status !== 'OK' || !first) return null
 
-  const location = data.results[0].geometry.location as Coordinates
+  const location = first.geometry.location
 
   // Store in cache (30 days)
   await withRedis(async client => {
