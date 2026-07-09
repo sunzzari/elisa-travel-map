@@ -20,6 +20,10 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 
 ## Changelog
 
+### 2026-07-09
+
+- `4:16pm` **Itinerary revalidate 3600s -> 60s** - the "live" itinerary was ISR-cached for an hour (stale-while-revalidate, so worst case two opens over an hour to see a Notion edit); now matches the trip map page's 60s so mid-planning edits appear within about a minute.
+
 ### 2026-06-07
 
 - `11:25am` **Live itinerary route** - added `/[tripSlug]/itinerary`, a server-rendered day-by-day plan read straight from Notion (revalidated hourly). Time slots on Confirmed/Assigned/Reservation-Pending items, deterministic Google Maps links (precise pin from the shared geocode cache, flagged name-search fallback otherwise). Opened from the Sunzzari app trip page and cached there for offline. Replaces the retired per-day newsletter system.

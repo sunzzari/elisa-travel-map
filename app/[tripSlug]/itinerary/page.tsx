@@ -4,11 +4,11 @@ import { groupDays, formatLongDate } from '@/lib/day'
 import type { TripItem } from '@/lib/types'
 import { notFound } from 'next/navigation'
 
-// Live, always-current itinerary. Renders straight from Notion on each request
-// (revalidated hourly). Replaces the retired per-day newsletter system and the
-// Sunzzari in-app Day view. The Sunzzari app opens this URL in a web view and
-// caches the rendered HTML to disk for offline viewing.
-export const revalidate = 3600
+// Live, always-current itinerary. Renders straight from Notion, revalidated
+// every 60s to match the trip map page — an hour-stale "live" itinerary defeats
+// the point of replacing the newsletter system. The Sunzzari app opens this URL
+// in a web view and caches the rendered HTML to disk for offline viewing.
+export const revalidate = 60
 
 export async function generateStaticParams() {
   const trips = await fetchAllTrips()
