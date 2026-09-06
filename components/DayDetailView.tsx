@@ -2,8 +2,8 @@
 
 import { useMemo, useRef, useState, useCallback } from 'react'
 import TripMap from './TripMap'
-import { dayIntro, displayItemsForDay, formatLongDate, formatShortDate, groupDays, newsletterMap, newsletterProse, poolDisplayItems } from '@/lib/day'
-import type { DayBundle, TripItem, TripNewsletter, ItemType } from '@/lib/types'
+import { dayIntro, formatLongDate, formatShortDate, groupDays, planDay, type DayPlan } from '@/lib/day'
+import type { DayBundle, TripItem, ItemType } from '@/lib/types'
 
 const TYPE_META: Record<string, { color: string; glyph: string }> = {
   Hotel: { color: '#3B82F6', glyph: '🏨' },
@@ -29,13 +29,16 @@ const TYPES: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Train',
 
 interface Props {
   items: TripItem[]
-  newsletters: TripNewsletter[]
   apiKey: string
 }
 
-export default function DayDetailView({ items, newsletters, apiKey }: Props) {
+export default function DayDetailView({ items, apiKey }: Props) {
   const days = useMemo(() => groupDays(items), [items])
-  const newslettersByDate = useMemo(() => newsletterMap(newsletters), [newsletters])
+  const allDates = useMemo(() => days.map(d => d.dateString), [days])
+  const plans = useMemo(
+    () => new Map(days.map(day => [day.dateString, planDay(day, allDates)])),
+    [days, allDates]
+  )
   const initialDate = pickInitialDate(days)
   const [selectedDates, setSelectedDates] = useState<Set<string>>(() => new Set(initialDate ? [initialDate] : []))
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
@@ -46,7 +49,11 @@ export default function DayDetailView({ items, newsletters, apiKey }: Props) {
   const handleRecenterReady = useCallback((fn: () => void) => { recenterRef.current = fn }, [])
 
   const visibleDays = days.filter(day => selectedDates.has(day.dateString))
-  const sharedItems = visibleDays.flatMap(day => displayItemsForDay(day, newslettersByDate))
+  const sharedItems = visibleDays.flatMap(day => {
+      const plan = plans.get(day.dateString)
+      if (!plan) return []
+      return [...plan.timeline.map(p => p.item), ...plan.anytime.map(p => p.item), ...plan.options]
+    })
     .filter((item, index, list) => list.findIndex(candidate => candidate.id === item.id) === index)
     .filter(item => activeTypes.size === 0 || (item.type && activeTypes.has(item.type)))
 
@@ -182,10 +189,10 @@ export default function DayDetailView({ items, newsletters, apiKey }: Props) {
             <p className="py-12 text-center text-sm text-white/40">Select a day above</p>
           ) : (
             visibleDays.map(day => (
-              <NewsletterDayCard
+              <DayCard
                 key={day.dateString}
                 day={day}
-                prose={newsletterProse(day, newslettersByDate)}
+                plan={plans.get(day.dateString)!}
                 selected={selected}
                 onSelect={selectItem}
               />
@@ -202,44 +209,36 @@ function pickInitialDate(days: DayBundle[]): string | null {
   return days.find(day => day.dateString === today)?.dateString ?? days[0]?.dateString ?? null
 }
 
-function NewsletterDayCard({
+function DayCard({
   day,
-  prose,
+  plan,
   selected,
   onSelect,
 }: {
   day: DayBundle
-  prose: string | null
+  plan: DayPlan
   selected: TripItem | null
   onSelect: (item: TripItem) => void
 }) {
-  const paragraphs = (prose ? prose.split('\n\n') : [dayIntro(day)])
-    .map(paragraph => paragraph.trim())
-    .filter(Boolean)
-  const poolItems = poolDisplayItems(day, prose)
+  const scheduled = [...plan.timeline.map(p => p.item), ...plan.anytime.map(p => p.item)]
+  const intro = dayIntro(day)
 
   return (
     <section className="rounded-xl bg-gray-800/60 p-4 border border-white/8">
       <div className="mb-3 flex items-baseline gap-2">
-        <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold tracking-[0.16em] text-gray-950">NEWSLETTER</span>
         <h2 className="font-display text-xl text-white">{formatLongDate(day.dateString)}</h2>
+        {plan.legCity && <span className="text-xs text-white/40">{plan.legCity}</span>}
       </div>
 
-      <div className="space-y-3">
-        {paragraphs.map((paragraph, index) => (
-          <p key={index} className="font-display text-[15px] leading-7 text-white/85">
-            {paragraph}
-          </p>
-        ))}
-      </div>
+      {intro && <p className="font-display text-[15px] leading-7 text-white/85">{intro}</p>}
 
-      {(day.confirmed.length > 0 || poolItems.length > 0) && (
+      {(scheduled.length > 0 || plan.options.length > 0) && (
         <div className="mt-4 rounded-lg bg-gray-950/50 px-3 py-2">
-          {day.confirmed.length > 0 && (
-            <ItemSection title="CONFIRMED" items={day.confirmed} selected={selected} onSelect={onSelect} hollow={false} />
+          {scheduled.length > 0 && (
+            <ItemSection title="SCHEDULED" items={scheduled} selected={selected} onSelect={onSelect} hollow={false} />
           )}
-          {poolItems.length > 0 && (
-            <ItemSection title="POSSIBILITIES" items={poolItems} selected={selected} onSelect={onSelect} hollow />
+          {plan.options.length > 0 && (
+            <ItemSection title="POSSIBILITIES" items={plan.options} selected={selected} onSelect={onSelect} hollow />
           )}
         </div>
       )}

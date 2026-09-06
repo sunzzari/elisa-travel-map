@@ -8,7 +8,7 @@ import BottomSheet from './BottomSheet'
 import DayTimeline from './DayTimeline'
 import DayDetailView from './DayDetailView'
 import { haversineKm } from '@/lib/geo'
-import type { TripItem, TripNewsletter, ItemStatus, ItemType } from '@/lib/types'
+import type { TripItem, ItemStatus, ItemType } from '@/lib/types'
 import type { UserLocation } from '@/lib/geo'
 
 const STATUSES: { value: ItemStatus; label: string; color: string; active: string }[] = [
@@ -38,13 +38,12 @@ type NearMeState = 'idle' | 'loading' | 'active' | 'error'
 
 interface Props {
   items: TripItem[]
-  newsletters: TripNewsletter[]
   apiKey: string
   legLabel?: string
   onFullscreenChange?: (fs: boolean) => void
 }
 
-export default function TripView({ items, newsletters, apiKey, legLabel = 'Leg', onFullscreenChange }: Props) {
+export default function TripView({ items, apiKey, legLabel = 'Leg', onFullscreenChange }: Props) {
   const [viewMode, setViewMode] = useState<'map' | 'day'>('map')
   const [selected, setSelected] = useState<TripItem | null>(null)
   const [activeFilters, setActiveFilters] = useState<Set<ItemStatus>>(new Set())
@@ -206,7 +205,7 @@ export default function TripView({ items, newsletters, apiKey, legLabel = 'Leg',
       )}
 
       {viewMode === 'day' ? (
-        <DayDetailView items={items} newsletters={newsletters} apiKey={apiKey} />
+        <DayDetailView items={items} apiKey={apiKey} />
       ) : (
         <>
 

@@ -1,4 +1,4 @@
-export type TripStatus = 'Planning' | 'Booked' | 'In Progress' | 'Completed'
+export type TripStatus = 'Planning' | 'Booked' | 'In Progress' | 'Completed' | 'Cancelled'
 
 export type ItemType =
   | 'Hotel'
@@ -44,7 +44,13 @@ export interface TripItem {
   dateEnd: string | null
   assignedToDate: string | null
   assignedToDateEnd: string | null
+  /** Notion `Time`: free text, a clock time or a rough word. See lib/time.ts. */
+  timeText: string
+  address: string
+  confirmationNumber: string
+  bookedVia: string
   reservationRequired: boolean
+  reservationMade: boolean
   coordinates?: Coordinates
 }
 
@@ -53,16 +59,6 @@ export interface DayBundle {
   dateString: string
   confirmed: TripItem[]
   possibilities: TripItem[]
-}
-
-export interface TripNewsletter {
-  id: string
-  tripId: string
-  date: string
-  prose: string
-  generatedAt: string | null
-  stale: boolean
-  itemsHash: string
 }
 
 export interface TripWithItems extends Trip {

@@ -20,6 +20,16 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 
 ## Changelog
 
+### 2026-09-06
+
+- `12:45pm` **Itinerary rebuilt as a during-the-trip day view** - `/[tripSlug]/itinerary` now opens on TODAY instead of dumping the whole trip as one scroll. Per day: what still needs booking, where you are sleeping tonight, the day's items in time order with notes, addresses and confirmation numbers, the "if you have time" pool, and a next-day preview. A day switcher runs along the top and "Whole trip" still shows everything at once.
+  - **Zero JS dependency, on purpose.** The Sunzzari app fetches this page and re-renders it with `loadHTMLString` for offline use, where Next's JS chunks are gone. Every day is server-rendered up front, day switching is radio inputs plus CSS sibling selectors, and one small INLINE script picks today's chip using the device's date (Vercel runs UTC, so at 6pm in Park City the server already thinks it is tomorrow). If that script never runs the server default stands and the page still works.
+- `12:45pm` **New Notion fields surfaced** - `Confirmation #` and `Booked Via` existed in Trip Items and were displayed nowhere; both now render on the item. Added `Time` (free text: `9:30am` or `morning`, both valid, blank valid) and `Address` (drives the map link, and beats a geocode when present).
+  - A rough time renders as the WORD ("Morning"), never as the clock time it was anchored to for sorting.
+- `12:45pm` **`/today`** - a stable bookmark that redirects to whatever trip is running, so the URL never changes mid-trip. The home page also pins the live trip above the grid.
+- `12:45pm` **Live trip detected by DATE, not status** - Park City was mid-trip on Sep 6 with its Notion Trip Status still reading "Planning". Nothing flips a trip to "In Progress", so anything keying off status showed no live trip while she was standing in it.
+- `12:45pm` **Fixes** - `TripStatus` was missing `Cancelled`, so cancelled trips rendered with the amber Planning badge. Removed the retired Trip Newsletters read path, which was costing a Notion round trip on every trip page load.
+
 ### 2026-07-09
 
 - `4:16pm` **Itinerary revalidate 3600s -> 60s** - the "live" itinerary was ISR-cached for an hour (stale-while-revalidate, so worst case two opens over an hour to see a Notion edit); now matches the trip map page's 60s so mid-planning edits appear within about a minute.

@@ -1,4 +1,5 @@
-import type { DayBundle, TripItem, TripNewsletter } from './types'
+import type { DayBundle, TripItem } from './types'
+import { parseTime, type ParsedTime } from './time'
 
 const TYPE_ORDER: Record<string, number> = {
   Hotel: 0,
@@ -113,29 +114,94 @@ export function groupDays(items: TripItem[]): DayBundle[] {
   })).filter(day => day.confirmed.length > 0 || day.possibilities.length > 0)
 }
 
-export function newsletterMap(newsletters: TripNewsletter[]): Record<string, TripNewsletter> {
-  return Object.fromEntries(newsletters.map(newsletter => [newsletter.date, newsletter]))
+/** Statuses that put an item on the day's timeline rather than in "if you have time". */
+export const SCHEDULED_STATUSES = new Set(['Confirmed', 'Assigned', 'Reservation Pending'])
+
+export interface PlannedItem {
+  item: TripItem
+  time: ParsedTime
 }
 
-export function newsletterProse(day: DayBundle, newslettersByDate: Record<string, TripNewsletter>): string | null {
-  const prose = newslettersByDate[day.dateString]?.prose.trim()
-  return prose || null
+export interface DayPlan {
+  dateString: string
+  /** 1-based position in the trip, for "Day 3 of 4". Null when dates are missing. */
+  dayNumber: number | null
+  totalDays: number | null
+  legCity: string
+  /** Scheduled items in time order, all-day pinned first. */
+  timeline: PlannedItem[]
+  /** Scheduled items with no usable time. */
+  anytime: PlannedItem[]
+  /** Shortlisted / Researching: candidates, not commitments. */
+  options: TripItem[]
+  /** The hotel covering this night, if one is booked. */
+  hotel: TripItem | null
+  /** Needs action: reservation required and not made, or still pending. */
+  needsBooking: TripItem[]
 }
 
-export function poolDisplayItems(day: DayBundle, prose: string | null): TripItem[] {
-  const confirmedNames = new Set(day.confirmed.map(item => item.name.toLowerCase()))
-  const confirmedIds = new Set(day.confirmed.map(item => item.id))
-  const basePool = day.possibilities.filter(item =>
-    !confirmedIds.has(item.id) &&
-    !confirmedNames.has(item.name.toLowerCase())
-  )
-  if (!prose) return basePool
-  return basePool.filter(item => item.name && prose.toLowerCase().includes(item.name.toLowerCase()))
+function itemTime(item: TripItem): ParsedTime {
+  return parseTime(item.timeText, item.assignedToDate ?? item.date)
 }
 
-export function displayItemsForDay(day: DayBundle, newslettersByDate: Record<string, TripNewsletter>): TripItem[] {
-  const prose = newsletterProse(day, newslettersByDate)
-  return [...day.confirmed, ...poolDisplayItems(day, prose)]
+export function needsBooking(item: TripItem): boolean {
+  if (item.status === 'Cancelled') return false
+  if (item.status === 'Reservation Pending') return true
+  return item.reservationRequired && !item.reservationMade
+}
+
+export function planDay(day: DayBundle, allDates: string[]): DayPlan {
+  const scheduled = [
+    ...day.confirmed,
+    ...day.possibilities.filter(i => SCHEDULED_STATUSES.has(i.status ?? '')),
+  ].filter((item, index, list) => list.findIndex(c => c.id === item.id) === index)
+
+  const planned = scheduled.map(item => ({ item, time: itemTime(item) }))
+  const timeline = planned.filter(p => !p.time.anytime).sort((a, b) => a.time.sortKey - b.time.sortKey)
+  const anytime = planned.filter(p => p.time.anytime).sort((a, b) => itemSort(a.item, b.item))
+
+  const scheduledIds = new Set(scheduled.map(i => i.id))
+  const options = day.possibilities
+    .filter(i => !scheduledIds.has(i.id))
+    .filter(i => i.status === 'Shortlisted' || i.status === 'Researching')
+    .sort(itemSort)
+
+  const hotel = day.confirmed.find(i => i.type === 'Hotel')
+    ?? day.possibilities.find(i => i.type === 'Hotel' && SCHEDULED_STATUSES.has(i.status ?? ''))
+    ?? null
+
+  const index = allDates.indexOf(day.dateString)
+
+  return {
+    dateString: day.dateString,
+    dayNumber: index >= 0 ? index + 1 : null,
+    totalDays: allDates.length || null,
+    legCity: scheduled[0]?.legCity || day.possibilities[0]?.legCity || '',
+    timeline,
+    anytime,
+    options,
+    hotel,
+    needsBooking: scheduled.filter(needsBooking),
+  }
+}
+
+/** Today as yyyy-MM-dd in the viewer's own timezone, which is where they are. */
+export function todayString(): string {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+}
+
+/**
+ * The day to open on: today if the trip covers it, otherwise the first day.
+ * Deliberately date-based - Park City was live on 2026-09-06 with its Notion
+ * Trip Status still reading "Planning", so status cannot be trusted here.
+ */
+export function pickOpeningDate(days: DayBundle[]): string | null {
+  if (days.length === 0) return null
+  const today = todayString()
+  if (days.some(d => d.dateString === today)) return today
+  const upcoming = days.find(d => d.dateString > today)
+  return upcoming?.dateString ?? days[days.length - 1].dateString
 }
 
 export function dayIntro(day: DayBundle): string {

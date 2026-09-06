@@ -1,4 +1,5 @@
 import { fetchAllTrips } from '@/lib/notion'
+import { findLiveTrip, findNextTrip, tripSlug, daysUntil } from '@/lib/trip'
 import Link from 'next/link'
 import type { Trip } from '@/lib/types'
 
@@ -16,6 +17,7 @@ const STATUS_BADGE: Record<string, string> = {
   Booked:        'bg-blue-400/20 text-blue-100 border border-blue-300/20',
   'In Progress': 'bg-green-400/20 text-green-100 border border-green-300/20',
   Completed:     'bg-white/10 text-white/50 border border-white/15',
+  Cancelled:     'bg-red-400/15 text-red-200 border border-red-400/20',
 }
 
 function formatDateRange(dep: string | null, ret: string | null) {
@@ -28,7 +30,13 @@ function formatDateRange(dep: string | null, ret: string | null) {
 export default async function Home() {
   const trips = await fetchAllTrips()
 
-  const ORDER: Record<string, number> = { 'In Progress': 0, Planning: 1, Booked: 2, Completed: 3 }
+  // The live trip goes above everything. During a trip this is the only thing
+  // she wants; hunting for it in a grid of cards is the problem being fixed.
+  const today = new Date().toISOString().slice(0, 10)
+  const live = findLiveTrip(trips, today)
+  const next = live ? null : findNextTrip(trips, today)
+
+  const ORDER: Record<string, number> = { 'In Progress': 0, Planning: 1, Booked: 2, Completed: 3, Cancelled: 4 }
   const sorted = [...trips].sort((a, b) => (ORDER[a.status ?? ''] ?? 9) - (ORDER[b.status ?? ''] ?? 9))
 
   return (
@@ -40,11 +48,34 @@ export default async function Home() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
+      {(live || next) && (
+        <div className="px-8 pb-8">
+          <Link
+            href={`/${tripSlug((live ?? next)!)}/itinerary`}
+            className="group flex items-center gap-4 rounded-2xl border border-amber-400/25 bg-amber-400/10 px-5 py-4 transition-colors hover:bg-amber-400/15"
+          >
+            <div className="flex-1">
+              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-amber-300/70">
+                {live
+                  ? 'On this trip now'
+                  : `Leaves in ${daysUntil(next!.departureDate!, today)} day${daysUntil(next!.departureDate!, today) === 1 ? '' : 's'}`}
+              </p>
+              <h2 className="font-display text-xl leading-tight text-white">{(live ?? next)!.name}</h2>
+              <p className="mt-1 text-xs text-white/40">{live ? "Open today's plan" : 'Open the day-by-day plan'}</p>
+            </div>
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-amber-400 text-gray-950 transition-transform group-hover:translate-x-0.5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+        </div>
+      )}
       <div className="px-8 pb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {sorted.map((trip: Trip, i: number) => {
           const gradient = GRADIENTS[i % GRADIENTS.length]
           const dateRange = formatDateRange(trip.departureDate, trip.returnDate)
-          const isCompleted = trip.status === 'Completed'
+          const isCompleted = trip.status === 'Completed' || trip.status === 'Cancelled'
           const hasCover = !!trip.coverImage
 
           return (
