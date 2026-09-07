@@ -30,16 +30,17 @@ function itemLine(i: TripItem): string {
   ].filter(Boolean).join(' | ')
 }
 
-const SYSTEM = `You help Elisa use a trip she has already planned, while she is on it.
+const SYSTEM = `You are helping Elisa use a trip she has already planned, while
+she is on it. Speak TO her, as "you" and "your list", never about her.
 
 Answer ONLY from the trip items given to you. These are her own saved places.
 Never invent a restaurant, bar, hotel or activity that is not in the list, and
-never recommend somewhere from general knowledge - if nothing in her list fits,
+never recommend somewhere from general knowledge - if nothing in the list fits,
 say so plainly and say what is closest.
 
 She is usually asking a practical question with a short answer: where to eat
-near a neighbourhood, what is open time-wise, what is already booked, what is
-near something else on the list. Lead with the answer. Two or three sentences.
+near a neighbourhood, what is already booked, what is near something else on the
+list. Lead with the answer. Two or three sentences. Plain text, no markdown.
 
 Status vocabulary, use it precisely and do not upgrade anything:
 - Confirmed = actually booked
@@ -106,6 +107,9 @@ export async function POST(request: Request) {
         model: MODEL,
         max_tokens: 700,
         system: SYSTEM,
+        // No assistant prefill here: this model returns thinking blocks, and
+        // prefilling alongside them produced an empty response. Format
+        // compliance is handled after the fact instead, by name matching.
         messages: [{ role: 'user', content: userContent }],
       }),
       signal: AbortSignal.timeout(30000),
@@ -130,19 +134,41 @@ export async function POST(request: Request) {
     .map((b: { text?: string }) => b.text ?? '')
     .join('\n')
     .trim()
-  const parsed = safeParse(text)
-  if (!parsed) {
-    // Better to show her the model's words than to claim it failed.
-    return NextResponse.json({ answer: text || 'No answer came back.', matchedItemIds: [] })
-  }
 
-  // Only ids that actually exist, so the map never tries to highlight a
-  // hallucinated one.
+  const parsed = safeParse(text)
   const known = new Set(items.map(i => i.id))
-  return NextResponse.json({
-    answer: String(parsed.answer ?? ''),
-    matchedItemIds: (parsed.matchedItemIds ?? []).filter((id: string) => known.has(id)),
-  })
+
+  // Prose instead of JSON is a real outcome, not an error: the model complies
+  // most of the time and not always. Show its words either way, and never let
+  // the map filtering depend on the model getting the format right.
+  const answer = parsed ? String(parsed.answer ?? '') : (text || 'No answer came back.')
+
+  // Only ids that actually exist, so a hallucinated one cannot reach the map.
+  let matchedItemIds: string[] = (parsed?.matchedItemIds ?? []).filter((id: string) => known.has(id))
+
+  // Deterministic fallback: find the items the answer actually names. This is
+  // what makes the map filter reliably rather than intermittently.
+  if (matchedItemIds.length === 0) matchedItemIds = idsNamedIn(answer, items)
+
+  return NextResponse.json({ answer, matchedItemIds })
+}
+
+/**
+ * Items whose name appears in the answer text.
+ *
+ * Longest names first, so "Cafe Sperl" is preferred over a shorter name that
+ * happens to be a substring of it. Short names are skipped entirely: matching
+ * on something like "Demel" is fine, but a two-character name would match
+ * everywhere.
+ */
+function idsNamedIn(answer: string, items: TripItem[]): string[] {
+  const haystack = answer.toLowerCase()
+  return [...items]
+    .filter(i => i.name.trim().length >= 5)
+    .sort((a, b) => b.name.length - a.name.length)
+    .filter(i => haystack.includes(i.name.toLowerCase().trim()))
+    .slice(0, 8)
+    .map(i => i.id)
 }
 
 /** Models sometimes wrap JSON in fences despite instructions. */
