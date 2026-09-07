@@ -1,46 +1,13 @@
-import { fetchAllTrips, fetchTripItems, fetchTripLegCount } from '@/lib/notion'
-import { geocodeItem } from '@/lib/geocode'
-import TripPageClient from '@/components/TripPageClient'
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
-export const revalidate = 60
-
-export async function generateStaticParams() {
-  const trips = await fetchAllTrips()
-  return trips.map(t => ({ tripSlug: t.id.replace(/-/g, '') }))
-}
-
+// The trip map and the day view were three separate map surfaces: this page's
+// "Map" mode, this page's "Day" mode (its own second map), and the itinerary.
+// None was a superset of the others, which is why none of them was good.
+//
+// Elisa, 2026-09-07: "instead of building one solid map function you are
+// building 3 subpar ones... one per platform with max functionality and
+// toggle-able." So there is now exactly one, and this route sends you to it.
 export default async function TripPage({ params }: { params: Promise<{ tripSlug: string }> }) {
   const { tripSlug } = await params
-  const trips = await fetchAllTrips()
-  const trip = trips.find(t => t.id.replace(/-/g, '') === tripSlug)
-
-  if (!trip) notFound()
-
-  const [rawItems, legCount] = await Promise.all([
-    fetchTripItems(trip.id),
-    fetchTripLegCount(trip.id),
-  ])
-
-  const items = await Promise.all(
-    rawItems.map(async item => {
-      const coords = await geocodeItem(item)
-      return { ...item, coordinates: coords ?? undefined }
-    })
-  )
-
-  const mapped = items.filter(i => i.coordinates)
-  const unmapped = items.filter(i => !i.coordinates)
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!
-
-  return (
-    <TripPageClient
-      trip={trip}
-      items={items}
-      apiKey={apiKey}
-      mappedCount={mapped.length}
-      unmappedCount={unmapped.length}
-      legLabel={legCount === 1 ? 'Neighborhood' : 'Leg'}
-    />
-  )
+  redirect(`/${tripSlug}/itinerary`)
 }

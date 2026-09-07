@@ -4,7 +4,9 @@ import { useMemo, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import TripMap from './TripMap'
 import { groupDays, groupLegs, planDay, formatLongDate, pickOpeningDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
+import { haversineKm } from '@/lib/geo'
 import type { Trip, TripItem, ItemType, ItemStatus } from '@/lib/types'
+import type { UserLocation } from '@/lib/geo'
 
 // Map-first day view.
 //
@@ -81,6 +83,13 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const [answer, setAnswer] = useState<string | null>(null)
   const [askError, setAskError] = useState<string | null>(null)
   const [matchedIds, setMatchedIds] = useState<string[]>([])
+
+  // Ported from the trip map before it was retired: this is the one map now,
+  // so everything that was only available there has to live here.
+  const [query, setQuery] = useState('')
+  const [activeLegs, setActiveLegs] = useState<Set<string>>(new Set())
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
+  const [nearMe, setNearMe] = useState<'off' | 'locating' | 'on' | 'denied'>('off')
   const recenterRef = useRef<(() => void) | null>(null)
   const onRecenterReady = useCallback((fn: () => void) => { recenterRef.current = fn }, [])
 
@@ -105,10 +114,35 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
 
   // ONE predicate for the map and the day panel. They were separate, so
   // toggling Restaurant filtered the pins and left the list showing everything.
+  const q = query.trim().toLowerCase()
+  const NEAR_KM = 5
+
   const matches = useCallback((i: TripItem) => (
     (activeTypes.size === 0 || activeTypes.has((i.type ?? 'Other') as ItemType)) &&
-    (activeStatuses.size === 0 || (i.status != null && activeStatuses.has(i.status)))
-  ), [activeTypes, activeStatuses])
+    (activeStatuses.size === 0 || (i.status != null && activeStatuses.has(i.status))) &&
+    (activeLegs.size === 0 || activeLegs.has(i.legCity)) &&
+    (!q || i.name.toLowerCase().includes(q) || i.venue.toLowerCase().includes(q) || i.notes.toLowerCase().includes(q)) &&
+    (nearMe !== 'on' || !userLocation || (
+      !!i.coordinates && haversineKm(userLocation.lat, userLocation.lng, i.coordinates.lat, i.coordinates.lng) <= NEAR_KM
+    ))
+  ), [activeTypes, activeStatuses, activeLegs, q, nearMe, userLocation])
+
+  const legs = useMemo(
+    () => Array.from(new Set(items.map(i => i.legCity).filter(Boolean))).sort(),
+    [items]
+  )
+
+  function requestNearMe() {
+    if (nearMe === 'on') { setNearMe('off'); setUserLocation(null); return }
+    setNearMe('locating')
+    navigator.geolocation.getCurrentPosition(
+      pos => { setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setNearMe('on') },
+      () => setNearMe('denied'),
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }
+
+  const todayIsInTrip = plans.some(p => p.dateString === today)
 
   const shown = matchedIds.length > 0
     ? pool.filter(i => matchedIds.includes(i.id))
@@ -173,6 +207,22 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           <h1 className="truncate font-display text-lg leading-tight">{trip.name}</h1>
           <p className="truncate text-xs text-white/40">{trip.location}</p>
         </div>
+        <input
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Search"
+          className="hidden w-40 flex-shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white placeholder:text-white/35 focus:border-amber-400/40 focus:outline-none sm:block"
+        />
+        <button
+          onClick={requestNearMe}
+          className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            nearMe === 'on' ? 'bg-blue-500 text-white'
+              : nearMe === 'denied' ? 'border border-red-400/40 text-red-300'
+              : 'border border-white/15 text-white/60 hover:text-white'
+          }`}
+        >
+          {nearMe === 'locating' ? '...' : nearMe === 'denied' ? 'Location off' : 'Near me'}
+        </button>
         <button
           onClick={() => setAskOpen(v => !v)}
           className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
@@ -181,12 +231,6 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
         >
           Ask
         </button>
-        <Link
-          href={`/${trip.id.replace(/-/g, '')}`}
-          className="flex-shrink-0 rounded-full border border-white/15 px-3 py-1 text-xs text-white/60 transition-colors hover:border-amber-400/40 hover:text-amber-400"
-        >
-          Full trip map
-        </Link>
       </header>
 
       {askOpen && (
@@ -244,6 +288,16 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
         >
           {byLeg ? 'Everywhere' : 'All days'}
         </button>
+        {todayIsInTrip && (
+          <button
+            onClick={() => { setSelectedDate(today); setSelected(null) }}
+            className={`flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
+              effectiveSelected === today ? 'bg-amber-400 text-gray-950' : 'bg-amber-400/20 text-amber-300 hover:bg-amber-400/30'
+            }`}
+          >
+            Today
+          </button>
+        )}
         {plans.map(plan => {
           const active = plan.dateString === effectiveSelected
           const isToday = !byLeg && plan.dateString === today
@@ -328,6 +382,27 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             Clear
           </button>
         )}
+        {legs.length > 1 && !byLeg && legs.map(leg => {
+          const on = activeLegs.has(leg)
+          return (
+            <button
+              key={leg}
+              onClick={() => {
+                setActiveLegs(prev => {
+                  const next = new Set(prev)
+                  if (next.has(leg)) next.delete(leg); else next.add(leg)
+                  return next
+                })
+                setSelected(null)
+              }}
+              className={`flex-shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
+                on ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-indigo-400/30 text-indigo-300 hover:bg-white/5'
+              }`}
+            >
+              {leg}
+            </button>
+          )
+        })}
         <span className="flex-shrink-0 pl-2 text-xs text-white/30">
           {mapped.length} on the map{unmapped > 0 ? ` - ${unmapped} without a location` : ''}
         </span>

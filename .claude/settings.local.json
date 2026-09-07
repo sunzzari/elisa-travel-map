@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:guide.michelin.com)",
+      "WebSearch",
+      "mcp__claude_ai_Notion__notion-search",
+      "mcp__claude_ai_Notion__notion-fetch",
+      "mcp__claude_ai_Notion__notion-create-pages",
+      "Bash(cp:*)",
+      "WebFetch(domain:www.theinfatuation.com)",
+      "WebFetch(domain:tribeza.com)",
+      "WebFetch(domain:irlxd.com)",
+      "WebFetch(domain:trip101.com)",
+      "WebFetch(domain:www.texasmonthly.com)"
+    ]
+  }
+}
