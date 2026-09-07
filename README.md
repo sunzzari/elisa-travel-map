@@ -22,6 +22,9 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 
 ### 2026-09-06
 
+- `10:55pm` **Fix: items with no venue were never really geocoded** - callers did `geocodeVenue(venue, city) ?? geocodeVenue(name, city)`, but a BLANK venue does not fail: it geocodes the bare city and returns the city centre. So the `??` never fell through and the item's own name was never looked up. Every China 2027 item has a blank `Provider / Venue`, so all 62 collapsed onto three city-centre pins. New `geocodeItem()` tries address, then venue, then name, and `geocodeVenue` now refuses a city on its own. China went from 0 usable pins to 60, with 2 reported as unlocatable rather than faked.
+- `10:55pm` **Trips with no dates now group by leg** - nothing gets a date without Elisa's approval, so a trip she has not scheduled yet has zero dated items. `groupDays` returned `[]` for those, which collapsed the page: no chips, no list, and a map on its fallback centre (China rendered over Tokyo). `groupLegs` buckets by leg instead, so an all-candidates trip is still fully usable.
+
 - `9:20pm` **Ask about this trip** - a write-in on the itinerary. "Where should I eat that's close to Main Street?" is answered from the places already on the trip, never from the internet, and the items it names are the only ones left on the map until you clear it.
   - Uses NO new API key. It posts through `sunzzari-backend/api/analyze`, the same authenticated proxy the iOS app uses, so the Anthropic key stays in exactly one place and rotating it is one change. This deployment holds only `SUNZZARI_PROXY_SECRET`.
   - Bug caught by testing the route rather than trusting it: the reply was read from `content[0].text`, but the model returns a thinking block first, so a perfectly good answer came back as "No answer came back". It now takes the first text block.

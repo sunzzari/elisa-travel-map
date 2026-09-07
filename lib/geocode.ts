@@ -20,11 +20,47 @@ function cacheKey(venue: string, city: string): string {
   return `geocode:${venue.toLowerCase().trim()}:${city.toLowerCase().trim()}`
 }
 
+/**
+ * Best coordinate for a trip item, most specific source first.
+ *
+ * The bug this replaces: callers did
+ *   geocodeVenue(item.venue, item.legCity) ?? geocodeVenue(item.name, ...)
+ * and a BLANK venue does not fail - it geocodes the bare city and returns the
+ * city centre. So the `??` never fell through, and the item's actual name was
+ * never looked up. Every China item has a blank `Provider / Venue`, so all 62
+ * landed on three city-centre pins and the map looked empty of real places.
+ *
+ * A bare city is never a location for an item. It is only used as the CONTEXT
+ * for a name or venue.
+ */
+export async function geocodeItem(item: {
+  venue: string
+  name: string
+  legCity: string
+  address?: string
+}): Promise<Coordinates | null> {
+  if (item.address?.trim()) {
+    const byAddress = await geocodeVenue(item.address, '')
+    if (byAddress) return byAddress
+  }
+  if (item.venue.trim()) {
+    const byVenue = await geocodeVenue(item.venue, item.legCity)
+    if (byVenue) return byVenue
+  }
+  if (item.name.trim()) {
+    const byName = await geocodeVenue(item.name, item.legCity)
+    if (byName) return byName
+  }
+  return null
+}
+
 export async function geocodeVenue(
   venue: string,
   city: string
 ): Promise<Coordinates | null> {
-  if (!venue && !city) return null
+  // A city on its own is not an item's location, it is context for a name.
+  // Returning the city centre here is what silently defeated the name lookup.
+  if (!venue.trim()) return null
 
   const query = [venue, city].filter(Boolean).join(', ')
   const key = cacheKey(venue, city)

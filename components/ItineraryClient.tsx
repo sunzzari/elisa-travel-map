@@ -3,7 +3,7 @@
 import { useMemo, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import TripMap from './TripMap'
-import { groupDays, planDay, formatLongDate, pickOpeningDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
+import { groupDays, groupLegs, planDay, formatLongDate, pickOpeningDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
 import type { Trip, TripItem, ItemType, ItemStatus } from '@/lib/types'
 
 // Map-first day view.
@@ -55,13 +55,21 @@ interface Props {
 export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const days = useMemo(() => groupDays(items), [items])
   const allDates = useMemo(() => days.map(d => d.dateString), [days])
-  const plans = useMemo(() => days.map(d => planDay(d, allDates)), [days, allDates])
+  const datedPlans = useMemo(() => days.map(d => planDay(d, allDates)), [days, allDates])
+
+  // A trip with nothing scheduled yet has no dated items, which is the normal
+  // state now that nothing gets a date without her approval. Fall back to
+  // grouping by leg so the map and the list still have something to show.
+  const byLeg = datedPlans.length === 0
+  const plans = useMemo(() => (byLeg ? groupLegs(items) : datedPlans), [byLeg, items, datedPlans])
 
   // null means "all days".
   // Every "is this today / is this past" question resolves in the TRIP's
   // timezone, not the browser's.
   const today = useMemo(() => todayInZone(trip.timeZone), [trip.timeZone])
   const [selectedDate, setSelectedDate] = useState<string | null>(() => pickOpeningDate(days, trip.timeZone))
+  // In leg mode there is no "today", so default to showing everything.
+  const effectiveSelected = byLeg ? null : selectedDate
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
   const [activeStatuses, setActiveStatuses] = useState<Set<ItemStatus>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
@@ -76,7 +84,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const recenterRef = useRef<(() => void) | null>(null)
   const onRecenterReady = useCallback((fn: () => void) => { recenterRef.current = fn }, [])
 
-  const visiblePlans = selectedDate ? plans.filter(p => p.dateString === selectedDate) : plans
+  const visiblePlans = effectiveSelected ? plans.filter(p => p.dateString === effectiveSelected) : plans
 
   // Everything on the visible day(s): what is scheduled, plus the candidates
   // for that leg. Status colour on the marker already distinguishes them.
@@ -234,12 +242,12 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             selectedDate === null ? 'bg-amber-400 text-gray-950' : 'bg-white/10 text-white/70 hover:bg-white/15'
           }`}
         >
-          All days
+          {byLeg ? 'Everywhere' : 'All days'}
         </button>
         {plans.map(plan => {
-          const active = plan.dateString === selectedDate
-          const isToday = plan.dateString === today
-          const past = plan.dateString < today
+          const active = plan.dateString === effectiveSelected
+          const isToday = !byLeg && plan.dateString === today
+          const past = !byLeg && plan.dateString < today
           return (
             <button
               key={plan.dateString}
@@ -248,12 +256,18 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
                 active ? 'bg-amber-400 text-gray-950' : past ? 'bg-white/5 text-white/35 hover:bg-white/10' : 'bg-white/10 text-white/70 hover:bg-white/15'
               } ${isToday && !active ? 'ring-1 ring-amber-400/50' : ''}`}
             >
-              <span className="block text-[10px] uppercase leading-none opacity-70">
-                {formatLongDate(plan.dateString, { weekday: 'short' })}
-              </span>
-              <span className="block text-sm font-semibold leading-tight">
-                {formatLongDate(plan.dateString, { month: 'short', day: 'numeric' })}
-              </span>
+              {byLeg ? (
+                <span className="block px-1 text-sm font-semibold leading-tight">{plan.dateString}</span>
+              ) : (
+                <>
+                  <span className="block text-[10px] uppercase leading-none opacity-70">
+                    {formatLongDate(plan.dateString, { weekday: 'short' })}
+                  </span>
+                  <span className="block text-sm font-semibold leading-tight">
+                    {formatLongDate(plan.dateString, { month: 'short', day: 'numeric' })}
+                  </span>
+                </>
+              )}
             </button>
           )
         })}
@@ -347,7 +361,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
 
         <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
           {visiblePlans.map(plan => (
-            <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} matches={matches} />
+            <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} matches={matches} byLeg={byLeg} />
           ))}
         </div>
       </div>
@@ -355,12 +369,13 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   )
 }
 
-function DaySection({ plan, selected, onSelect, today, matches }: {
+function DaySection({ plan, selected, onSelect, today, matches, byLeg }: {
   plan: DayPlan
   selected: TripItem | null
   onSelect: (i: TripItem) => void
   today: string
   matches: (i: TripItem) => boolean
+  byLeg: boolean
 }) {
   const timeline = plan.timeline.filter(p => matches(p.item))
   const anytime = plan.anytime.filter(p => matches(p.item))
@@ -372,9 +387,13 @@ function DaySection({ plan, selected, onSelect, today, matches }: {
   return (
     <section className="border-b border-white/10 px-4 py-4 last:border-b-0">
       <div className="mb-3 flex items-baseline gap-2">
-        <h2 className="font-display text-lg text-amber-300">{formatLongDate(plan.dateString)}</h2>
+        <h2 className="font-display text-lg text-amber-300">
+          {byLeg ? plan.dateString : formatLongDate(plan.dateString)}
+        </h2>
         <span className="text-xs text-white/35">
-          Day {plan.dayNumber} of {plan.totalDays}{plan.legCity ? ` - ${plan.legCity}` : ''}
+          {byLeg
+            ? `${plan.options.length + plan.timeline.length + plan.anytime.length} saved, nothing scheduled yet`
+            : `Day ${plan.dayNumber} of ${plan.totalDays}${plan.legCity ? ` - ${plan.legCity}` : ''}`}
         </span>
       </div>
 
@@ -400,7 +419,7 @@ function DaySection({ plan, selected, onSelect, today, matches }: {
         </button>
       )}
 
-      {timeline.length === 0 && anytime.length === 0 && (
+      {timeline.length === 0 && anytime.length === 0 && !byLeg && (
         <p className="text-sm text-white/40">
           {filtered ? 'Nothing on this day matches the filters.' : 'Nothing scheduled. Anything on the map is fair game.'}
         </p>
@@ -413,9 +432,29 @@ function DaySection({ plan, selected, onSelect, today, matches }: {
       <Rows planned={anytime} showTime={timeline.length > 0} selected={selected} onSelect={onSelect} today={today} dayDate={plan.dateString} />
 
       {options.length > 0 && (
-        <p className="mt-3 border-t border-white/10 pt-2 text-xs text-white/35">
-          {options.length} more nearby on the map, not scheduled
-        </p>
+        byLeg ? (
+          <div className="mt-1">
+            {options.map(item => (
+              <button
+                key={item.id}
+                onClick={() => onSelect(item)}
+                className={`flex w-full gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors ${
+                  selected?.id === item.id ? 'bg-amber-400/10' : 'hover:bg-white/5'
+                }`}
+              >
+                <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full" style={{ background: STATUS_DOT[item.status ?? ''] ?? '#8E8E93' }} />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium text-white">{item.name}</span>
+                  {item.notes && <span className="mt-0.5 block truncate text-xs text-white/45">{item.notes}</span>}
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-3 border-t border-white/10 pt-2 text-xs text-white/35">
+            {options.length} more nearby on the map, not scheduled
+          </p>
+        )
       )}
     </section>
   )

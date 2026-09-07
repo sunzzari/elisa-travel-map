@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { fetchAllTrips, fetchTripItems } from '@/lib/notion'
-import { geocodeVenue } from '@/lib/geocode'
+import { geocodeItem } from '@/lib/geocode'
 
 export async function GET(
   _request: Request,
@@ -19,8 +19,7 @@ export async function GET(
   // Geocode items without coordinates
   const geocoded = await Promise.all(
     items.map(async item => {
-      const coords = await geocodeVenue(item.venue, item.legCity)
-        ?? (item.name !== item.venue ? await geocodeVenue(item.name, item.legCity) : null)
+      const coords = await geocodeItem(item)
       return { ...item, coordinates: coords ?? undefined }
     })
   )

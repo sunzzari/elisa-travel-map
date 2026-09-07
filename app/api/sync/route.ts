@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { fetchAllTrips, fetchAllTripItems } from '@/lib/notion'
-import { geocodeVenue } from '@/lib/geocode'
+import { geocodeItem } from '@/lib/geocode'
 
 export const maxDuration = 60
 
@@ -25,8 +25,7 @@ export async function POST(request: Request) {
       const batch = geocoded.slice(i, i + BATCH_SIZE)
       await Promise.all(
         batch.map(async (item, j) => {
-          const coords = await geocodeVenue(item.venue, item.legCity)
-            ?? (item.name !== item.venue ? await geocodeVenue(item.name, item.legCity) : null)
+          const coords = await geocodeItem(item)
           if (coords) geocoded[i + j].coordinates = coords
         })
       )

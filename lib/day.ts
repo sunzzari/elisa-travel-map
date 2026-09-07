@@ -201,6 +201,48 @@ export function planDay(day: DayBundle, allDates: string[]): DayPlan {
 }
 
 /**
+ * Buckets a trip by LEG when it has no dated items at all.
+ *
+ * This is now the normal state of a healthy trip, not an edge case: nothing
+ * reaches a committed status or a date without Elisa's approval, so a trip she
+ * has not scheduled yet has ZERO dated items. `groupDays` returns [] for it,
+ * which collapsed the whole day view - no chips, no list, and a map falling
+ * back to its default centre (China 2027 rendered over Tokyo). Grouping by leg
+ * keeps the trip usable while it is still all candidates.
+ *
+ * Returns DayPlan-shaped buckets so the caller renders them with the same code.
+ * `dateString` carries the leg name and `dayNumber` is 0, which is how a caller
+ * tells the two modes apart.
+ */
+export function groupLegs(items: TripItem[]): DayPlan[] {
+  const live = items.filter(i => i.status && i.status !== 'Cancelled')
+  const byLeg = new Map<string, TripItem[]>()
+  for (const item of live) {
+    const leg = item.legCity || 'Everywhere else'
+    byLeg.set(leg, [...(byLeg.get(leg) ?? []), item])
+  }
+
+  return [...byLeg.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([leg, list]) => {
+      const scheduled = list.filter(i => SCHEDULED_STATUSES.has(i.status ?? ''))
+      const planned = scheduled.map(item => ({ item, time: itemTime(item) }))
+      const scheduledIds = new Set(scheduled.map(i => i.id))
+      return {
+        dateString: leg,
+        dayNumber: 0,
+        totalDays: 0,
+        legCity: leg,
+        timeline: planned.filter(p => !p.time.anytime).sort((a, b) => a.time.sortKey - b.time.sortKey),
+        anytime: planned.filter(p => p.time.anytime).sort((a, b) => itemSort(a.item, b.item)),
+        options: list.filter(i => !scheduledIds.has(i.id)).sort(itemSort),
+        hotel: null,
+        needsBooking: scheduled.filter(needsBooking),
+      }
+    })
+}
+
+/**
  * Today as yyyy-MM-dd in the TRIP's timezone.
  *
  * Elisa, 2026-09-06: "the dimming should always happen at the timezone of the

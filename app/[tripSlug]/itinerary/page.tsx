@@ -1,5 +1,5 @@
 import { fetchAllTrips, fetchTripItems } from '@/lib/notion'
-import { geocodeVenue } from '@/lib/geocode'
+import { geocodeItem } from '@/lib/geocode'
 import ItineraryClient from '@/components/ItineraryClient'
 import { notFound } from 'next/navigation'
 
@@ -28,8 +28,7 @@ export default async function ItineraryPage({ params }: { params: Promise<{ trip
   const rawItems = await fetchTripItems(trip.id)
   const items = await Promise.all(
     rawItems.map(async item => {
-      const coords = await geocodeVenue(item.venue, item.legCity)
-        ?? (item.name !== item.venue ? await geocodeVenue(item.name, item.legCity) : null)
+      const coords = await geocodeItem(item)
       return { ...item, coordinates: coords ?? undefined }
     })
   )

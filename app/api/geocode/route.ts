@@ -7,8 +7,11 @@ export async function GET(request: Request) {
   const venue = searchParams.get('venue') ?? ''
   const city = searchParams.get('city') ?? ''
 
-  if (!venue && !city) {
-    return NextResponse.json({ error: 'venue or city required' }, { status: 400 })
+  // A city alone is not an item's location, it is context for a venue or name.
+  // Accepting city-only here is what let a blank venue resolve to a city centre
+  // and silently defeat the name lookup on the callers' side.
+  if (!venue.trim()) {
+    return NextResponse.json({ error: 'venue (or item name) required' }, { status: 400 })
   }
 
   const coords = await geocodeVenue(venue, city)
