@@ -27,6 +27,9 @@ export interface Trip {
   returnDate: string | null
   status: TripStatus | null
   coverImage: string | null
+  /** IANA zone for the trip, e.g. "America/Denver". Blank falls back to the
+      viewer's device zone. See lib/day.ts todayInZone. */
+  timeZone: string
 }
 
 export interface TripItem {

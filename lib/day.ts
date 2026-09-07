@@ -185,20 +185,55 @@ export function planDay(day: DayBundle, allDates: string[]): DayPlan {
   }
 }
 
-/** Today as yyyy-MM-dd in the viewer's own timezone, which is where they are. */
-export function todayString(): string {
+/**
+ * Today as yyyy-MM-dd in the TRIP's timezone.
+ *
+ * Elisa, 2026-09-06: "the dimming should always happen at the timezone of the
+ * trip". The device is not a safe proxy - checking the plan from LA the night
+ * before a flight, or from a phone that has not switched over yet, both give
+ * the wrong day and would dim a day that has not happened.
+ *
+ * A blank zone falls back to the device, which is the old behaviour and is
+ * right for a trip with no zone recorded.
+ */
+export function todayInZone(timeZone?: string | null): string {
   const now = new Date()
+  if (timeZone) {
+    try {
+      // en-CA gives yyyy-mm-dd directly.
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+      }).format(now)
+    } catch {
+      // An unrecognised zone must not crash the page; fall through to device.
+    }
+  }
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+}
+
+/**
+ * Is this day finished, in the trip's timezone?
+ *
+ * Only a Confirmed item on such a day is treated as done - Elisa, 2026-09-06:
+ * "only dim what we have certainly already done (confirmed)". Assigned and
+ * Shortlisted are intentions, and a plan is not evidence it happened.
+ * Multi-night hotels are expanded per night, so last night's stay dims while
+ * tonight's does not, with no special case.
+ */
+export function isDone(dateString: string, status: string | null, today: string): boolean {
+  return status === 'Confirmed' && dateString < today
 }
 
 /**
  * The day to open on: today if the trip covers it, otherwise the first day.
  * Deliberately date-based - Park City was live on 2026-09-06 with its Notion
  * Trip Status still reading "Planning", so status cannot be trusted here.
+ * The day is resolved in the TRIP's timezone, not the device's.
  */
-export function pickOpeningDate(days: DayBundle[]): string | null {
+export function pickOpeningDate(days: DayBundle[], timeZone?: string | null): string | null {
   if (days.length === 0) return null
-  const today = todayString()
+  const today = todayInZone(timeZone)
   if (days.some(d => d.dateString === today)) return today
   const upcoming = days.find(d => d.dateString > today)
   return upcoming?.dateString ?? days[days.length - 1].dateString

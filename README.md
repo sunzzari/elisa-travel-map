@@ -22,6 +22,8 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 
 ### 2026-09-06
 
+- `8:05pm` **Finished days dim, in the trip's timezone** - an item goes dim and struck through only when it is `Confirmed` and its day is over. Assigned and Shortlisted never dim; a plan is not evidence it happened. Day boundaries resolve from a new `Time Zone` property on the trip (IANA id), not from the browser, because checking the plan from LA the night before a flight gives the wrong day. Blank falls back to the device zone.
+
 - `6:55pm` **Itinerary is now a map** - `/[tripSlug]/itinerary` is a map-first day view: "All days" plus one chip per day, type chips for only the types actually present, a large map (beside the day panel on a laptop, above it on a phone), and the panel keeping still-needs-booking, sleeping-tonight and the timeline with notes and confirmation numbers. Reuses the existing `TripMap`, so clusters expand on click.
   - **The zero-JS design is retired**, and it retired itself: it existed so the Sunzzari webview could cache this HTML for offline, and the iOS app now has a native Today screen with its own map and disk cache. Consequently the app's itinerary viewer now loads the live URL instead of a saved HTML string, which would have rendered as a dead page with no map.
   - Supersedes the 5:15pm entry below, which lasted about ninety minutes.

@@ -45,6 +45,7 @@ export async function fetchAllTrips(): Promise<Trip[]> {
     returnDate: page.properties['Return Date']?.date?.start ?? null,
     status: (getText(page.properties['Trip Status']) as TripStatus) || null,
     coverImage: page.properties['Cover Image']?.url ?? page.cover?.external?.url ?? page.cover?.file?.url ?? null,
+    timeZone: getText(page.properties['Time Zone']),
   }))
 }
 

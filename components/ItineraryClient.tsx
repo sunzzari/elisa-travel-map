@@ -3,7 +3,7 @@
 import { useMemo, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import TripMap from './TripMap'
-import { groupDays, planDay, formatLongDate, pickOpeningDate, type DayPlan, type PlannedItem } from '@/lib/day'
+import { groupDays, planDay, formatLongDate, pickOpeningDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
 import type { Trip, TripItem, ItemType } from '@/lib/types'
 
 // Map-first day view.
@@ -54,7 +54,10 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const plans = useMemo(() => days.map(d => planDay(d, allDates)), [days, allDates])
 
   // null means "all days".
-  const [selectedDate, setSelectedDate] = useState<string | null>(() => pickOpeningDate(days))
+  // Every "is this today / is this past" question resolves in the TRIP's
+  // timezone, not the browser's.
+  const today = useMemo(() => todayInZone(trip.timeZone), [trip.timeZone])
+  const [selectedDate, setSelectedDate] = useState<string | null>(() => pickOpeningDate(days, trip.timeZone))
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
   const recenterRef = useRef<(() => void) | null>(null)
@@ -90,8 +93,6 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
     setSelected(null)
   }
 
-  const today = plans.find(p => p.dateString === pickOpeningDate(days))
-
   return (
     <main className="flex h-screen flex-col bg-gray-950 text-white">
       <header className="flex flex-shrink-0 items-center gap-3 border-b border-white/10 bg-gray-900 px-4 py-2.5">
@@ -120,13 +121,14 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
         </button>
         {plans.map(plan => {
           const active = plan.dateString === selectedDate
-          const isToday = plan.dateString === today?.dateString
+          const isToday = plan.dateString === today
+          const past = plan.dateString < today
           return (
             <button
               key={plan.dateString}
               onClick={() => { setSelectedDate(plan.dateString); setSelected(null) }}
               className={`flex-shrink-0 rounded-xl px-3 py-1 text-center transition-colors ${
-                active ? 'bg-amber-400 text-gray-950' : 'bg-white/10 text-white/70 hover:bg-white/15'
+                active ? 'bg-amber-400 text-gray-950' : past ? 'bg-white/5 text-white/35 hover:bg-white/10' : 'bg-white/10 text-white/70 hover:bg-white/15'
               } ${isToday && !active ? 'ring-1 ring-amber-400/50' : ''}`}
             >
               <span className="block text-[10px] uppercase leading-none opacity-70">
@@ -200,7 +202,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
 
         <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
           {visiblePlans.map(plan => (
-            <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} />
+            <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} />
           ))}
         </div>
       </div>
@@ -208,7 +210,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   )
 }
 
-function DaySection({ plan, selected, onSelect }: { plan: DayPlan; selected: TripItem | null; onSelect: (i: TripItem) => void }) {
+function DaySection({ plan, selected, onSelect, today }: { plan: DayPlan; selected: TripItem | null; onSelect: (i: TripItem) => void; today: string }) {
   return (
     <section className="border-b border-white/10 px-4 py-4 last:border-b-0">
       <div className="mb-3 flex items-baseline gap-2">
@@ -228,8 +230,10 @@ function DaySection({ plan, selected, onSelect }: { plan: DayPlan; selected: Tri
       )}
 
       {plan.hotel && (
-        <button onClick={() => onSelect(plan.hotel!)} className="mb-3 block w-full rounded-lg border border-blue-400/30 bg-blue-400/10 px-3 py-2 text-left">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-blue-400">Sleeping tonight</p>
+        <button onClick={() => onSelect(plan.hotel!)} className={`mb-3 block w-full rounded-lg border border-blue-400/30 bg-blue-400/10 px-3 py-2 text-left ${plan.dateString < today ? 'opacity-50' : ''}`}>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-blue-400">
+            {plan.dateString < today ? 'Stayed here' : 'Sleeping tonight'}
+          </p>
           <p className="text-sm font-semibold text-white">{plan.hotel.name}</p>
           {plan.hotel.address && <p className="text-xs text-white/45">{plan.hotel.address}</p>}
           {plan.hotel.confirmationNumber && (
@@ -242,11 +246,11 @@ function DaySection({ plan, selected, onSelect }: { plan: DayPlan; selected: Tri
         <p className="text-sm text-white/40">Nothing scheduled. Anything on the map is fair game.</p>
       )}
 
-      <Rows planned={plan.timeline} showTime selected={selected} onSelect={onSelect} />
+      <Rows planned={plan.timeline} showTime selected={selected} onSelect={onSelect} today={today} dayDate={plan.dateString} />
       {plan.anytime.length > 0 && plan.timeline.length > 0 && (
         <p className="pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-white/35">Anytime today</p>
       )}
-      <Rows planned={plan.anytime} showTime={plan.timeline.length > 0} selected={selected} onSelect={onSelect} />
+      <Rows planned={plan.anytime} showTime={plan.timeline.length > 0} selected={selected} onSelect={onSelect} today={today} dayDate={plan.dateString} />
 
       {plan.options.length > 0 && (
         <p className="mt-3 border-t border-white/10 pt-2 text-xs text-white/35">
@@ -257,21 +261,27 @@ function DaySection({ plan, selected, onSelect }: { plan: DayPlan; selected: Tri
   )
 }
 
-function Rows({ planned, showTime, selected, onSelect }: {
+function Rows({ planned, showTime, selected, onSelect, today, dayDate }: {
   planned: PlannedItem[]
   showTime: boolean
   selected: TripItem | null
   onSelect: (i: TripItem) => void
+  today: string
+  dayDate: string
 }) {
   return (
     <>
-      {planned.map(({ item, time }) => (
+      {planned.map(({ item, time }) => {
+        // Dimmed ONLY when it is Confirmed and its day is finished in the
+        // trip's timezone. A plan is not evidence that it happened.
+        const done = isDone(dayDate, item.status, today)
+        return (
         <button
           key={item.id}
           onClick={() => onSelect(item)}
           className={`flex w-full gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors ${
             selected?.id === item.id ? 'bg-amber-400/10' : 'hover:bg-white/5'
-          }`}
+          } ${done ? 'opacity-40' : ''}`}
         >
           {showTime && (
             // A rough word renders as the word, dimmer and smaller. It is never
@@ -282,7 +292,7 @@ function Rows({ planned, showTime, selected, onSelect }: {
           )}
           <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full" style={{ background: STATUS_DOT[item.status ?? ''] ?? '#8E8E93' }} />
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-medium text-white">{item.name}</span>
+            <span className={`block text-sm font-medium text-white ${done ? 'line-through decoration-white/30' : ''}`}>{item.name}</span>
             <span className="block text-xs text-white/40">
               {[item.type, item.venue && item.venue !== item.name ? item.venue : null].filter(Boolean).join(' - ')}
             </span>
@@ -304,7 +314,8 @@ function Rows({ planned, showTime, selected, onSelect }: {
             </a>
           </span>
         </button>
-      ))}
+        )
+      })}
     </>
   )
 }

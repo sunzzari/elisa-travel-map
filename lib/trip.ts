@@ -1,4 +1,5 @@
 import type { Trip } from './types'
+import { todayInZone } from './day'
 
 /**
  * The trip you are on, or the next one up.
@@ -9,12 +10,14 @@ import type { Trip } from './types'
  * status would have shown no live trip while she was standing in it.
  */
 export function findLiveTrip(trips: Trip[], today: string): Trip | null {
+  // Each trip is judged in its OWN zone: "am I on this trip today" is a
+  // question about where the trip is, not where the browser is.
   return trips.find(t =>
     t.status !== 'Completed' &&
     t.status !== 'Cancelled' &&
     t.departureDate != null &&
-    t.departureDate <= today &&
-    (t.returnDate ?? t.departureDate)! >= today
+    t.departureDate <= todayInZone(t.timeZone) &&
+    (t.returnDate ?? t.departureDate)! >= todayInZone(t.timeZone)
   ) ?? null
 }
 
