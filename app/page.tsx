@@ -81,7 +81,7 @@ export default async function Home() {
           return (
             <Link
               key={trip.id}
-              href={`/${trip.id.replace(/-/g, '')}`}
+              href={`/${trip.id.replace(/-/g, '')}/itinerary`}
               className={`group relative overflow-hidden rounded-2xl aspect-[3/2] flex flex-col justify-between transition-all duration-400 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.08)] animate-fade-up ${isCompleted ? 'opacity-60' : ''}`}
               style={{ animationDelay: `${0.1 + i * 0.1}s` }}
             >
@@ -112,7 +112,7 @@ export default async function Home() {
                   <p className="text-white/35 text-xs mt-2 font-light">{dateRange}</p>
                 )}
                 <div className="mt-4 flex items-center justify-between">
-                  <span className="text-white/30 text-xs font-medium group-hover:text-white/60 transition-colors">Open map</span>
+                  <span className="text-white/30 text-xs font-medium group-hover:text-white/60 transition-colors">Open</span>
                   <div className="w-7 h-7 rounded-full bg-white/5 border border-white/8 flex items-center justify-center group-hover:bg-amber-400/15 group-hover:border-amber-400/25 transition-all">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/40 group-hover:text-amber-400 group-hover:translate-x-px transition-all">
                       <path d="M5 12h14M12 5l7 7-7 7"/>
