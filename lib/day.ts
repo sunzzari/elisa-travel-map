@@ -144,10 +144,25 @@ function itemTime(item: TripItem): ParsedTime {
   return parseTime(item.timeText, item.assignedToDate ?? item.date)
 }
 
+/**
+ * Does this still need booking?
+ *
+ * ONLY `Reservation Pending`. That is the single status that means "she has
+ * said she wants this and it is not booked yet".
+ *
+ * The old rule also counted `reservationRequired && !reservationMade`, which
+ * was the bug Elisa hit on 2026-09-06: `Reservation Required` is INFERRED by
+ * the add-to-trip skill from the item type ("restaurants and activities often
+ * yes"), so every restaurant Claude had ever suggested showed up under "Still
+ * needs booking". Her words: *"you tell me 'still needs booking' for many
+ * things that i never say im going to book. you just recommend them but i
+ * never actually say i will do it. it makes everything so messy."*
+ *
+ * A recommendation is not a commitment. Nothing Claude inferred may put an
+ * item in this list.
+ */
 export function needsBooking(item: TripItem): boolean {
-  if (item.status === 'Cancelled') return false
-  if (item.status === 'Reservation Pending') return true
-  return item.reservationRequired && !item.reservationMade
+  return item.status === 'Reservation Pending'
 }
 
 export function planDay(day: DayBundle, allDates: string[]): DayPlan {

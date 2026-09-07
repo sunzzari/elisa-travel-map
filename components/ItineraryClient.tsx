@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import TripMap from './TripMap'
 import { groupDays, planDay, formatLongDate, pickOpeningDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
-import type { Trip, TripItem, ItemType } from '@/lib/types'
+import type { Trip, TripItem, ItemType, ItemStatus } from '@/lib/types'
 
 // Map-first day view.
 //
@@ -26,6 +26,10 @@ const TYPE_META: Record<string, { glyph: string; color: string }> = {
 }
 
 const TYPE_ORDER: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Train', 'Ferry', 'Car Rental', 'Other']
+
+// Order matters: this is the pipeline from "booked" to "idea", and the chips
+// read left to right as certainty decreasing.
+const STATUS_ORDER: ItemStatus[] = ['Confirmed', 'Assigned', 'Reservation Pending', 'Shortlisted', 'Researching']
 
 const STATUS_DOT: Record<string, string> = {
   Confirmed: '#34C759',
@@ -59,6 +63,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const today = useMemo(() => todayInZone(trip.timeZone), [trip.timeZone])
   const [selectedDate, setSelectedDate] = useState<string | null>(() => pickOpeningDate(days, trip.timeZone))
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
+  const [activeStatuses, setActiveStatuses] = useState<Set<ItemStatus>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
   const recenterRef = useRef<(() => void) | null>(null)
   const onRecenterReady = useCallback((fn: () => void) => { recenterRef.current = fn }, [])
@@ -72,16 +77,42 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
     return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i)
   }, [visiblePlans])
 
+  const presentStatuses = useMemo(
+    () => STATUS_ORDER.filter(st => pool.some(i => i.status === st)),
+    [pool]
+  )
+
   const presentTypes = useMemo(
     () => TYPE_ORDER.filter(t => pool.some(i => (i.type ?? 'Other') === t)),
     [pool]
   )
 
-  const shown = pool.filter(i => activeTypes.size === 0 || activeTypes.has((i.type ?? 'Other') as ItemType))
+  // ONE predicate for the map and the day panel. They were separate, so
+  // toggling Restaurant filtered the pins and left the list showing everything.
+  const matches = useCallback((i: TripItem) => (
+    (activeTypes.size === 0 || activeTypes.has((i.type ?? 'Other') as ItemType)) &&
+    (activeStatuses.size === 0 || (i.status != null && activeStatuses.has(i.status)))
+  ), [activeTypes, activeStatuses])
+
+  const shown = pool.filter(matches)
   const mapped = shown.filter(i => i.coordinates)
   const unmapped = shown.length - mapped.length
 
-  const fitKey = [selectedDate ?? 'all', Array.from(activeTypes).sort().join(',') || 'alltypes'].join('|')
+  const fitKey = [
+    selectedDate ?? 'all',
+    Array.from(activeTypes).sort().join(',') || 'alltypes',
+    Array.from(activeStatuses).sort().join(',') || 'allstatus',
+  ].join('|')
+
+  function toggleStatus(status: ItemStatus) {
+    setActiveStatuses(prev => {
+      const next = new Set(prev)
+      if (next.has(status)) next.delete(status)
+      else next.add(status)
+      return next
+    })
+    setSelected(null)
+  }
 
   function toggleType(type: ItemType) {
     setActiveTypes(prev => {
@@ -140,6 +171,34 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             </button>
           )
         })}
+      </div>
+
+      {/* Status chips. Same rule as types: only what is actually present. */}
+      <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
+        {presentStatuses.map(status => {
+          const on = activeStatuses.has(status)
+          const color = STATUS_DOT[status] ?? '#8E8E93'
+          return (
+            <button
+              key={status}
+              onClick={() => toggleStatus(status)}
+              className="flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all"
+              style={{
+                background: on ? color : 'transparent',
+                borderColor: on ? color : 'rgba(255,255,255,0.15)',
+                color: on ? '#0b0b0d' : color,
+              }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: on ? '#0b0b0d' : color }} />
+              {status}
+            </button>
+          )
+        })}
+        {activeStatuses.size > 0 && (
+          <button onClick={() => setActiveStatuses(new Set())} className="flex-shrink-0 text-xs text-white/40 underline hover:text-white/70">
+            Clear
+          </button>
+        )}
       </div>
 
       {/* Type chips. Only the types actually present, so a Ferry toggle never
@@ -202,7 +261,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
 
         <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
           {visiblePlans.map(plan => (
-            <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} />
+            <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} matches={matches} />
           ))}
         </div>
       </div>
@@ -210,7 +269,20 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   )
 }
 
-function DaySection({ plan, selected, onSelect, today }: { plan: DayPlan; selected: TripItem | null; onSelect: (i: TripItem) => void; today: string }) {
+function DaySection({ plan, selected, onSelect, today, matches }: {
+  plan: DayPlan
+  selected: TripItem | null
+  onSelect: (i: TripItem) => void
+  today: string
+  matches: (i: TripItem) => boolean
+}) {
+  const timeline = plan.timeline.filter(p => matches(p.item))
+  const anytime = plan.anytime.filter(p => matches(p.item))
+  const options = plan.options.filter(matches)
+  const needsBooking = plan.needsBooking.filter(matches)
+  const hotel = plan.hotel && matches(plan.hotel) ? plan.hotel : null
+  const filtered = timeline.length === 0 && anytime.length === 0 && options.length === 0
+
   return (
     <section className="border-b border-white/10 px-4 py-4 last:border-b-0">
       <div className="mb-3 flex items-baseline gap-2">
@@ -220,41 +292,43 @@ function DaySection({ plan, selected, onSelect, today }: { plan: DayPlan; select
         </span>
       </div>
 
-      {plan.needsBooking.length > 0 && (
+      {needsBooking.length > 0 && (
         <div className="mb-3 rounded-lg border border-orange-400/30 bg-orange-400/10 px-3 py-2">
           <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-orange-400">Still needs booking</p>
-          {plan.needsBooking.map(item => (
+          {needsBooking.map(item => (
             <p key={item.id} className="text-[13px] leading-relaxed text-white/90">{item.name}</p>
           ))}
         </div>
       )}
 
-      {plan.hotel && (
-        <button onClick={() => onSelect(plan.hotel!)} className={`mb-3 block w-full rounded-lg border border-blue-400/30 bg-blue-400/10 px-3 py-2 text-left ${plan.dateString < today ? 'opacity-50' : ''}`}>
+      {hotel && (
+        <button onClick={() => onSelect(hotel)} className={`mb-3 block w-full rounded-lg border border-blue-400/30 bg-blue-400/10 px-3 py-2 text-left ${plan.dateString < today ? 'opacity-50' : ''}`}>
           <p className="text-[10px] font-semibold uppercase tracking-wider text-blue-400">
             {plan.dateString < today ? 'Stayed here' : 'Sleeping tonight'}
           </p>
-          <p className="text-sm font-semibold text-white">{plan.hotel.name}</p>
-          {plan.hotel.address && <p className="text-xs text-white/45">{plan.hotel.address}</p>}
-          {plan.hotel.confirmationNumber && (
-            <p className="text-xs font-semibold text-green-400">{plan.hotel.confirmationNumber}{plan.hotel.bookedVia ? ` - ${plan.hotel.bookedVia}` : ''}</p>
+          <p className="text-sm font-semibold text-white">{hotel.name}</p>
+          {hotel.address && <p className="text-xs text-white/45">{hotel.address}</p>}
+          {hotel.confirmationNumber && (
+            <p className="text-xs font-semibold text-green-400">{hotel.confirmationNumber}{hotel.bookedVia ? ` - ${hotel.bookedVia}` : ''}</p>
           )}
         </button>
       )}
 
-      {plan.timeline.length === 0 && plan.anytime.length === 0 && (
-        <p className="text-sm text-white/40">Nothing scheduled. Anything on the map is fair game.</p>
+      {timeline.length === 0 && anytime.length === 0 && (
+        <p className="text-sm text-white/40">
+          {filtered ? 'Nothing on this day matches the filters.' : 'Nothing scheduled. Anything on the map is fair game.'}
+        </p>
       )}
 
-      <Rows planned={plan.timeline} showTime selected={selected} onSelect={onSelect} today={today} dayDate={plan.dateString} />
-      {plan.anytime.length > 0 && plan.timeline.length > 0 && (
+      <Rows planned={timeline} showTime selected={selected} onSelect={onSelect} today={today} dayDate={plan.dateString} />
+      {anytime.length > 0 && timeline.length > 0 && (
         <p className="pb-1 pt-3 text-[10px] font-semibold uppercase tracking-wider text-white/35">Anytime today</p>
       )}
-      <Rows planned={plan.anytime} showTime={plan.timeline.length > 0} selected={selected} onSelect={onSelect} today={today} dayDate={plan.dateString} />
+      <Rows planned={anytime} showTime={timeline.length > 0} selected={selected} onSelect={onSelect} today={today} dayDate={plan.dateString} />
 
-      {plan.options.length > 0 && (
+      {options.length > 0 && (
         <p className="mt-3 border-t border-white/10 pt-2 text-xs text-white/35">
-          {plan.options.length} more nearby on the map, not scheduled
+          {options.length} more nearby on the map, not scheduled
         </p>
       )}
     </section>
