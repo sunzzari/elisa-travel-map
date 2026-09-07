@@ -65,6 +65,14 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
   const [activeStatuses, setActiveStatuses] = useState<Set<ItemStatus>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
+
+  // Ask-about-this-trip. Answers come from her own items only.
+  const [askOpen, setAskOpen] = useState(false)
+  const [question, setQuestion] = useState('')
+  const [asking, setAsking] = useState(false)
+  const [answer, setAnswer] = useState<string | null>(null)
+  const [askError, setAskError] = useState<string | null>(null)
+  const [matchedIds, setMatchedIds] = useState<string[]>([])
   const recenterRef = useRef<(() => void) | null>(null)
   const onRecenterReady = useCallback((fn: () => void) => { recenterRef.current = fn }, [])
 
@@ -94,7 +102,9 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
     (activeStatuses.size === 0 || (i.status != null && activeStatuses.has(i.status)))
   ), [activeTypes, activeStatuses])
 
-  const shown = pool.filter(matches)
+  const shown = matchedIds.length > 0
+    ? pool.filter(i => matchedIds.includes(i.id))
+    : pool.filter(matches)
   const mapped = shown.filter(i => i.coordinates)
   const unmapped = shown.length - mapped.length
 
@@ -102,7 +112,30 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
     selectedDate ?? 'all',
     Array.from(activeTypes).sort().join(',') || 'alltypes',
     Array.from(activeStatuses).sort().join(',') || 'allstatus',
+    matchedIds.join(',') || 'noask',
   ].join('|')
+
+  async function ask(e: React.FormEvent) {
+    e.preventDefault()
+    const q = question.trim()
+    if (!q || asking) return
+    setAsking(true); setAskError(null); setAnswer(null); setMatchedIds([])
+    try {
+      const res = await fetch('/api/assistant', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ question: q, tripId: trip.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setAskError(data.error ?? 'Something went wrong.'); return }
+      setAnswer(data.answer ?? '')
+      setMatchedIds(data.matchedItemIds ?? [])
+    } catch {
+      setAskError('No connection. This one needs signal.')
+    } finally {
+      setAsking(false)
+    }
+  }
 
   function toggleStatus(status: ItemStatus) {
     setActiveStatuses(prev => {
@@ -132,6 +165,14 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           <h1 className="truncate font-display text-lg leading-tight">{trip.name}</h1>
           <p className="truncate text-xs text-white/40">{trip.location}</p>
         </div>
+        <button
+          onClick={() => setAskOpen(v => !v)}
+          className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+            askOpen ? 'bg-amber-400 text-gray-950' : 'bg-amber-400/15 text-amber-300 hover:bg-amber-400/25'
+          }`}
+        >
+          Ask
+        </button>
         <Link
           href={`/${trip.id.replace(/-/g, '')}`}
           className="flex-shrink-0 rounded-full border border-white/15 px-3 py-1 text-xs text-white/60 transition-colors hover:border-amber-400/40 hover:text-amber-400"
@@ -139,6 +180,51 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           Full trip map
         </Link>
       </header>
+
+      {askOpen && (
+        <div className="flex-shrink-0 border-b border-white/10 bg-gray-900 px-4 py-3">
+          <form onSubmit={ask} className="flex gap-2">
+            <input
+              autoFocus
+              value={question}
+              onChange={e => setQuestion(e.target.value)}
+              placeholder="Where should I eat that's close to Main Street?"
+              className="min-w-0 flex-1 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-white placeholder:text-white/35 focus:border-amber-400/40 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={asking || !question.trim()}
+              className="flex-shrink-0 rounded-full bg-amber-400 px-4 py-2 text-sm font-semibold text-gray-950 disabled:opacity-40"
+            >
+              {asking ? '...' : 'Ask'}
+            </button>
+          </form>
+
+          <p className="mt-2 text-[11px] text-white/30">
+            Answers come from the places already on this trip, not from the internet.
+          </p>
+
+          {askError && (
+            <p className="mt-2 rounded-lg border border-orange-400/30 bg-orange-400/10 px-3 py-2 text-xs text-orange-300">
+              {askError}
+            </p>
+          )}
+
+          {answer && (
+            <div className="mt-2 rounded-lg border border-amber-400/20 bg-amber-400/5 px-3 py-2">
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-white/90">{answer}</p>
+              {matchedIds.length > 0 && (
+                <button
+                  onClick={() => { setMatchedIds([]); setAnswer(null) }}
+                  className="mt-2 text-xs text-amber-400 underline"
+                >
+                  Showing {matchedIds.length} on the map - clear
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Date chips. "All days" first so it is reachable without scrolling. */}
       <div className="flex flex-shrink-0 gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>

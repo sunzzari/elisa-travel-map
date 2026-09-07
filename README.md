@@ -22,6 +22,10 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 
 ### 2026-09-06
 
+- `9:20pm` **Ask about this trip** - a write-in on the itinerary. "Where should I eat that's close to Main Street?" is answered from the places already on the trip, never from the internet, and the items it names are the only ones left on the map until you clear it.
+  - Uses NO new API key. It posts through `sunzzari-backend/api/analyze`, the same authenticated proxy the iOS app uses, so the Anthropic key stays in exactly one place and rotating it is one change. This deployment holds only `SUNZZARI_PROXY_SECRET`.
+  - Bug caught by testing the route rather than trusting it: the reply was read from `content[0].text`, but the model returns a thinking block first, so a perfectly good answer came back as "No answer came back". It now takes the first text block.
+
 - `8:40pm` **Status toggles, and the day panel now honours the filters** - a second chip row filters by Confirmed / Assigned / Reservation Pending / Shortlisted / Researching, showing only the statuses actually present. The bigger fix is that the map and the day panel now share ONE predicate: before this, toggling Restaurant filtered the pins and left the list showing everything, which made the filters look broken.
 
 - `8:05pm` **Finished days dim, in the trip's timezone** - an item goes dim and struck through only when it is `Confirmed` and its day is over. Assigned and Shortlisted never dim; a plan is not evidence it happened. Day boundaries resolve from a new `Time Zone` property on the trip (IANA id), not from the browser, because checking the plan from LA the night before a flight gives the wrong day. Blank falls back to the device zone.
