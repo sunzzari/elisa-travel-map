@@ -3,7 +3,7 @@
 import { useMemo, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import TripMap from './TripMap'
-import { groupDays, groupLegs, planDay, formatLongDate, pickOpeningDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
+import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
 import { haversineKm } from '@/lib/geo'
 import type { Trip, TripItem, ItemType, ItemStatus } from '@/lib/types'
 import type { UserLocation } from '@/lib/geo'
@@ -69,7 +69,10 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   // Every "is this today / is this past" question resolves in the TRIP's
   // timezone, not the browser's.
   const today = useMemo(() => todayInZone(trip.timeZone), [trip.timeZone])
-  const [selectedDate, setSelectedDate] = useState<string | null>(() => pickOpeningDate(days, trip.timeZone))
+  // Opens on ALL, never pre-filtered to a day. Elisa, 2026-09-08: "open the app
+  // to a very functional map 100% of the time... and then ALSO to toggle today
+  // view which filters the map". Today is one tap away in the chip row.
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
   // In leg mode there is no "today", so default to showing everything.
   const effectiveSelected = byLeg ? null : selectedDate
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
@@ -95,12 +98,23 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
 
   const visiblePlans = effectiveSelected ? plans.filter(p => p.dateString === effectiveSelected) : plans
 
+  const liveItems = useMemo(
+    () => items.filter(i => i.status && i.status !== 'Cancelled'),
+    [items]
+  )
+
   // Everything on the visible day(s): what is scheduled, plus the candidates
   // for that leg. Status colour on the marker already distinguishes them.
+  //
+  // On ALL the pool is every item still in play rather than the union of the
+  // day plans: an item with no date AND no leg belongs to no plan, so it would
+  // never reach the map. Elisa, 2026-09-08: "the whole map should be visible no
+  // matter if things are or not assigned."
   const pool = useMemo(() => {
+    if (!effectiveSelected) return liveItems
     const list = visiblePlans.flatMap(p => [...p.timeline.map(x => x.item), ...p.anytime.map(x => x.item), ...p.options])
     return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i)
-  }, [visiblePlans])
+  }, [effectiveSelected, liveItems, visiblePlans])
 
   const presentStatuses = useMemo(
     () => STATUS_ORDER.filter(st => pool.some(i => i.status === st)),
@@ -438,6 +452,29 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           {visiblePlans.map(plan => (
             <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} matches={matches} byLeg={byLeg} />
           ))}
+
+          {/* An item with no coordinate has no pin, so without this row it is
+              counted in "N without a location" and then unreachable. */}
+          {unmapped > 0 && (
+            <section className="border-t border-white/10 px-4 py-4">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">Not on the map</p>
+              {shown.filter(i => !i.coordinates).map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setSelected(item)}
+                  className="flex w-full gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-white/5"
+                >
+                  <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full" style={{ background: STATUS_DOT[item.status ?? ''] ?? '#8E8E93' }} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-medium text-white">{item.name}</span>
+                    <span className="block text-xs text-white/40">
+                      {[item.type, item.legCity].filter(Boolean).join(' - ')}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </section>
+          )}
         </div>
       </div>
     </main>
