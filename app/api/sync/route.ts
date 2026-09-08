@@ -17,7 +17,10 @@ export async function POST(request: Request) {
       fetchAllTripItems(),
     ])
 
-    // Geocode all items that have a venue or city (in parallel batches)
+    // Geocode all items that have a venue or city (in parallel batches).
+    // Each item is anchored to its own trip's location so a blank leg cannot
+    // send a venue name to the wrong country.
+    const locationByTripUrl = new Map(trips.map(t => [t.url, t.location]))
     const BATCH_SIZE = 5
     const geocoded = [...items]
 
@@ -25,7 +28,7 @@ export async function POST(request: Request) {
       const batch = geocoded.slice(i, i + BATCH_SIZE)
       await Promise.all(
         batch.map(async (item, j) => {
-          const coords = await geocodeItem(item)
+          const coords = await geocodeItem(item, locationByTripUrl.get(item.tripUrl) ?? '')
           if (coords) geocoded[i + j].coordinates = coords
         })
       )

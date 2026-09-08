@@ -19,7 +19,7 @@ export async function GET(
   // Geocode items without coordinates
   const geocoded = await Promise.all(
     items.map(async item => {
-      const coords = await geocodeItem(item)
+      const coords = await geocodeItem(item, trip.location)
       return { ...item, coordinates: coords ?? undefined }
     })
   )

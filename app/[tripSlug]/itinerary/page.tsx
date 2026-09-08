@@ -28,7 +28,7 @@ export default async function ItineraryPage({ params }: { params: Promise<{ trip
   const rawItems = await fetchTripItems(trip.id)
   const items = await Promise.all(
     rawItems.map(async item => {
-      const coords = await geocodeItem(item)
+      const coords = await geocodeItem(item, trip.location)
       return { ...item, coordinates: coords ?? undefined }
     })
   )
