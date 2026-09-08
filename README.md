@@ -20,6 +20,12 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 
 ## Changelog
 
+### 2026-09-08
+
+- `8:45am` **Never geocode a place into the wrong country** - the Vienna trip had a pin in Adelaide, South Australia. "Mozart Dinner Concert" has a blank leg, so its venue "Baroque Hall - St. Peter restaurant" went to Google with no geography attached and nothing on the way back checked the answer. Three guards, all in `lib/geocode.ts` so the iOS app gets them by calling the same endpoint: every lookup is anchored to a country (leg city, else the trip's own location) and constrained with `components=country:XX`; the trip location picks the country and never enters the query text, because "Park Hyatt Vienna, Salzburg + Vienna, Austria" resolves to plain Vienna while the same name constrained to AT is Am Hof 2; and an answer made only of area types is rejected, because a constrained query that finds nothing hands back the city named in the query, which is how "Shibuya Crossing" resolved to Vienna. Vienna went from 100 pins including one in Australia to 94 pins all in Austria, with 7 reported as having no location rather than faked.
+- `8:45am` **The itinerary opens on the whole map, not on today** - it opened pre-filtered to today, so a trip with nothing scheduled showed an empty day and the day decided what the map showed. Now it opens on All days and Today is a chip. On All the pool is every item still in play instead of the union of the day plans: an item with no date AND no leg belongs to no plan and could never reach the map. The day panel is untouched. Items the map cannot place are listed under it instead of only being counted.
+
+
 ### 2026-09-06
 
 - `10:55pm` **Fix: items with no venue were never really geocoded** - callers did `geocodeVenue(venue, city) ?? geocodeVenue(name, city)`, but a BLANK venue does not fail: it geocodes the bare city and returns the city centre. So the `??` never fell through and the item's own name was never looked up. Every China 2027 item has a blank `Provider / Venue`, so all 62 collapsed onto three city-centre pins. New `geocodeItem()` tries address, then venue, then name, and `geocodeVenue` now refuses a city on its own. China went from 0 usable pins to 60, with 2 reported as unlocatable rather than faked.
