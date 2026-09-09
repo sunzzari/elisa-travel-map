@@ -123,8 +123,17 @@ function canCallGoogle(what: string): boolean {
   return true
 }
 
-function cacheKey(venue: string, context: string, country: string | null): string {
-  return `geocode:${venue.toLowerCase().trim()}:${context.toLowerCase().trim()}:${country ?? 'any'}`
+/**
+ * Keyed on the QUERY STRING that goes to Google, not on the venue and city
+ * separately. Same identity either way - the two are always joined the same
+ * way - but this shape is recoverable: it is what appears in an `address=`
+ * parameter, so a table can be rebuilt from any record of past requests
+ * without knowing how a query was split. That is exactly how this table was
+ * first filled, from Next's fetch cache, after the Geocoding API was switched
+ * off. See the 2026-09-08 entry in README.md.
+ */
+function cacheKey(query: string, country: string | null): string {
+  return `geocode:${query.toLowerCase().trim()}:${country ?? 'any'}`
 }
 
 interface AddressComponent { short_name: string; types: string[] }
@@ -264,7 +273,7 @@ export async function geocodeVenue(
   const expected = await countryOf(city.trim() || region.trim())
 
   const query = [venue, city.trim()].filter(Boolean).join(', ')
-  const key = cacheKey(venue, city.trim(), expected)
+  const key = cacheKey(query, expected)
 
   // Cache first, and a cached `null` is an answer: this place was looked up and
   // could not be placed. Asking again costs money and returns the same nothing.
