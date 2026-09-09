@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "geocache:fill": "GEOCODE_WRITE_CACHE=1 next build"
   },
   "dependencies": {
     "@googlemaps/markerclusterer": "^2.6.2",
@@ -14,8 +15,7 @@
     "@vis.gl/react-google-maps": "^1.4.2",
     "next": "^16.1.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "redis": "^5.11.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

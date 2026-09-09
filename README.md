@@ -9,7 +9,7 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 - **Next.js 16** (App Router, server components)
 - **Google Maps** via `@vis.gl/react-google-maps`
 - **Notion** as the backend database
-- **Redis** for caching
+- **A committed JSON lookup table** (`data/geocache.json`) for coordinates - see the 2026-09-08 5:47pm changelog entry before changing it
 - **Tailwind CSS** for styling
 - **Vercel** for hosting + auto-deploys
 
@@ -21,6 +21,13 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 ## Changelog
 
 ### 2026-09-08
+
+- `5:47pm` **$97 of Google Geocoding in two days - the cache was a service that had been deleted** - the coordinate cache was a Redis Cloud instance whose host no longer resolves in DNS (`NXDOMAIN`). `withRedis` swallowed the failure by design so the app would survive a cache outage, so every read missed, every miss called Google, and nothing anywhere counted. Eleven production deploys in two days, each prerendering seven itinerary pages over all 668 trip items, at up to two paid requests per item. Two other paths made it worse: `/api/webhook` was public and fired a full 668-item sync on ANY Notion page event (its database allowlist was computed and then never applied), and `/api/geocode` is public with no cap.
+  - **The cache is now a file in this repo**, `data/geocache.json`, static-imported. A coordinate for a named place never changes, so this was never really a cache - it is a lookup table that happens to be filled by an API. A file cannot be deleted out from under the app, costs nothing, needs no credentials, and shows up in `git diff`.
+  - **A production build can no longer call Google at all.** That single gate is what killed the $20-per-deploy class. Runtime lookups are capped per process (`GEOCODE_LIVE_BUDGET`, default 40), logged individually, and killable with `GEOCODE_DISABLED=1`.
+  - **Failures are cached too.** A place Google cannot resolve, or resolves into the wrong country, stores `null` and is never asked about again. Transport failures and `REQUEST_DENIED` are NOT stored, so a disabled API key cannot poison the table with permanent nulls.
+  - **The webhook no longer fans out to sync.** It acknowledges and drops; pages already revalidate from Notion every 60s, so a Notion edit still reaches the map without anyone paying per edit for it.
+  - To fill the table: enable the Geocoding API, run `npm run geocache:fill` locally, commit `data/geocache.json`. Upper bound for the current 668 items is 888 requests (~$4.44); after that the app needs the API only for items added later.
 
 - `8:45am` **Never geocode a place into the wrong country** - the Vienna trip had a pin in Adelaide, South Australia. "Mozart Dinner Concert" has a blank leg, so its venue "Baroque Hall - St. Peter restaurant" went to Google with no geography attached and nothing on the way back checked the answer. Three guards, all in `lib/geocode.ts` so the iOS app gets them by calling the same endpoint: every lookup is anchored to a country (leg city, else the trip's own location) and constrained with `components=country:XX`; the trip location picks the country and never enters the query text, because "Park Hyatt Vienna, Salzburg + Vienna, Austria" resolves to plain Vienna while the same name constrained to AT is Am Hof 2; and an answer made only of area types is rejected, because a constrained query that finds nothing hands back the city named in the query, which is how "Shibuya Crossing" resolved to Vienna. Vienna went from 100 pins including one in Australia to 94 pins all in Austria, with 7 reported as having no location rather than faked.
 - `8:45am` **The itinerary opens on the whole map, not on today** - it opened pre-filtered to today, so a trip with nothing scheduled showed an empty day and the day decided what the map showed. Now it opens on All days and Today is a chip. On All the pool is every item still in play instead of the union of the day plans: an item with no date AND no leg belongs to no plan and could never reach the map. The day panel is untouched. Items the map cannot place are listed under it instead of only being counted.
