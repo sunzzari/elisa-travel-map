@@ -20,6 +20,22 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 
 ## Changelog
 
+### 2026-09-14
+
+- **Around Town is a page here now, on the trips' own map** - `/around-town`, linked from home, with LA / SF Bay, Restaurants / Activities, Want to Try and Haven't Tried toggles, a search box, the preference legend from the phone, and the not-on-the-map list. Around Town places have no dates and never will, so there is no day strip and no Up Next; where it is, what it is, and whether we have been are the only axes.
+  - `lib/aroundtown.ts` returns **`TripItem`s**, not a type of its own, so `TripMap`, the clusterer, the InfoWindow and the unmapped list all work with no new code. The Around Town-only fields - preference, kind, been-there, want-to-try - ride alongside in `meta` keyed by id. `TripMap` gained `styleFor` and `defaultCenter`, both opt-in; trip rendering is unchanged.
+  - `ItineraryClient`'s "Not on the map" block is now `components/UnmappedList.tsx` and both pages render it. One list, so a fix reaches both.
+  - **`lib/aroundtown-shared.ts` exists for a build reason, not a style one.** `lib/aroundtown.ts` imports the geocoder, which reads `data/geocache.json` with `node:fs`; a client component importing a single colour constant from it drags Node into the browser bundle and Turbopack fails the build. Types, colours and the pure region rules live in the shared module. Client code imports that one only.
+  - The region word lists and the two coordinate bounding boxes are ported verbatim from `Sunzzari/Models/AroundTownItem.swift`, so the phone and the web admit and reject the same rows.
+  - Restaurant Guide is database `9078462d-842a-4233-82d9-dbd07014782b`. The id in the Notion STRUCTURE doc is the PAGE id and `databases.retrieve` on it fails.
+
+- **`REQUEST_DENIED` is a refusal about the project, so stop asking** - it was treated as an ordinary miss. It is correctly never cached (a disabled key must not poison the table with permanent nulls), but nothing stopped the run either, so the caller's second attempt asked again and one cache-filling build issued **1734 refused requests** while writing nothing to the table and finishing with a clean "build succeeded". Refused requests are not billed, so this cost nothing; the shape was the problem, a failure wearing a success. The first `REQUEST_DENIED` or `OVER_QUERY_LIMIT` now hard-stops every further lookup in the process and says so once, with the fix. 1734 requests became 23, one per build worker. The no-caching rule is unchanged.
+  - Also: Around Town asked Google the same question twice per row whenever dropping the neighbourhood produced the same query string, which it does for most activities. It now skips an identical second attempt.
+
+- **The blank-Location rule let in eleven Chinese restaurants** - a restaurant row with no `Location` was admitted as an Around Town place if it had any `Neighborhood` at all, and eleven rows carry a blank Location with a Chengdu or Shanghai neighbourhood. They never showed, because the LA/Bay coordinate box kept them off the map and nothing listed the rows the map could not place. The phone grew that list the same day, so the rule is tightened in both clients: a blank Location needs a neighbourhood that itself reads as LA or the Bay, which still admits "Rokusho" on "Hollywood". 421 candidates became 410.
+
+- **Known, needs the Cloud console**: the Geocoding API is still deactivated on the project, so `/around-town` currently shows **0 pins and all 410 places under "Not on the map"**. Enable Geocoding API, `npm run geocache:fill` (~600-700 requests, about $3.50), commit `data/geocache.json`, switch it back off. The iOS app is unaffected; it geocodes on-device.
+
 ### 2026-09-08
 
 - `6:20pm` **The map is back with the Geocoding API left switched off** - the table shipped empty, so every one of the 668 items was listed under "Not on the map". Nothing had to be re-bought: `next build` stores every fetch response under `.next/cache/fetch-cache`, and the builds that ran up the bill left 1,472 Google Geocoding responses sitting there. `scripts/recover-geocache.mjs` reads them back out - no network, no key - and rebuilds `data/geocache.json`: 1,176 coordinates, 46 country lookups, and 217 places Google refused or placed in the wrong country, stored as `null` so they are never asked about again. **602 of 668 items place, 90%**, which is the same coverage the live map had before any of this (Vienna is 94/101 in both). `scripts/geocache-coverage.mjs` prints that table from the file alone.

@@ -57,6 +57,19 @@ const LIVE_BUDGET = Number(
 let liveCalls = 0
 let budgetWarned = false
 
+/**
+ * Set when Google answers with a project-level refusal rather than a miss.
+ *
+ * REQUEST_DENIED means the Geocoding API is switched off on the Cloud project,
+ * and OVER_QUERY_LIMIT means the project is done for now. Neither is an answer
+ * about a place, so neither gets cached - which meant the caller's second
+ * attempt asked again, and a cache-filling build issued one refused request per
+ * attempt per row. 1734 of them on 2026-09-14. They are not billed, but the run
+ * looks like it worked and writes nothing, which is the worst shape a failure
+ * can have. After the first one we stop asking and say why, once.
+ */
+let hardStopReason: string | null = null
+
 function cacheGet(key: string): CacheValue | undefined {
   if (runtimeCache.has(key)) return runtimeCache.get(key)
   if (Object.prototype.hasOwnProperty.call(staticCache, key)) return staticCache[key]
@@ -100,6 +113,7 @@ function writeThrough(key: string, value: CacheValue): void {
  */
 function canCallGoogle(what: string): boolean {
   if (process.env.GEOCODE_DISABLED === '1') return false
+  if (hardStopReason) return false
 
   // A production build prerenders every itinerary page. With a cold cache that
   // is 668 items per deploy, which is exactly how the bill was run up. Builds
@@ -121,6 +135,19 @@ function canCallGoogle(what: string): boolean {
   liveCalls += 1
   console.warn(`[geocode] live Google lookup ${liveCalls}/${LIVE_BUDGET}: ${what}`)
   return true
+}
+
+/** A refusal about the project, not an answer about a place. Stops the run. */
+function noteHardStop(status: string | undefined, message?: string): void {
+  if (hardStopReason) return
+  if (status !== 'REQUEST_DENIED' && status !== 'OVER_QUERY_LIMIT') return
+  hardStopReason = status
+  console.error(
+    `[geocode] Google refused the PROJECT, not the place: ${status}. ` +
+    `${message ?? ''} No further lookups will be attempted in this process, and ` +
+    `nothing has been written to data/geocache.json. Fix the project, then re-run ` +
+    `GEOCODE_WRITE_CACHE=1 npm run build.`
+  )
 }
 
 /**
@@ -196,12 +223,14 @@ async function countryOf(place: string): Promise<string | null> {
     const res = await fetch(url, { signal: AbortSignal.timeout(8000) })
     const data = await res.json() as {
       status?: string
+      error_message?: string
       results?: Array<{ address_components?: AddressComponent[] }>
     }
     // A definitive "no" is cached; a transport failure is not, because the next
     // run would inherit a wrong answer forever.
     if (data.status !== 'OK') {
       if (data.status === 'ZERO_RESULTS') cacheSet(key, null)
+      else noteHardStop(data.status, (data as { error_message?: string }).error_message)
       return null
     }
     const cc = countryOfResult(data.results?.[0]?.address_components)
@@ -290,6 +319,7 @@ export async function geocodeVenue(
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(query)}${constraint}&key=${GEOCODING_API_KEY}`
   let data: {
     status?: string
+    error_message?: string
     results?: Array<{
       geometry: { location: Coordinates }
       address_components?: AddressComponent[]
@@ -307,6 +337,7 @@ export async function geocodeVenue(
   const first = data.results?.[0]
   if (data.status !== 'OK' || !first) {
     if (data.status === 'ZERO_RESULTS') cacheSet(key, null)
+    else noteHardStop(data.status, (data as { error_message?: string }).error_message)
     return null
   }
 

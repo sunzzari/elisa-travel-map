@@ -71,6 +71,26 @@ export default async function Home() {
           </Link>
         </div>
       )}
+      {/* Around Town is not a trip - no dates, no legs - so it gets its own
+          entry rather than a card in the trip grid. */}
+      <div className="px-8 pb-8">
+        <Link
+          href="/around-town"
+          className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 transition-colors hover:bg-white/[0.06]"
+        >
+          <div className="flex-1">
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/30">Home turf</p>
+            <h2 className="font-display text-xl leading-tight text-white">Around Town</h2>
+            <p className="mt-1 text-xs text-white/40">Every LA and SF Bay place we have logged</p>
+          </div>
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white/10 text-white/60 transition-transform group-hover:translate-x-0.5 group-hover:text-amber-400">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+        </Link>
+      </div>
+
       <div className="px-8 pb-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {sorted.map((trip: Trip, i: number) => {
           const gradient = GRADIENTS[i % GRADIENTS.length]

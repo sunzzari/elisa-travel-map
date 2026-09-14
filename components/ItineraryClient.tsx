@@ -3,6 +3,7 @@
 import { useMemo, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import TripMap from './TripMap'
+import UnmappedList from './UnmappedList'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
 import { haversineKm } from '@/lib/geo'
 import type { Trip, TripItem, ItemType, ItemStatus } from '@/lib/types'
@@ -453,28 +454,12 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} matches={matches} byLeg={byLeg} />
           ))}
 
-          {/* An item with no coordinate has no pin, so without this row it is
-              counted in "N without a location" and then unreachable. */}
-          {unmapped > 0 && (
-            <section className="border-t border-white/10 px-4 py-4">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">Not on the map</p>
-              {shown.filter(i => !i.coordinates).map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setSelected(item)}
-                  className="flex w-full gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-white/5"
-                >
-                  <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full" style={{ background: STATUS_DOT[item.status ?? ''] ?? '#8E8E93' }} />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-medium text-white">{item.name}</span>
-                    <span className="block text-xs text-white/40">
-                      {[item.type, item.legCity].filter(Boolean).join(' - ')}
-                    </span>
-                  </span>
-                </button>
-              ))}
-            </section>
-          )}
+          <UnmappedList
+            items={shown.filter(i => !i.coordinates)}
+            onSelect={setSelected}
+            dotColor={item => STATUS_DOT[item.status ?? ''] ?? '#8E8E93'}
+            subtitle={item => [item.type, item.legCity].filter(Boolean).join(' - ')}
+          />
         </div>
       </div>
     </main>

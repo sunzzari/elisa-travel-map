@@ -40,7 +40,14 @@ const STATUS_COLORS: Record<string, string> = {
   Cancelled:   '#ef4444',
 }
 
-function markerStyle(item: TripItem) {
+export interface MarkerStyle {
+  bg: string
+  border: string
+  glyph: string
+}
+
+/** The trip rule: colour by status, glyph by type. */
+function markerStyle(item: TripItem): MarkerStyle {
   const bg = STATUS_COLORS[item.status ?? ''] ?? '#9ca3af'
   return {
     bg,
@@ -78,6 +85,7 @@ function MapContent({
   userLocation,
   onRecenterReady,
   fitKey,
+  styleFor = markerStyle,
 }: {
   items: TripItem[]
   selected: TripItem | null
@@ -85,6 +93,9 @@ function MapContent({
   userLocation: UserLocation | null
   onRecenterReady?: (fn: () => void) => void
   fitKey?: string
+  /** Overrides how a pin is coloured. Around Town rides on this same map and
+      colours by how much Elisa liked the place, not by a trip status. */
+  styleFor?: (item: TripItem) => MarkerStyle
 }) {
   const map = useMap()
   const markerLib = useMapsLibrary('marker')
@@ -196,7 +207,7 @@ function MapContent({
     const newMarkers: google.maps.marker.AdvancedMarkerElement[] = []
     for (const item of withCoords) {
       if (prev.has(item.id)) continue
-      const style = markerStyle(item)
+      const style = styleFor(item)
       const pin = document.createElement('div')
       pin.style.cssText = `
         background: ${style.bg}; border: 2px solid ${style.border};
@@ -227,7 +238,7 @@ function MapContent({
       if (!el) continue
       const item = items.find(i => i.id === id)
       if (!item) continue
-      const style = markerStyle(item)
+      const style = styleFor(item)
       const isSelected = selected?.id === id
       el.style.border = `2px solid ${isSelected ? '#fff' : style.border}`
       el.style.width = isSelected ? '38px' : '32px'
@@ -383,9 +394,13 @@ interface Props {
   userLocation: UserLocation | null
   onRecenterReady?: (fn: () => void) => void
   fitKey?: string
+  styleFor?: (item: TripItem) => MarkerStyle
+  /** Where the map sits before any pin loads. A trip can be anywhere; Around
+      Town is always LA or the Bay. */
+  defaultCenter?: { lat: number; lng: number }
 }
 
-export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey }: Props) {
+export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter }: Props) {
   const mapped = items.filter(i => i.coordinates)
 
   const center = userLocation ?? (mapped.length > 0
@@ -393,7 +408,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         lat: mapped.reduce((s, i) => s + i.coordinates!.lat, 0) / mapped.length,
         lng: mapped.reduce((s, i) => s + i.coordinates!.lng, 0) / mapped.length,
       }
-    : { lat: 35.6762, lng: 139.6503 })
+    : defaultCenter ?? { lat: 35.6762, lng: 139.6503 })
 
   return (
     <APIProvider apiKey={apiKey}>
@@ -412,7 +427,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         clickableIcons={false}
         onClick={() => onSelect(null)}
       >
-        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} />
+        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} />
       </Map>
     </APIProvider>
   )
