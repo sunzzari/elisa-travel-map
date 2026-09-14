@@ -8,6 +8,12 @@ import type { TripItem } from '@/lib/types'
  * An item with no coordinate has no pin, so without this list it is counted in
  * "N without a location" and then unreachable. Shared by the itinerary and
  * Around Town: one list, so a fix to it reaches both.
+ *
+ * Every row carries its own actions, because selecting an item with no
+ * coordinate opens no InfoWindow - there is nowhere on the map to open it. On
+ * Around Town with the coordinate table unfilled that is EVERY row, so without
+ * these two links the whole list is inert: she can read 410 names and do
+ * nothing with any of them. Look it up in Maps, or open the Notion row.
  */
 export default function UnmappedList({
   items,
@@ -15,6 +21,8 @@ export default function UnmappedList({
   dotColor,
   subtitle,
   note,
+  /** Extra context for the Maps search, e.g. the city or neighborhood. */
+  searchContext,
 }: {
   items: TripItem[]
   onSelect: (item: TripItem) => void
@@ -22,8 +30,15 @@ export default function UnmappedList({
   dotColor: (item: TripItem) => string
   subtitle: (item: TripItem) => string
   note?: string
+  searchContext?: (item: TripItem) => string
 }) {
   if (items.length === 0) return null
+
+  function mapsHref(item: TripItem): string {
+    const extra = searchContext?.(item) ?? item.legCity
+    const query = [item.venue || item.name, extra].filter(Boolean).join(', ')
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+  }
 
   return (
     <section className="border-t border-white/10 px-4 py-4">
@@ -32,20 +47,39 @@ export default function UnmappedList({
       </p>
       {note && <p className="mb-2 text-xs text-white/30">{note}</p>}
       {items.map(item => (
-        <button
+        <div
           key={item.id}
-          onClick={() => onSelect(item)}
-          className="flex w-full gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-white/5"
+          className="flex items-start gap-2.5 rounded-md px-1.5 py-2 transition-colors hover:bg-white/5"
         >
           <span
             className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
             style={{ background: dotColor(item) }}
           />
-          <span className="min-w-0 flex-1">
+          <button onClick={() => onSelect(item)} className="min-w-0 flex-1 text-left">
             <span className="block text-sm font-medium text-white">{item.name}</span>
             <span className="block text-xs text-white/40">{subtitle(item)}</span>
+          </button>
+          <span className="flex flex-shrink-0 items-center gap-2 pt-0.5">
+            <a
+              href={mapsHref(item)}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[11px] font-medium text-white/40 transition-colors hover:text-amber-400"
+              title="Search this place in Google Maps"
+            >
+              Maps
+            </a>
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[11px] font-medium text-white/40 transition-colors hover:text-amber-400"
+              title="Open the Notion row"
+            >
+              Notion
+            </a>
           </span>
-        </button>
+        </div>
       ))}
     </section>
   )

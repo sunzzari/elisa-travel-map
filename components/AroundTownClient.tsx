@@ -288,7 +288,11 @@ export default function AroundTownClient({
                 .filter(Boolean)
                 .join(' - ')
             }}
-            note="No address Google could place. Open one to read it, or search it by name."
+            note="No address Google could place. Search it in Maps, or open its Notion row."
+            searchContext={item => {
+              const m = meta[item.id]
+              return [m?.neighborhood, m?.locationText].filter(Boolean).join(', ')
+            }}
           />
         </div>
       </div>
