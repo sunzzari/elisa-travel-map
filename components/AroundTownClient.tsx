@@ -13,6 +13,7 @@ import {
   NOT_RATED_COLOR,
   ACTIVITY_COLOR,
   BEEN_THERE_COLOR,
+  regionFromCoords,
 } from '@/lib/aroundtown-shared'
 
 /**
@@ -103,12 +104,40 @@ export default function AroundTownClient({
   const mapped = shown.filter(i => i.coordinates)
   const unmapped = shown.filter(i => !i.coordinates)
 
+  // The ONE area a fit may span. Elisa, 2026-09-14: "id never want to fit all
+  // between sf and la. id fit all within one area but not all areas." Her
+  // explicit LA / SF Bay choice wins; with no choice made it is whichever area
+  // holds more of the places on screen. Pins outside it stay on the map and
+  // stay clickable, they just never stretch the frame.
+  const fitRegion: AroundTownRegion = useMemo(() => {
+    if (region) return region
+    let la = 0
+    let sf = 0
+    for (const item of mapped) {
+      const r = regionFromCoords(item.coordinates!.lat, item.coordinates!.lng)
+      if (r === 'la') la += 1
+      else if (r === 'sfBay') sf += 1
+    }
+    return sf > la ? 'sfBay' : 'la'
+  }, [region, mapped])
+
+  const fitScopeIds = useMemo(
+    () =>
+      new Set(
+        mapped
+          .filter(i => regionFromCoords(i.coordinates!.lat, i.coordinates!.lng) === fitRegion)
+          .map(i => i.id)
+      ),
+    [mapped, fitRegion]
+  )
+
   const fitKey = [
     region ?? 'allregions',
     kind ?? 'allkinds',
     wantToTryOnly ? 'want' : 'any',
     hideBeenThere ? 'nottried' : 'all',
     query.trim().toLowerCase(),
+    `fit:${fitRegion}`,
   ].join('|')
 
   const styleFor = useCallback(
@@ -220,6 +249,7 @@ export default function AroundTownClient({
             fitKey={fitKey}
             styleFor={styleFor}
             defaultCenter={{ lat: 34.05, lng: -118.24 }}
+            fitScopeIds={fitScopeIds}
           />
           <button
             onClick={() => {

@@ -86,6 +86,7 @@ function MapContent({
   onRecenterReady,
   fitKey,
   styleFor = markerStyle,
+  fitScopeIds,
 }: {
   items: TripItem[]
   selected: TripItem | null
@@ -96,6 +97,11 @@ function MapContent({
   /** Overrides how a pin is coloured. Around Town rides on this same map and
       colours by how much Elisa liked the place, not by a trip status. */
   styleFor?: (item: TripItem) => MarkerStyle
+  /** Limits every fit to these ids. Undefined fits everything, which is right
+      for a trip: its items are all in one place by definition. Around Town is
+      not one place -- Elisa, 2026-09-14: "id never want to fit all between sf
+      and la. id fit all within one area but not all areas." */
+  fitScopeIds?: Set<string>
 }) {
   const map = useMap()
   const markerLib = useMapsLibrary('marker')
@@ -107,8 +113,12 @@ function MapContent({
 
   const fitBounds = useCallback((includeUser: boolean) => {
     if (!map) return
-    const lats = mapped.map(i => i.coordinates!.lat)
-    const lngs = mapped.map(i => i.coordinates!.lng)
+    // Scope the fit, but never to nothing: an empty scope (coordinates still
+    // arriving) falls back to every pin rather than leaving the map unframed.
+    const scoped = fitScopeIds ? mapped.filter(i => fitScopeIds.has(i.id)) : mapped
+    const inFrame = scoped.length > 0 ? scoped : mapped
+    const lats = inFrame.map(i => i.coordinates!.lat)
+    const lngs = inFrame.map(i => i.coordinates!.lng)
     if (includeUser && userLocation) {
       lats.push(userLocation.lat)
       lngs.push(userLocation.lng)
@@ -129,7 +139,7 @@ function MapContent({
       { north: Math.max(...lats), south: Math.min(...lats), east: Math.max(...lngs), west: Math.min(...lngs) },
       60
     )
-  }, [map, mapped, userLocation])
+  }, [map, mapped, userLocation, fitScopeIds])
 
   // Fit map to all pins on initial load
   useEffect(() => {
@@ -398,9 +408,10 @@ interface Props {
   /** Where the map sits before any pin loads. A trip can be anywhere; Around
       Town is always LA or the Bay. */
   defaultCenter?: { lat: number; lng: number }
+  fitScopeIds?: Set<string>
 }
 
-export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter }: Props) {
+export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds }: Props) {
   const mapped = items.filter(i => i.coordinates)
 
   const center = userLocation ?? (mapped.length > 0
@@ -427,7 +438,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         clickableIcons={false}
         onClick={() => onSelect(null)}
       >
-        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} />
+        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} />
       </Map>
     </APIProvider>
   )

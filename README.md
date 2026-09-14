@@ -22,6 +22,8 @@ An interactive trip planner that pulls trips from Notion and displays them on a 
 
 ### 2026-09-14
 
+- **A fit never spans LA and the Bay** - Elisa: "id never want to fit all between sf and la. id fit all within one area but not all areas." `TripMap` gained an opt-in `fitScopeIds`; undefined fits everything, which stays right for a trip whose items are all in one place. Around Town scopes it to one area: her explicit LA / SF Bay chip if set, otherwise whichever area holds more of the pins on screen. Pins outside that area stay on the map and stay clickable, they just never stretch the frame. An empty scope falls back to every pin rather than leaving the map unframed while coordinates are still arriving.
+
 - **Around Town is a page here now, on the trips' own map** - `/around-town`, linked from home, with LA / SF Bay, Restaurants / Activities, Want to Try and Haven't Tried toggles, a search box, the preference legend from the phone, and the not-on-the-map list. Around Town places have no dates and never will, so there is no day strip and no Up Next; where it is, what it is, and whether we have been are the only axes.
   - `lib/aroundtown.ts` returns **`TripItem`s**, not a type of its own, so `TripMap`, the clusterer, the InfoWindow and the unmapped list all work with no new code. The Around Town-only fields - preference, kind, been-there, want-to-try - ride alongside in `meta` keyed by id. `TripMap` gained `styleFor` and `defaultCenter`, both opt-in; trip rendering is unchanged.
   - `ItineraryClient`'s "Not on the map" block is now `components/UnmappedList.tsx` and both pages render it. One list, so a fix reaches both.
