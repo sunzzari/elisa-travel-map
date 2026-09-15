@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# Refuses a push to the default branch that changes the app without adding a changelog entry.
+#
+# Turn it on once per clone:   git config core.hooksPath .githooks
+# Bypass it when you must:     git push --no-verify
+#
+# Why this exists: the changelog is the only record of what changed and why.
+# A rule that depends on remembering is a rule that stops working, so this
+# checks instead of trusting.
+
+CHANGELOG="CHANGELOG.md"
+ZERO="0000000000000000000000000000000000000000"
+
+# Paths that count as "you changed the app"
+watched='^(app|components|lib)/'
+
+while read -r _local_ref local_sha remote_ref remote_sha; do
+	# Deleting a branch - nothing to check
+	[ "$local_sha" = "$ZERO" ] && continue
+
+	# Only guard the default branch (this repo uses master; sunzzari-app uses main)
+	case "$remote_ref" in
+		refs/heads/master|refs/heads/main) ;;
+		*) continue ;;
+	esac
+
+	if [ "$remote_sha" = "$ZERO" ]; then
+		# Branch is new on the remote; check the last commit only
+		range="$local_sha~1..$local_sha"
+	else
+		range="$remote_sha..$local_sha"
+	fi
+
+	changed=$(git diff --name-only "$range" 2>/dev/null) || continue
+	[ -z "$changed" ] && continue
+
+	echo "$changed" | grep -Eq "$watched" || continue
+	echo "$changed" | grep -qx "$CHANGELOG" && continue
+
+	cat >&2 <<EOF
+
+  Push refused: you changed the app but not the changelog.
+
+  These commits touch app/, components/, or lib/ but leave $CHANGELOG alone.
+
+  Add an entry at the TOP of $CHANGELOG:
+
+    ## $(date +%Y-%m-%d)
+
+    - \`$(date +%-I:%M%p | tr 'APM' 'apm')\` **What changed** - why it matters.
+
+  Then:  git add $CHANGELOG && git commit --amend --no-edit && git push
+
+  See CONTRIBUTING.md, Part 4. To skip deliberately: git push --no-verify
+
+EOF
+	exit 1
+done
+
+exit 0
