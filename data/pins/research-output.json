@@ -1,0 +1,235 @@
+[
+  {
+    "id": "3e8f3cdd-67a4-8118-bcc9-e4cdc1d4d845",
+    "name": "Sam Woo BBQ",
+    "status": "found",
+    "address": "514 W Valley Blvd, Alhambra, CA 91803, USA",
+    "sourceUrl": "https://www.yelp.com/biz/sam-woo-bbq-alhambra",
+    "sourceTitle": "SAM WOO ALHAMBRA - Updated August 2026 - 1913 Photos & 870 Reviews - 514 W Valley Blvd, Alhambra, California - Barbeque - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Confirmed Alhambra location matching stated area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-818b-9b37-e2f67be8b0e6",
+    "name": "Camphor",
+    "status": "found",
+    "address": "923 E 3rd St, #109, Los Angeles, CA 90013, USA",
+    "sourceUrl": "https://www.yelp.com/biz/camphor-los-angeles",
+    "sourceTitle": "CAMPHOR - Updated September 2026 - 2725 Photos & 556 Reviews - 923 E 3rd St, Los Angeles, California - French - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Arts District, downtown LA; single location.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-816e-807a-f1b55dcdbfd7",
+    "name": "Fatted Calf Charcuterie",
+    "status": "needs-you",
+    "note": "Fatted Calf has two branches matching the two trip legs named (SF and Napa) - original SF Hayes Valley shop closed Oct 2022 and it reopened inside the Ferry Building (Embarcadero, SF); Napa shop is separate. Area lists both legs so branch is ambiguous.",
+    "closed": false,
+    "alternatives": [
+      "1 Ferry Plaza, Bldg #13, San Francisco, CA 94111, USA",
+      "644 First St, Suite C, Napa, CA 94559, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-812f-bc74-df20dcf36443",
+    "name": "Miette",
+    "status": "needs-you",
+    "note": "Two branches match the two named neighborhoods: Embarcadero (Ferry Building) is still open; the original Hayes Valley shop (449 Octavia St) closed permanently in Sept 2025 and Miette reopened a new flagship in Pacific Heights instead, not Hayes Valley. Ambiguous which branch was intended.",
+    "closed": false,
+    "alternatives": [
+      "1 Ferry Building, Suite 10, San Francisco, CA 94111, USA",
+      "449 Octavia St, San Francisco, CA 94102, USA (closed Sept 2025; replaced by 2252 Fillmore St, San Francisco, CA)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-818e-b66e-dded6097511c",
+    "name": "Juanita Juanita",
+    "status": "found",
+    "address": "19114 Arnold Dr, Sonoma, CA 95476, USA",
+    "sourceUrl": "https://www.yelp.com/biz/juanita-juanita-sonoma",
+    "sourceTitle": "JUANITA JUANITA - Updated July 2026 - 106 Photos & 314 Reviews - 19114 Arnold Dr, Sonoma, California - Mexican - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Single location in Sonoma, matching stated area (Sonoma/Napa region).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8131-9be8-e8e275799f95",
+    "name": "Yerim Korean BBQ",
+    "status": "found",
+    "address": "300 S Hobart Blvd, Ste 100, Los Angeles, CA 90020, USA",
+    "sourceUrl": "https://www.yelp.com/biz/yerim-korean-bbq-los-angeles-2",
+    "sourceTitle": "YERIM KOREAN BBQ - Updated August 2026 - 638 Photos & 403 Reviews - 300 S Hobart Blvd, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Single Los Angeles (Koreatown) location, matches stated area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81bc-9761-eeb33fb93b51",
+    "name": "Noods",
+    "status": "found",
+    "address": "1142 Abbot Kinney Blvd, Los Angeles, CA 90291, USA",
+    "sourceUrl": "https://www.yelp.com/biz/noods-los-angeles",
+    "sourceTitle": "NOODS - CLOSED - Updated August 2026 - 38 Reviews - 62 Photos - 1142 Abbot Kinney Blvd, Los Angeles, California - Food Trucks - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "On Abbot Kinney Blvd in Venice, matches area; Yelp lists it as permanently closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-814b-8e4c-e39b9198247b",
+    "name": "Newport Seafood Restaurant",
+    "status": "needs-you",
+    "note": "Newport Seafood is a San Gabriel Valley chain (626 area code); two plausible branches near Pasadena - the original/flagship San Gabriel location and Rowland Heights. A third branch in Irvine is outside the 626/Pasadena area and excluded. Ambiguous which is meant.",
+    "closed": false,
+    "alternatives": [
+      "518 W Las Tunas Dr, San Gabriel, CA 91776, USA",
+      "18441 E Colima Rd, Rowland Heights, CA 91748, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ad-afe9-ee14b9ad2877",
+    "name": "Chi Spacca",
+    "status": "found",
+    "address": "6610 Melrose Ave, Los Angeles, CA 90038, USA",
+    "sourceUrl": "https://www.yelp.com/biz/chi-spacca-los-angeles",
+    "sourceTitle": "CHI SPACCA - Updated September 2026 - 2935 Photos & 811 Reviews - 6610 Melrose Ave, Los Angeles, California - Italian - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Single Melrose Ave location, matches stated area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-812b-a85a-e9766ce81d6d",
+    "name": "Good Luck Dim Sum",
+    "status": "needs-you",
+    "note": "Good Luck Dim Sum is a real, currently-open business but it is located in the Richmond District of San Francisco (736 Clement St), not in Los Angeles. No Los Angeles branch was found - wrong-area mismatch.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81d8-932f-f2d8ab9317a0",
+    "name": "Eataly",
+    "status": "found",
+    "address": "10250 Santa Monica Blvd, Los Angeles, CA 90067, USA",
+    "sourceUrl": "https://www.yelp.com/biz/eataly-los-angeles-10",
+    "sourceTitle": "EATALY - LOS ANGELES - Updated July 2026 - 9429 Photos & 3048 Reviews - 10250 Santa Monica Blvd, Los Angeles, California - Italian - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Located inside Westfield Century City; the only LA-area Eataly, matches stated area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8192-a45b-e4cdb8ec052c",
+    "name": "Terra (Eataly)",
+    "status": "found",
+    "address": "10250 Santa Monica Blvd, Los Angeles, CA 90067, USA",
+    "sourceUrl": "https://www.yelp.com/biz/terra-at-eataly-los-angeles",
+    "sourceTitle": "TERRA - Updated September 2026 - 3333 Photos & 1229 Reviews - 10250 Santa Monica Blvd, Los Angeles, California - Cocktail Bars - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Terra is the rooftop restaurant inside Eataly LA at Westfield Century City; same building/address as Eataly.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8135-be46-d1c8c9281848",
+    "name": "Employees Only",
+    "status": "found",
+    "address": "7953 Santa Monica Blvd, West Hollywood, CA 90046, USA",
+    "sourceUrl": "https://www.yelp.com/biz/employees-only-west-hollywood",
+    "sourceTitle": "EMPLOYEES ONLY - Updated August 2026 - 636 Photos & 562 Reviews - 7953 Santa Monica Blvd, West Hollywood, California - Cocktail Bars - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Employees Only has other branches (NYC, Miami, etc.), but area specifies WeHo, which unambiguously picks this location.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81cf-9e72-cadea25028dd",
+    "name": "Ardor",
+    "status": "found",
+    "address": "9040 W Sunset Blvd, West Hollywood, CA 90069, USA",
+    "sourceUrl": "https://www.yelp.com/biz/ardor-west-hollywood",
+    "sourceTitle": "ARDOR - Updated July 2026 - 1237 Photos & 406 Reviews - 9040 W Sunset Blvd, West Hollywood, California - New American - Yelp",
+    "note": "Restaurant inside The West Hollywood EDITION hotel; single location, matches stated area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8147-a0f7-e9b92b28d137",
+    "name": "Winston's Pies",
+    "status": "needs-you",
+    "note": "Winston Pies (brand name, no apostrophe) has branches in Brentwood and Marina del Rey (both named in the area field, confirmed), plus Studio City, Manhattan Beach and Palm Desert; no La Brea location was found. Ambiguous between the two LA-area branches named.",
+    "closed": false,
+    "alternatives": [
+      "11678 San Vicente Blvd, Los Angeles, CA 90049, USA",
+      "4625 Admiralty Way #105, Marina del Rey, CA 90292, USA"
+    ]
+  },
+  {
+    "id": "3c8f3cdd-67a4-81aa-938b-e681842100f8",
+    "name": "palisades mall",
+    "status": "found",
+    "address": "15225 Palisades Village Ln, Pacific Palisades, CA 90272, USA",
+    "sourceUrl": "https://www.yelp.com/biz/palisades-village-pacific-palisades",
+    "sourceTitle": "PALISADES VILLAGE - TEMP. CLOSED - Updated July 2026 - 177 Photos & 79 Reviews - 15225 Palisades Village Ln, Pacific Palisades, California - Shopping Centers - Phone Number - Yelp",
+    "note": "The well-known 'Palisades Mall' is actually in West Nyack, NY (not LA). In LA, the matching shopping center is Palisades Village in Pacific Palisades, developed by Rick Caruso; it was affected by the Jan 2025 Palisades Fire but has since reopened.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-811a-a50e-ddc6c04c8873",
+    "name": "Farmers Market",
+    "status": "found",
+    "address": "6333 W 3rd St, Los Angeles, CA 90036, USA",
+    "sourceUrl": "https://www.yelp.com/biz/the-original-farmers-market-los-angeles-2",
+    "sourceTitle": "THE ORIGINAL FARMERS MARKET - Updated September 2026 - 3695 Photos & 1659 Reviews - 6333 W 3rd St, Los Angeles, California - Shopping Centers - Phone Number - Yelp",
+    "note": "The Original Farmers Market at 3rd & Fairfax, the iconic LA landmark matching the area.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-818e-888c-fe3365942e94",
+    "name": "Penmar Live Music Fridays",
+    "status": "found",
+    "address": "1233 Rose Ave, Venice, CA 90291, USA",
+    "sourceUrl": "https://www.yelp.com/biz/the-penmar-venice-4",
+    "sourceTitle": "THE PENMAR - Updated September 2026 - 163 Reviews - 175 Photos - 1233 Rose Ave, Venice, California - American - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "'Penmar Live Music Fridays' matches the recurring 'Sunset Sessions' Friday live-music event hosted at The Penmar (bar/restaurant attached to Penmar Golf Course) in Venice; recording the host venue's address.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-81c8-b62b-d37d6a5f771e",
+    "name": "Hidden Cannabis Lounge & Comedy Show",
+    "status": "needs-you",
+    "note": "No business literally named 'Hidden Cannabis Lounge' was found in West Hollywood. WeHo does have several cannabis consumption lounges that host comedy/events (e.g. The Woods WeHo, Private Reserve, The Artist Tree), but none match the exact name given, so no confident match was recorded.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-8132-ab2d-eff775d8ad26",
+    "name": "Getty's",
+    "status": "found",
+    "address": "1200 Getty Center Dr, Los Angeles, CA 90049, USA",
+    "sourceUrl": "https://www.yelp.com/biz/the-restaurant-at-the-getty-center-los-angeles",
+    "sourceTitle": "THE RESTAURANT AT THE GETTY CENTER - Updated July 2026 - 1551 Photos & 716 Reviews - 1200 Getty Center Dr, Los Angeles, California - New American - Yelp",
+    "note": "No business is literally named 'Getty's'; recorded as The Restaurant at the Getty Center, the main sit-down restaurant on site (other on-site options share the same 1200 Getty Center Dr address).",
+    "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-813b-a744-ecb6137ec8e3",
+    "name": "Jialing and Yangtze night river cruise",
+    "status": "not-a-place",
+    "note": "Describes a river cruise activity, not a named venue; no venue given for this trip item.",
+    "closed": false
+  },
+  {
+    "id": "3c8f3cdd-67a4-8175-822d-d7f1d3188540",
+    "name": "Horse drawn carriage ride",
+    "status": "not-a-place",
+    "note": "Describes an activity/outing, not a named venue; no venue given for this trip item.",
+    "closed": false
+  },
+  {
+    "id": "367f3cdd-67a4-8131-a853-f8445d509f27",
+    "name": "Rock Climbing in Fuili Canyon with Transfer from Cala Gonone",
+    "status": "not-a-place",
+    "note": "Describes an activity/tour package, not a named venue; no venue given for this trip item.",
+    "closed": false
+  },
+  {
+    "id": "32af3cdd-67a4-8164-bac0-c79902c03fa4",
+    "name": "Pienza Lunch (en route to Rosewood)",
+    "status": "not-a-place",
+    "note": "Describes a meal stop on a route, not a named restaurant; no venue given for this trip item.",
+    "closed": false
+  },
+  {
+    "id": "315f3cdd-67a4-8151-84f5-e0d15cd2e099",
+    "name": "Paris Bercy → Beaune | TER",
+    "status": "not-a-place",
+    "note": "Describes a train route/leg, not a named venue; no venue given for this trip item.",
+    "closed": false
+  }
+]
