@@ -1218,5 +1218,201 @@
     "alternatives": [
       "3655 S Grand Ave, Unit C9, Los Angeles, CA 90007, USA"
     ]
+  },
+  {
+    "id": "312f3cdd-67a4-8163-bc8a-e81ad7b2cee8",
+    "name": "Dang Sung Sa",
+    "status": "found",
+    "address": "3317 W 6th St, Los Angeles, CA 90020, USA",
+    "sourceUrl": "https://www.timeout.com/los-angeles/restaurants/dan-sung-sa",
+    "sourceTitle": "Dan Sung Sa | Restaurants in Koreatown, Los Angeles",
+    "note": "Spelled Dan Sung Sa on sources; Koreatown Korean bar.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8172-b0c0-c0f8d7e5b14a",
+    "name": "Cerveteca LA",
+    "status": "found",
+    "address": "9418 Venice Blvd, Culver City, CA 90232, USA",
+    "sourceUrl": "https://www.yelp.com/biz/cerveteca-culver-city-culver-city",
+    "sourceTitle": "CERVETECA CULVER CITY - Updated September 2026 - 585 Photos & 782 Reviews - 9418 Venice Blvd, Culver City, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Culver City location.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8173-8224-d6c56229f034",
+    "name": "Good Alley",
+    "status": "needs-you",
+    "note": "No Sunset District branch found; branches are in Rosemead and Arcadia (San Gabriel Valley).",
+    "closed": false,
+    "alternatives": [
+      "8450 E Valley Blvd, Ste 108, Rosemead, CA 91770",
+      "56 E Duarte Rd #107, Arcadia, CA 91006 (Good Alley Reserve)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8176-8603-fb64a9f00179",
+    "name": "Bistro Na's",
+    "status": "found",
+    "address": "9055 E Las Tunas Dr #105, Temple City, CA 91780, USA",
+    "sourceUrl": "https://www.bistronas.com/",
+    "sourceTitle": "Bistro na's | chinese cuisine | 9055 East Las Tunas Drive #105, Temple City, CA 91780, USA",
+    "note": "Official site; Temple City is in the 626 area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-817e-9eb3-f65a33abd12e",
+    "name": "K Team BBQ",
+    "status": "found",
+    "address": "936 S Vermont Ave, Los Angeles, CA 90006, USA",
+    "sourceUrl": "https://www.yelp.com/biz/k-team-bbq-los-angeles",
+    "sourceTitle": "K Team BBQ - Official Yelp Page - Updated August 2026 - 417 Photos - 108 Reviews - 936 S Vermont Ave, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Koreatown.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8180-a997-c87d6a9f77e3",
+    "name": "Bar CDMX",
+    "status": "found",
+    "address": "515 W 7th St, Los Angeles, CA 90014, USA",
+    "sourceUrl": "https://www.barcdmx.la/",
+    "sourceTitle": "Bar CDMX | Underground Cocktail Bar | Downtown Los Angeles",
+    "note": "Basement bar in downtown LA.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8186-82d8-d5296d0dfe77",
+    "name": "Jiang Nan Spring",
+    "status": "found",
+    "address": "910 E Main St, Alhambra, CA 91801, USA",
+    "sourceUrl": "https://www.yelp.com/biz/jiang-nan-spring-alhambra-4",
+    "sourceTitle": "JIANG NAN SPRING - CLOSED - Updated September 2026 - 1947 Photos & 621 Reviews - 910 E Main St, Alhambra, California - Chinese - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Alhambra (626); Yelp lists it as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-8189-9408-c49ed3a4dcf3",
+    "name": "Hue Thai Bakery & Deli",
+    "status": "found",
+    "address": "8968 Garvey Ave, Ste D, Rosemead, CA 91770, USA",
+    "sourceUrl": "https://www.corner.inc/place/88250",
+    "sourceTitle": "Hue Thai Bakery & Deli - Garvey / River, 8968 Garvey Ave, Rosemead | Corner",
+    "note": "Rosemead (626).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-819a-9589-fa01521dff0a",
+    "name": "Chang Hwa Dang",
+    "status": "found",
+    "address": "3377 Wilshire Blvd #104, Los Angeles, CA 90010, USA",
+    "sourceUrl": "https://www.yelp.com/biz/chang-hwa-dang-los-angeles-3",
+    "sourceTitle": "CHANG HWA DANG - CLOSED - Updated August 2026 - 37 Photos & 15 Reviews - 3377 Wilshire Blvd, Los Angeles, California - Korean - Restaurant Reviews - Menu - Yelp",
+    "note": "Koreatown; Yelp lists it as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-81ad-8d2b-c447a08726df",
+    "name": "Guerrilla Tacos",
+    "status": "found",
+    "address": "2000 E 7th St, Los Angeles, CA 90021, USA",
+    "sourceUrl": "https://www.theinfatuation.com/los-angeles/reviews/guerrilla-tacos-arts-district",
+    "sourceTitle": "Guerrilla Tacos - Review - Arts District - Los Angeles - The Infatuation",
+    "note": "Arts District.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b0-8c80-e20036cd029f",
+    "name": "Daedo Sikdang",
+    "status": "found",
+    "address": "4001 W 6th St, Los Angeles, CA 90020, USA",
+    "sourceUrl": "https://www.yelp.com/biz/daedo-sikdang-los-angeles",
+    "sourceTitle": "DAEDO SIKDANG - Updated September 2026 - 1456 Photos & 476 Reviews - 4001 W 6th St, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Koreatown.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81be-a62a-ebd2e69d0664",
+    "name": "Lunasia Dim Sum House",
+    "status": "needs-you",
+    "note": "Several branches in the area (Alhambra, Torrance, closed Pasadena); cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "500 W Main St, Alhambra, CA 91801",
+      "2575 E Pacific Coast Hwy, Torrance, CA 90505",
+      "239 E Colorado Blvd, Pasadena, CA 91101 (closed)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81c0-95cb-cd8b74c072ef",
+    "name": "Banh Mi My-Tho",
+    "status": "needs-you",
+    "note": "Multiple 626 branches (Alhambra and Rosemead); cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "304 W Valley Blvd, Alhambra, CA 91801",
+      "9011 Garvey Ave, Rosemead, CA",
+      "7434 Garvey Ave, Rosemead, CA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ce-9121-f2d1e7991493",
+    "name": "Holy Basil",
+    "status": "needs-you",
+    "note": "Two Downtown LA branches; cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "718 S Los Angeles St, Los Angeles, CA 90014",
+      "2000 E 7th St, Los Angeles, CA 90021"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81d9-88dc-d10cac56f2d6",
+    "name": "Atla",
+    "status": "found",
+    "address": "1025 Abbot Kinney Blvd, Los Angeles, CA 90291, USA",
+    "sourceUrl": "https://www.yelp.com/biz/atla-venice-los-angeles",
+    "sourceTitle": "ATLA VENICE - CLOSED - Updated August 2026 - 72 Photos & 75 Reviews - 1025 Abbot Kinney, Los Angeles, California - Desserts - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Venice location on Abbot Kinney; Yelp lists it as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-81ef-b1d9-d2967b3b2c96",
+    "name": "Frances Patisserie",
+    "status": "needs-you",
+    "note": "Only found in South Pasadena, a separate city from Pasadena; confirm it is acceptable.",
+    "closed": false,
+    "alternatives": [
+      "700 Fair Oaks Ave, Ste J, South Pasadena, CA 91030"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81f5-8ebf-e8f81e82fc46",
+    "name": "Angelini Osteria",
+    "status": "found",
+    "address": "7313 Beverly Blvd, Los Angeles, CA 90036, USA",
+    "sourceUrl": "https://www.yelp.com/biz/angelini-osteria-los-angeles",
+    "sourceTitle": "ANGELINI OSTERIA - Updated September 2026 - 3726 Photos & 2323 Reviews - 7313 Beverly Blvd, Los Angeles, California - Italian - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Fairfax-area Osteria; Palisades branch is a separate venue (Angelini Ristorante & Bar).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81fb-bb06-ec0b8fff46fc",
+    "name": "Corner Beef Noodle",
+    "status": "needs-you",
+    "note": "Only found as Corner Beef Noodle House in El Monte, not Rosemead.",
+    "closed": false,
+    "alternatives": [
+      "3948 Peck Rd, El Monte, CA 91732"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81fc-8f20-cd374efb1b7c",
+    "name": "Kyuramen Arcadia",
+    "status": "found",
+    "address": "7 Las Tunas Dr, Suite B, Arcadia, CA 91007, USA",
+    "sourceUrl": "https://www.kyuramen.com/locations/arcadia",
+    "sourceTitle": "Kyuramen Arcadia",
+    "note": "Official Arcadia location page.",
+    "closed": false
   }
 ]
