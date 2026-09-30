@@ -2018,5 +2018,206 @@
     "alternatives": [
       "11648 San Vicente Blvd, Los Angeles, CA 90049, USA"
     ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ef-8c2b-cbd85a41bb0e",
+    "name": "Eat Joy Food",
+    "status": "found",
+    "address": "18888 Labin Ct, Ste C113, Rowland Heights, CA 91748, USA",
+    "sourceUrl": "https://www.yelp.com/biz/eat-joy-food-rowland-hghts-4",
+    "sourceTitle": "EAT JOY FOOD - Updated August 2026 - 945 Photos & 180 Reviews - 18888 Labin Ct, ROWLAND HGHTS, California - Taiwanese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Rowland Heights is in the San Gabriel Valley (626).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81f3-a7e4-c18cb027f6c7",
+    "name": "Coconut Jelly King",
+    "status": "found",
+    "address": "29 E Valley Blvd, Alhambra, CA 91801, USA",
+    "sourceUrl": "https://www.yelp.com/biz/coconut-jelly-king-alhambra-2",
+    "sourceTitle": "Coconut Jelly King - Alhambra, CA",
+    "note": "Alhambra branch.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81fa-ad02-d210e61fdb41",
+    "name": "PP Pop",
+    "status": "found",
+    "address": "127 N Garfield Ave, Monterey Park, CA 91754, USA",
+    "sourceUrl": "https://www.yelp.com/biz/p-p-pop-monterey-park-7",
+    "sourceTitle": "P P Pop - Monterey Park, CA",
+    "note": "Listed as P P Pop / P.P. Pop, same name.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8102-8653-fa2dc371e7b9",
+    "name": "Hyun Poong Gom Tang",
+    "status": "found",
+    "address": "244 S Oxford Ave, Ste 18, Los Angeles, CA 90004, USA",
+    "sourceUrl": "https://koreatownladirectory.com/listing/hyun-poong-gom-tang/",
+    "sourceTitle": "Hyun Poong Gom Tang (Koreatown)",
+    "note": "Koreatown listing.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8105-9ae7-f78b25d613c4",
+    "name": "Stumptown Coffee Roasters",
+    "status": "found",
+    "address": "1982 Lincoln Ave, Pasadena, CA 91103, USA",
+    "sourceUrl": "https://m.yelp.com/biz/stumptown-coffee-roasters-pasadena-2",
+    "sourceTitle": "STUMPTOWN COFFEE ROASTERS - Updated June 2026 - 363 Photos & 165 Reviews - 1982 Lincoln Ave, Pasadena, California - Coffee & Tea - Phone Number - Yelp",
+    "note": "Pasadena cafe.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8106-8058-ce699d60045b",
+    "name": "Lodge Bread",
+    "status": "found",
+    "address": "11918 Washington Blvd, Los Angeles, CA 90066, USA",
+    "sourceUrl": "https://www.yelp.com/biz/lodge-bread-los-angeles",
+    "sourceTitle": "LODGE BREAD - Updated July 2026 - 1815 Photos & 1120 Reviews - 11918 Washington Blvd, Los Angeles, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Culver City flagship (Lodge Bread Company); other search-listed branches are in Woodland Hills and Beverly Hills.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8109-8c7a-e0845d0fca7d",
+    "name": "Nha Trang",
+    "status": "needs-you",
+    "note": "Two Nha Trang restaurants in the 626: Monterey Park and San Gabriel; area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "742 E Garvey Ave, Unit A, Monterey Park, CA 91755",
+      "311 E Valley Blvd, San Gabriel, CA 91776"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8121-b508-d5db25da3fa8",
+    "name": "Rutts",
+    "status": "found",
+    "address": "11707 Washington Place, Los Angeles, CA 90066, USA",
+    "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g32272-d3467814-Reviews-Rutt_s_Hawaiian_Cafe-Culver_City_California.html",
+    "sourceTitle": "RUTT'S HAWAIIAN CAFE, Culver City - Menu, Prices & Restaurant Reviews - Tripadvisor",
+    "note": "Rutts is Rutt's Hawaiian Cafe (spelling/full-name variant); Tripadvisor lists it in Culver City.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8125-91a1-f0dd736b4b49",
+    "name": "Mayura Indian Restaurant",
+    "status": "needs-you",
+    "note": "Found only in Culver City, not Venice; source lists it as Culver City.",
+    "closed": false,
+    "sourceUrl": "https://www.yelp.com/biz/mayura-indian-restaurant-culver-city-2",
+    "sourceTitle": "MAYURA INDIAN RESTAURANT - Updated August 2026 - 1602 Photos & 1993 Reviews - 10406 Venice Blvd, Culver City, California - Indian - Restaurant Reviews - Phone Number - Yelp",
+    "alternatives": [
+      "10406 Venice Blvd, Culver City, CA 90232"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8125-a915-e73001eefd76",
+    "name": "Coin & Candor",
+    "status": "needs-you",
+    "note": "Only location found is in Westlake Village (Four Seasons), not Thousand Oaks.",
+    "closed": false,
+    "sourceUrl": "https://www.yelp.com/biz/coin-and-candor-westlake-village-2",
+    "sourceTitle": "COIN & CANDOR - Updated August 2026 - 1102 Photos & 360 Reviews - 2 Dole Dr, Westlake Village, California - Brasseries - Restaurant Reviews - Phone Number - Yelp",
+    "alternatives": [
+      "2 Dole Dr, Westlake Village, CA 91362"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8136-8d8c-cac0f64fd759",
+    "name": "Mickey's Deli",
+    "status": "found",
+    "address": "101 Hermosa Ave, Hermosa Beach, CA 90254, USA",
+    "sourceUrl": "https://www.yelp.com/biz/mickeys-italian-delicatessen-and-liquor-store-hermosa-beach-2",
+    "sourceTitle": "MICKEY'S ITALIAN DELICATESSEN & LIQUOR STORE - Updated September 2026 - 718 Photos & 1012 Reviews - 101 Hermosa Ave, Hermosa Beach, California - Delis - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Mickey's Deli, Hermosa Beach; listed as Mickey's Italian Delicatessen.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-813e-8cc4-fe46e5ca5380",
+    "name": "Sul and Beans",
+    "status": "found",
+    "address": "621 S Western Ave, Ste 208-A, Los Angeles, CA 90005, USA",
+    "sourceUrl": "https://koreatownladirectory.com/listing/sul-beans/",
+    "sourceTitle": "Sul & Beans (Koreatown): 설빙",
+    "note": "Spelling variant Sul & Beans; Koreatown listing.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8157-9459-d65c7cf452ab",
+    "name": "Witch's Chicken",
+    "status": "found",
+    "address": "3250 W Olympic Blvd, Ste 105, Los Angeles, CA 90006, USA",
+    "sourceUrl": "https://koreatownladirectory.com/listing/witchs-chicken/",
+    "sourceTitle": "Witch's Chicken (Koreatown)",
+    "note": "Koreatown listing.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8157-ac1c-dcebe7692653",
+    "name": "Golden Deli",
+    "status": "needs-you",
+    "note": "San Gabriel address found, but chain site suggests other branches in the 626; only this one confirmed, so area does not pick a branch.",
+    "closed": false,
+    "sourceUrl": "https://www.yelp.com/biz/golden-deli-san-gabriel-5",
+    "sourceTitle": "GOLDEN DELI SAN GABRIEL - Updated August 2026 - 4315 Photos & 3726 Reviews - 815 W Las Tunas Dr, San Gabriel, California - Vietnamese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "alternatives": [
+      "815 W Las Tunas Dr, San Gabriel, CA 91776"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8169-b8d5-dc47f36f87a5",
+    "name": "Simpang Asia",
+    "status": "needs-you",
+    "note": "Two branches, Palms and Venice, both in the listed area.",
+    "closed": false,
+    "alternatives": [
+      "10433 National Blvd, Ste 2, Los Angeles, CA 90034",
+      "705 Lincoln Blvd, Venice, CA 90291"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-816a-82af-e434ef64697d",
+    "name": "Sidecar Doughnuts",
+    "status": "needs-you",
+    "note": "Multi-location chain and area is just 'Lots of Locations'; pick a branch.",
+    "closed": false,
+    "sourceUrl": "https://www.yelp.com/biz/sidecar-doughnuts-and-coffee-santa-monica-3",
+    "sourceTitle": "SIDECAR DOUGHNUTS & COFFEE - Updated September 2026 - 5008 Photos & 2881 Reviews - 631 Wilshire Blvd, Santa Monica, California - Donuts - Phone Number - Yelp",
+    "alternatives": [
+      "631 Wilshire Blvd, Santa Monica, CA 90401"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-816a-9172-f709874b41cf",
+    "name": "V Wine Room",
+    "status": "found",
+    "address": "903 Westbourne Dr, West Hollywood, CA 90069, USA",
+    "sourceUrl": "https://www.yelp.com/biz/v-wine-room-west-hollywood-3",
+    "sourceTitle": "V WINE ROOM - Updated July 2026 - 178 Photos & 282 Reviews - 903 Westbourne Dr, West Hollywood, California - Wine Bars - Restaurant Reviews - Phone Number - Yelp",
+    "note": "West Hollywood wine bar.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-816c-bad7-ce4861ba89fb",
+    "name": "Duck House",
+    "status": "found",
+    "address": "501 S Atlantic Blvd, Monterey Park, CA 91754, USA",
+    "sourceUrl": "https://www.yelp.com/biz/duck-house-monterey-park-6",
+    "sourceTitle": "DUCK HOUSE - Updated September 2026 - 5356 Photos & 2221 Reviews - 501 S Atlantic Blvd, Monterey Park, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Monterey Park (626).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8178-ad82-c9b90ef6c7e6",
+    "name": "Tsujita",
+    "status": "needs-you",
+    "note": "Two Tsujita spots on Sawtelle Blvd (Tsujita LA and Tsujita Annex); name/area do not pick one.",
+    "closed": false,
+    "alternatives": [
+      "2057 Sawtelle Blvd, Los Angeles, CA 90025",
+      "2050 Sawtelle Blvd, Los Angeles, CA 90025"
+    ]
   }
 ]
