@@ -415,5 +415,200 @@
     "sourceTitle": "Almost Famous - Sherman Oaks Galleria",
     "note": "Burger shop in Sherman Oaks Galleria",
     "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81c4-ac5b-fa24d56f6004",
+    "name": "Gogo Curry",
+    "status": "found",
+    "address": "1740 Artesia Blvd, Gardena, CA 90248, USA",
+    "sourceUrl": "https://www.gogocurrygardena.com/",
+    "sourceTitle": "Go Go Curry - Japanese Curry Restaurant | Online Order | Gardena | CA",
+    "note": "Go Go Curry in Tokyo Central Gardena food court.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81da-abb7-ee652e0a098b",
+    "name": "Jian Bing",
+    "status": "needs-you",
+    "note": "Jian Bing is a dish, not a named venue; several Rowland Heights shops serve it (e.g. Yu Ji Stone Mill Chinese Crepes, 1648 S Jellick Ave, 91748).",
+    "closed": false,
+    "alternatives": [
+      "Yu Ji Stone Mill Chinese Crepes, 1648 S Jellick Ave, Rowland Heights, CA 91748"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81db-87ff-f1ecdb0a5754",
+    "name": "Camelia",
+    "status": "found",
+    "address": "1850 Industrial St, Los Angeles, CA 90021, USA",
+    "sourceUrl": "https://www.yelp.com/biz/camelia-los-angeles",
+    "sourceTitle": "CAMELIA - Updated September 2026 - 1650 Photos & 303 Reviews - 1850 Industrial St, Los Angeles, California - French - Restaurant Reviews - Phone Number - Yelp",
+    "note": "French-Japanese bistro in the Arts District.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8105-bd33-f6a757e5bfe0",
+    "name": "Genki Crepes and Mini Mart",
+    "status": "found",
+    "address": "330 Clement St, San Francisco, CA 94118, USA",
+    "sourceUrl": "https://www.yelp.com/biz/genki-crepes-and-mini-mart-san-francisco",
+    "sourceTitle": "GENKI CREPES & MINI-MART - Updated September 2026 - 2058 Photos & 2610 Reviews - 330 Clement St, San Francisco, California - Creperies - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Inner Richmond, Clement St.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8125-ad09-c9319a54054f",
+    "name": "Bar Crenn",
+    "status": "found",
+    "address": "3131 Fillmore St, San Francisco, CA 94123, USA",
+    "sourceUrl": "https://www.barcrenn.com/location/bar-crenn-2/",
+    "sourceTitle": "Hours + Location | Bar Crenn",
+    "note": "Official location page. Fillmore St is Cow Hollow/Marina edge, near Pacific Heights.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8139-aa04-c634a7f62396",
+    "name": "Sightglass Coffee",
+    "status": "needs-you",
+    "note": "Several SF and LA branches match the area; pick one.",
+    "closed": false,
+    "alternatives": [
+      "270 Seventh St, San Francisco, CA 94103 (SoMa)",
+      "3014 20th St, San Francisco, CA 94110 (Mission)",
+      "7051 W Willoughby Ave, Los Angeles, CA 90038 (Hollywood)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-813e-a53f-f65ae1eb2c7b",
+    "name": "Johnny's Doughnuts",
+    "status": "needs-you",
+    "note": "Three branches match the area; pick one.",
+    "closed": false,
+    "alternatives": [
+      "2257 Larkspur Landing Circle, Larkspur, CA",
+      "1617 4th Street, San Rafael, CA",
+      "2404 California Street, San Francisco, CA (Pacific Heights)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-814a-a2b6-d86ce01db945",
+    "name": "Four Kings",
+    "status": "found",
+    "address": "710 Commercial St, San Francisco, CA 94108, USA",
+    "sourceUrl": "https://www.yelp.com/biz/four-kings-%E5%9B%9B%E5%A4%A7%E5%A4%A9%E7%8E%8B-san-francisco",
+    "sourceTitle": "FOUR KINGS 四大天王 - Updated July 2026 - 2821 Photos & 456 Reviews - 710 Commercial St, San Francisco, California - Cantonese - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Cantonese restaurant in Chinatown.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8184-b8ce-d3c53fdcb5f1",
+    "name": "Monsieur Benjamin",
+    "status": "found",
+    "address": "451 Gough St, San Francisco, CA 94102, USA",
+    "sourceUrl": "https://www.yelp.com/biz/monsieur-benjamin-san-francisco",
+    "sourceTitle": "MONSIEUR BENJAMIN - CLOSED - Updated July 2026 - 3300 Photos & 1138 Reviews - 451 Gough St, San Francisco, California - French - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Hayes Valley; listed as closed (June 2024).",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-8197-8ba2-e8d96be817f5",
+    "name": "Souvla",
+    "status": "needs-you",
+    "note": "Multiple Souvla branches in SF and Marin match the area; pick one. Only two addresses confirmed by search.",
+    "closed": false,
+    "alternatives": [
+      "2505 3rd Street, San Francisco, CA (Dogpatch)",
+      "758 Valencia St, San Francisco, CA 94110 (Mission)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8197-b541-f017a39dbe8f",
+    "name": "Lolinda",
+    "status": "found",
+    "address": "2518 Mission St, San Francisco, CA 94110, USA",
+    "sourceUrl": "https://www.lolindasf.com/location/location/",
+    "sourceTitle": "Hours & Location | Lolinda in San Francisco, CA",
+    "note": "Official location page, Mission District.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8198-a367-cb36810e0587",
+    "name": "Hole in the Wall Coffee",
+    "status": "found",
+    "address": "524 Union St, San Francisco, CA 94133, USA",
+    "sourceUrl": "https://www.yelp.com/biz/hole-in-the-wall-coffee-san-francisco",
+    "sourceTitle": "HOLE IN THE WALL COFFEE - CLOSED - Updated April 2026 - 202 Photos & 207 Reviews - 524 Union St, San Francisco, California - Coffee & Tea - Phone Number - Menu - Yelp",
+    "note": "North Beach coffee window; Yelp marks closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-81ce-9c53-e7bbc38b4b98",
+    "name": "DOSA on Valencia",
+    "status": "found",
+    "address": "995 Valencia St, San Francisco, CA 94110, USA",
+    "sourceUrl": "https://www.yelp.com/biz/dosa-on-valencia-san-francisco",
+    "sourceTitle": "DOSA ON VALENCIA - CLOSED - Updated February 2026 - 988 Photos & 2337 Reviews - 995 Valencia St, San Francisco, California - Indian - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Mission; Yelp marks permanently closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-81eb-8d9b-fbc274156816",
+    "name": "Nopalito",
+    "status": "found",
+    "address": "1224 9th Ave, San Francisco, CA 94122, USA",
+    "sourceUrl": "https://www.yelp.com/biz/nopalito-san-francisco-3",
+    "sourceTitle": "NOPALITO - CLOSED - Updated March 2026 - 1572 Photos & 1331 Reviews - 1224 9th Ave, San Francisco, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Sunset (9th Ave) branch; Yelp marks closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-81ed-a4d9-de355aa8e16e",
+    "name": "Sichuan Home",
+    "status": "found",
+    "address": "5037 Geary Blvd, San Francisco, CA 94118, USA",
+    "sourceUrl": "https://sichuanhome.com/location/",
+    "sourceTitle": "Location & Hours | Sichuan Home | 5037 Geary Blvd, SF",
+    "note": "Richmond District, official page.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81ed-ae50-e23804b83488",
+    "name": "Acquerello",
+    "status": "found",
+    "address": "1722 Sacramento St, San Francisco, CA 94109, USA",
+    "sourceUrl": "https://www.acquerellosf.com/",
+    "sourceTitle": "Acquerello",
+    "note": "Official site; Nob Hill/Polk Gulch.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81ef-8afa-c8022d822f4b",
+    "name": "Fung Wong",
+    "status": "needs-you",
+    "note": "Only Fung Wong found is 2500 Noriega St in the Outer Sunset, not Chinatown; no Chinatown match confirmed.",
+    "closed": false,
+    "alternatives": [
+      "2500 Noriega St, San Francisco, CA 94122 (Outer Sunset)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81fd-98af-e29c825f19d2",
+    "name": "La Mar",
+    "status": "found",
+    "address": "Pier 1.5 Embarcadero (at Washington St), San Francisco, CA 94111, USA",
+    "sourceUrl": "https://lamarcebicheria.com/san-francisco/",
+    "sourceTitle": "San Francisco's La Mar restaurant",
+    "note": "Peruvian cebicheria on the Embarcadero.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8116-a81b-e699a0c35896",
+    "name": "House of Dim Sum",
+    "status": "found",
+    "address": "735 Jackson St, San Francisco, CA 94133, USA",
+    "sourceUrl": "https://www.yelp.com/biz/house-of-dim-sum-san-francisco",
+    "sourceTitle": "HOUSE OF DIM SUM - Updated July 2026 - 1606 Photos & 767 Reviews - 735 Jackson St, San Francisco, California - Dim Sum - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Chinatown; a smaller listing exists at 1242 Stockton St.",
+    "closed": false
   }
 ]
