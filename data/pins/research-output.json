@@ -2717,5 +2717,161 @@
     "status": "not-a-place",
     "note": "Food crawl outing, not a single venue.",
     "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-811e-b2a2-d1932ead3813",
+    "name": "Banyan Tree Mount Emei",
+    "status": "needs-you",
+    "note": "Hotel is in Emeishan City, not the Qing Cheng Mountain area; source title shows the address.",
+    "closed": false,
+    "sourceUrl": "https://www.vacations.com.au/property/125384610/banyan-tree-mount-emei",
+    "sourceTitle": "Banyan Tree Mount Emei - No. 55, Section 1, Jingqu Road, Leshan - Vacations.com.au",
+    "alternatives": [
+      "No. 55, Section 1, Jingqu Road, Emeishan, Sichuan, China"
+    ]
+  },
+  {
+    "id": "3cff3cdd-67a4-8149-88e4-cc6deee66e2d",
+    "name": "Rissai Valley, a Ritz-Carlton Reserve",
+    "status": "needs-you",
+    "note": "Search results place this hotel in Zhangzha Town, Jiuzhaigou, not Qing Cheng Mountain; no readable page stated a street address.",
+    "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-814a-8cd7-c563a159f699",
+    "name": "Xu's Cuisine",
+    "status": "needs-you",
+    "note": "Search suggests a Wangjiang Road, Wuhou branch (chain has other branches) but no readable page stated the address.",
+    "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-8168-95ef-e7469b7240fa",
+    "name": "Chengdu Bib Gourmand hotpot",
+    "status": "not-a-place",
+    "note": "Generic meal description, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "3cbf3cdd-67a4-8139-8af5-f603538e2367",
+    "name": "June Six Salzburg",
+    "status": "needs-you",
+    "note": "Hotel is in Salzburg (search suggests Haunspergstrasse 41) but no readable page stated the address.",
+    "closed": false
+  },
+  {
+    "id": "3c7f3cdd-67a4-819d-b878-c1a1ec346156",
+    "name": "Felzl",
+    "status": "needs-you",
+    "note": "Several Felzl bakery-cafe branches in Vienna; area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "Lerchenfelder Str. 99-101, Wien, Austria",
+      "Kaiserstrasse 51-53, 1070 Wien",
+      "Pilgramgasse 24, 1050 Wien"
+    ]
+  },
+  {
+    "id": "3c7f3cdd-67a4-819b-afc9-f4f359443ae5",
+    "name": "Öfferl",
+    "status": "needs-you",
+    "note": "Several Oefferl branches in Vienna; area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "Wollzeile 31, 1010 Wien",
+      "Praterstrasse 26, Wien",
+      "Schottengasse 3, 1010 Wien"
+    ]
+  },
+  {
+    "id": "3c7f3cdd-67a4-811a-a01f-ed4fa9c0f7f8",
+    "name": "Joseph Brot",
+    "status": "needs-you",
+    "note": "Several Joseph Brot branches in Vienna; area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "Fuehrichgasse 6, 1010 Wien",
+      "Landstrasser Hauptstrasse 4, 1030 Wien",
+      "Naglergasse 9, 1010 Wien"
+    ]
+  },
+  {
+    "id": "3c7f3cdd-67a4-812e-aa91-df3fa6f66d62",
+    "name": "Clubbing and Techno",
+    "status": "not-a-place",
+    "note": "Activity, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "3c7f3cdd-67a4-8101-911c-fb9e88e46df2",
+    "name": "Leopoldstadt natural wine crawl",
+    "status": "not-a-place",
+    "note": "Venue given is a neighborhood, not a single place.",
+    "closed": false
+  },
+  {
+    "id": "3c6f3cdd-67a4-8100-8265-fda18daca09d",
+    "name": "Private transfer SLC to Montage, round trip",
+    "status": "not-a-place",
+    "note": "Transport leg, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "3c6f3cdd-67a4-8135-a749-f0f42264ba87",
+    "name": "Miners Day parade and Running of the Balls",
+    "status": "not-a-place",
+    "note": "Event, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "3c6f3cdd-67a4-8170-8468-f5c8245bcfec",
+    "name": "Car or driver for Main Street evenings",
+    "status": "not-a-place",
+    "note": "Transport service, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "3c6f3cdd-67a4-818f-a6be-d2af3847fd73",
+    "name": "Guided horseback ride",
+    "status": "not-a-place",
+    "note": "Activity, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "3c6f3cdd-67a4-81b4-bff8-d151353cb222",
+    "name": "Delta LAX-SLC (outbound)",
+    "status": "not-a-place",
+    "note": "Flight leg; the venue given is an airline, not a place.",
+    "closed": false
+  },
+  {
+    "id": "3c6f3cdd-67a4-81fc-abd0-f827e4a6b2ea",
+    "name": "Southwest SLC-LAX WN2856 (return)",
+    "status": "not-a-place",
+    "note": "Flight leg; the venue given is an airline, not a place.",
+    "closed": false
+  },
+  {
+    "id": "36df3cdd-67a4-8138-9f06-d6994ef60c29",
+    "name": "Villa e Corti – Wine Tasting",
+    "status": "found",
+    "address": "Via San Piero di Sotto 1, San Casciano in Val di Pesa, Firenze, Tuscany, Italy",
+    "sourceUrl": "https://www.yelp.com/biz/villa-le-corti-san-casciano-in-val-di-pesa",
+    "sourceTitle": "VILLA LE CORTI - Updated June 2026 - 28 Photos - Via San Piero di Sotto 1, San Casciano in Val di Pesa, Firenze, Italy - Wine Tours - Phone Number - Yelp",
+    "note": "Name is Villa Le Corti (spelling variant of Villa e Corti); Tuscany.",
+    "closed": false
+  },
+  {
+    "id": "365f3cdd-67a4-8193-b081-f7a0322c1d54",
+    "name": "Rhônexpress – Lyon Part-Dieu → LYS",
+    "status": "not-a-place",
+    "note": "Transport leg, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "365f3cdd-67a4-81c3-abb1-ec70e0ad4450",
+    "name": "Paris Bercy → Beaune (TER)",
+    "status": "not-a-place",
+    "note": "Transport leg, not a venue.",
+    "closed": false
   }
 ]
