@@ -812,5 +812,206 @@
       "12 Tamalpais Dr, Corte Madera, CA 94925",
       "1311 Bridgeway, Sausalito, CA 94965"
     ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ca-9287-dfbd75ef6411",
+    "name": "Puesto",
+    "status": "needs-you",
+    "note": "Several San Diego branches, area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "789 West Harbor Dr, Unit 155, San Diego, CA 92101",
+      "5010 Mission Center Rd, San Diego, CA 92108",
+      "1026 Wall St, La Jolla, San Diego, CA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81cd-8851-fa738ac76ac8",
+    "name": "Charter Oak",
+    "status": "needs-you",
+    "sourceUrl": "https://guide.michelin.com/us/en/california/saint-helena/restaurant/the-charter-oak",
+    "sourceTitle": "The Charter Oak – Saint Helena - a MICHELIN Guide Restaurant",
+    "note": "Only location is in St. Helena (Napa Valley), not Napa city; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "1050 Charter Oak Ave, St. Helena, CA 94574, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81e1-934f-c4e7c757a527",
+    "name": "Extraordinary Desserts",
+    "status": "needs-you",
+    "note": "Only found in San Diego (1430 Union St, San Diego, CA 92101); no Napa location found.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8100-b312-d0c9f77bc1d5",
+    "name": "Mian",
+    "status": "needs-you",
+    "note": "Several branches match the area, so cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "3333 Bristol St, Suite 1075, Costa Mesa, CA 92626",
+      "301 W Valley Blvd, Ste 114-115, San Gabriel, CA 91776",
+      "5263 W Adams Blvd, Los Angeles, CA 90016"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8101-8c78-cb5d5443c486",
+    "name": "Longo Seafood",
+    "status": "found",
+    "address": "7540 Garvey Ave, Suite A, Rosemead, CA 91770, USA",
+    "sourceUrl": "https://guide.michelin.com/us/en/california/rosemead/restaurant/longo-seafood",
+    "sourceTitle": "Longo Seafood – Rosemead - a MICHELIN Guide Restaurant",
+    "note": "Rosemead is in the 626 San Gabriel Valley.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8105-818f-f4796a2f94e0",
+    "name": "Luscious Dumplings",
+    "status": "needs-you",
+    "note": "Branches in both 626 (Monrovia) and LA (Beverly Hills); area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "919 W Duarte Rd, Monrovia, CA 91016",
+      "9605 S Santa Monica Blvd, Beverly Hills, CA 90210"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-810c-b957-d605821add69",
+    "name": "SIP & Sonder",
+    "status": "found",
+    "address": "108 S Market St, Inglewood, CA 90301, USA",
+    "sourceUrl": "https://www.yelp.com/biz/sip-and-sonder-inglewood-2",
+    "sourceTitle": "SIP & SONDER - CLOSED - Updated August 2026 - 486 Photos & 422 Reviews - 108 S Market St, Inglewood, California - Coffee & Tea - Phone Number - Menu - Yelp",
+    "note": "Yelp lists it as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-8111-a489-d34c55d731c6",
+    "name": "Seoulmates",
+    "status": "found",
+    "address": "11419 Santa Monica Blvd, Los Angeles, CA, USA",
+    "sourceUrl": "https://m.yelp.com/biz/seoulmates-los-angeles-2",
+    "sourceTitle": "SEOULMATES - Updated July 2026 - 12 Photos - 11419 Santa Monica Blvd, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Sawtelle-area branch; other branches are at 8320 W 3rd St (Beverly Grove) and Colony in Santa Monica.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-811b-8ca2-e54d5ee61282",
+    "name": "MillCross Coffee Bar and Kitchen",
+    "status": "found",
+    "address": "11050 Washington Blvd, Culver City, CA 90232, USA",
+    "sourceUrl": "https://www.yelp.com/biz/millcross-coffee-bar-and-kitchen-la-sabina-wine-bar-culver-city",
+    "sourceTitle": "MILLCROSS COFFEE BAR & KITCHEN / LA SABINA WINE BAR - Updated September 2026 - 1620 Photos & 856 Reviews - 11050 Washington Blvd, Culver City, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Single location in Culver City.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-814d-9034-ecd290b4daa8",
+    "name": "Mapo Dak Galbi",
+    "status": "found",
+    "address": "1008 S St Andrews Pl, Los Angeles, CA 90019, USA",
+    "sourceUrl": "https://www.yelp.com/biz/mapo-chicken-los-angeles",
+    "sourceTitle": "MAPO CHICKEN - Updated September 2026 - 542 Photos & 397 Reviews - 1008 S St Andrews Pl, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Mapo Dak Galbi, also listed as Mapo Chicken, in Koreatown LA.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-814d-b5da-f833024f5028",
+    "name": "Sogno Toscano",
+    "status": "found",
+    "address": "1512 Montana Ave, Santa Monica, CA 90403, USA",
+    "sourceUrl": "https://www.yelp.com/biz/sogno-toscano-santa-monica",
+    "sourceTitle": "SOGNO TOSCANO - Updated September 2026 - 409 Photos & 329 Reviews - 1512 Montana Ave, Santa Monica, California - Wine Bars - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Santa Monica cafe and wine bar.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8162-b26d-c5975aed3526",
+    "name": "Zooies Cookies",
+    "status": "needs-you",
+    "note": "More than one Culver City area location; area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "9815 National Blvd, Los Angeles, CA 90034",
+      "9355 Culver Blvd, Culver City, CA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8172-a5d3-fef10e91a01a",
+    "name": "Sichuan Impression",
+    "status": "needs-you",
+    "note": "Several branches match the area, so cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "13816 Red Hill Ave, Tustin, CA",
+      "11057 Santa Monica Blvd, Los Angeles, CA",
+      "235 W Main St Ste B, Alhambra, CA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8178-aea8-d033b2a00e72",
+    "name": "Wexler's Deli",
+    "status": "found",
+    "address": "616 Santa Monica Blvd, Santa Monica, CA 90401, USA",
+    "sourceUrl": "https://www.yelp.com/biz/wexlers-deli-santa-monica",
+    "sourceTitle": "WEXLER'S DELI - CLOSED - Updated June 2026 - 384 Photos & 466 Reviews - 616 Santa Monica Blvd, Santa Monica, California - Delis - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Yelp lists the Santa Monica branch as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-817e-89ed-d08b6d1516e6",
+    "name": "Farmhouse Thai",
+    "status": "needs-you",
+    "note": "Several branches match the area, so cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "1549 Shattuck Ave, Berkeley, CA 94709",
+      "710 Florida St, San Francisco, CA 94110",
+      "336 Water St, Oakland, CA 94607"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8185-9c9c-ecc474d962ea",
+    "name": "Petit Grain Boulangerie",
+    "status": "found",
+    "address": "1209 Wilshire Blvd, Santa Monica, CA 90403, USA",
+    "sourceUrl": "https://www.yelp.com/biz/petitgrain-boulangerie-santa-monica",
+    "sourceTitle": "PETITGRAIN BOULANGERIE - Updated September 2026 - 727 Photos & 356 Reviews - 1209 Wilshire Blvd, Santa Monica, California - Bakeries - Phone Number - Menu - Yelp",
+    "note": "Listed as Petitgrain Boulangerie.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-818a-913f-c2706133bbc3",
+    "name": "Tacos Los Cholos",
+    "status": "needs-you",
+    "note": "Branches in both Anaheim and Huntington Park; area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "821 S State College, Anaheim, CA",
+      "7127 Pacific Blvd, Huntington Park, CA 90255"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-818d-b091-c16db79c45f0",
+    "name": "Gracias Madre",
+    "status": "needs-you",
+    "note": "West Hollywood is open; Mission SF branch closed Aug 2023. Area lists both cities.",
+    "closed": false,
+    "alternatives": [
+      "8905 Melrose Ave, West Hollywood, CA 90069",
+      "2211 Mission St, San Francisco, CA (closed)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8190-94bc-e3a527fdd759",
+    "name": "Mae Malai Thai House of Noodles",
+    "status": "found",
+    "address": "5445 Hollywood Blvd, Unit A, Los Angeles, CA 90027, USA",
+    "sourceUrl": "https://maemalaithaihouseofnoodles.com/location/",
+    "sourceTitle": "Location & Hours | Mae Malai Thai | 5445 Hollywood Blvd unit a, LA",
+    "note": "Official location page.",
+    "closed": false
   }
 ]
