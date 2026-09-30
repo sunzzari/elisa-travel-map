@@ -22,23 +22,49 @@
   {
     "id": "312f3cdd-67a4-816e-807a-f1b55dcdbfd7",
     "name": "Fatted Calf Charcuterie",
-    "status": "needs-you",
-    "note": "Fatted Calf has two branches matching the two trip legs named (SF and Napa) - original SF Hayes Valley shop closed Oct 2022 and it reopened inside the Ferry Building (Embarcadero, SF); Napa shop is separate. Area lists both legs so branch is ambiguous.",
+    "status": "found",
+    "address": "1 Ferry Building, Suite 13, San Francisco, CA 94111, USA",
+    "sourceUrl": "https://www.yelp.com/biz/fatted-calf-san-francisco",
+    "sourceTitle": "FATTED CALF - Updated August 2026 - 496 Photos & 425 Reviews - 1 Ferry Building, San Francisco, California - Meat Shops - Phone Number - Menu - Yelp",
+    "note": "2 branches in the named areas: Ferry Building (SF) and Napa. The old Hayes Valley shop closed.",
     "closed": false,
-    "alternatives": [
-      "1 Ferry Plaza, Bldg #13, San Francisco, CA 94111, USA",
-      "644 First St, Suite C, Napa, CA 94559, USA"
+    "branches": [
+      {
+        "address": "1 Ferry Building, Suite 13, San Francisco, CA 94111, USA",
+        "sourceUrl": "https://www.yelp.com/biz/fatted-calf-san-francisco",
+        "sourceTitle": "FATTED CALF - Updated August 2026 - 496 Photos & 425 Reviews - 1 Ferry Building, San Francisco, California - Meat Shops - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "644 C 1st St, Napa, CA 94559, USA",
+        "sourceUrl": "https://www.yelp.com/biz/fatted-calf-charcuterie-napa",
+        "sourceTitle": "FATTED CALF CHARCUTERIE - Updated June 2026 - 612 Photos & 405 Reviews - 644 C 1st St, Napa, California - +17072563684 - Meat Shops - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-812f-bc74-df20dcf36443",
     "name": "Miette",
-    "status": "needs-you",
-    "note": "Two branches match the two named neighborhoods: Embarcadero (Ferry Building) is still open; the original Hayes Valley shop (449 Octavia St) closed permanently in Sept 2025 and Miette reopened a new flagship in Pacific Heights instead, not Hayes Valley. Ambiguous which branch was intended.",
+    "status": "found",
+    "address": "1 Ferry Building, Shop 10, San Francisco, CA 94111, USA",
+    "sourceUrl": "https://www.yelp.com/biz/miette-san-francisco-6",
+    "sourceTitle": "MIETTE - Updated August 2026 - 1518 Photos & 1595 Reviews - Ferry Building Shop 10, San Francisco, California - Bakeries - Phone Number - Yelp",
+    "note": "2 branches (Ferry Building open, Hayes Valley closed)",
     "closed": false,
-    "alternatives": [
-      "1 Ferry Building, Suite 10, San Francisco, CA 94111, USA",
-      "449 Octavia St, San Francisco, CA 94102, USA (closed Sept 2025; replaced by 2252 Fillmore St, San Francisco, CA)"
+    "branches": [
+      {
+        "address": "1 Ferry Building, Shop 10, San Francisco, CA 94111, USA",
+        "sourceUrl": "https://www.yelp.com/biz/miette-san-francisco-6",
+        "sourceTitle": "MIETTE - Updated August 2026 - 1518 Photos & 1595 Reviews - Ferry Building Shop 10, San Francisco, California - Bakeries - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "449 Octavia St, San Francisco, CA 94102, USA",
+        "sourceUrl": "https://www.yelp.com/biz/miette-san-francisco-5?start=40",
+        "sourceTitle": "MIETTE - CLOSED - Updated April 2026 - 645 Photos & 735 Reviews - 449 Octavia St, San Francisco, California - Bakeries - Phone Number - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -74,12 +100,25 @@
   {
     "id": "312f3cdd-67a4-814b-8e4c-e39b9198247b",
     "name": "Newport Seafood Restaurant",
-    "status": "needs-you",
-    "note": "Newport Seafood is a San Gabriel Valley chain (626 area code); two plausible branches near Pasadena - the original/flagship San Gabriel location and Rowland Heights. A third branch in Irvine is outside the 626/Pasadena area and excluded. Ambiguous which is meant.",
+    "status": "found",
+    "address": "518 W Las Tunas Dr, San Gabriel, CA 91776, USA",
+    "sourceUrl": "https://www.yelp.com/biz/newport-seafood-restaurant-san-gabriel-4",
+    "sourceTitle": "NEWPORT SEAFOOD RESTAURANT - Updated September 2026 - 8195 Photos & 3751 Reviews - 518 W Las Tunas Dr, San Gabriel, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 branches in 626 (San Gabriel, Rowland Heights)",
     "closed": false,
-    "alternatives": [
-      "518 W Las Tunas Dr, San Gabriel, CA 91776, USA",
-      "18441 E Colima Rd, Rowland Heights, CA 91748, USA"
+    "branches": [
+      {
+        "address": "518 W Las Tunas Dr, San Gabriel, CA 91776, USA",
+        "sourceUrl": "https://www.yelp.com/biz/newport-seafood-restaurant-san-gabriel-4",
+        "sourceTitle": "NEWPORT SEAFOOD RESTAURANT - Updated September 2026 - 8195 Photos & 3751 Reviews - 518 W Las Tunas Dr, San Gabriel, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "18441 E Colima Rd, Rowland Heights, CA 91748, USA",
+        "sourceUrl": "https://www.yelp.com/biz/newport-seafood-restaurant-rowland-heights",
+        "sourceTitle": "NEWPORT SEAFOOD RESTAURANT - Updated July 2026 - 1991 Photos & 1033 Reviews - 18441 E Colima Rd, Rowland Heights, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -142,12 +181,25 @@
   {
     "id": "312f3cdd-67a4-8147-a0f7-e9b92b28d137",
     "name": "Winston's Pies",
-    "status": "needs-you",
-    "note": "Winston Pies (brand name, no apostrophe) has branches in Brentwood and Marina del Rey (both named in the area field, confirmed), plus Studio City, Manhattan Beach and Palm Desert; no La Brea location was found. Ambiguous between the two LA-area branches named.",
+    "status": "found",
+    "address": "11678 San Vicente Blvd, Los Angeles, CA 90049, USA",
+    "sourceUrl": "https://www.yelp.com/biz/winston-pies-los-angeles-8",
+    "sourceTitle": "WINSTON PIES - Updated September 2026 - 546 Photos & 441 Reviews - 11678 San Vicente Blvd, Los Angeles, California - Desserts - Restaurant Reviews - Phone Number - Yelp",
+    "note": "2 branches (Brentwood, Marina del Rey); no La Brea branch found",
     "closed": false,
-    "alternatives": [
-      "11678 San Vicente Blvd, Los Angeles, CA 90049, USA",
-      "4625 Admiralty Way #105, Marina del Rey, CA 90292, USA"
+    "branches": [
+      {
+        "address": "11678 San Vicente Blvd, Los Angeles, CA 90049, USA",
+        "sourceUrl": "https://www.yelp.com/biz/winston-pies-los-angeles-8",
+        "sourceTitle": "WINSTON PIES - Updated September 2026 - 546 Photos & 441 Reviews - 11678 San Vicente Blvd, Los Angeles, California - Desserts - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "4625 Admiralty Way #105, Marina del Rey, CA 90292, USA",
+        "sourceUrl": "https://www.yelp.com/biz/winston-pies-marina-del-rey",
+        "sourceTitle": "WINSTON PIES - Updated August 2026 - 80 Photos & 93 Reviews - 4625 Admiralty Way, Marina del Rey, California - Desserts - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -473,25 +525,67 @@
   {
     "id": "312f3cdd-67a4-8139-aa04-c634a7f62396",
     "name": "Sightglass Coffee",
-    "status": "needs-you",
-    "note": "Several SF and LA branches match the area; pick one.",
+    "status": "found",
+    "address": "270 Seventh St, San Francisco, CA 94103, USA",
+    "sourceUrl": "https://www.yelp.com/biz/sightglass-coffee-san-francisco-7",
+    "sourceTitle": "SIGHTGLASS COFFEE - Updated September 2026 - 3278 Photos & 2230 Reviews - 270 Seventh St, San Francisco, California - Coffee Roasteries - Phone Number - Yelp",
+    "note": "4 branches (SoMa, Mission, Hollywood; 1 closed SoMa 3rd St)",
     "closed": false,
-    "alternatives": [
-      "270 Seventh St, San Francisco, CA 94103 (SoMa)",
-      "3014 20th St, San Francisco, CA 94110 (Mission)",
-      "7051 W Willoughby Ave, Los Angeles, CA 90038 (Hollywood)"
+    "branches": [
+      {
+        "address": "270 Seventh St, San Francisco, CA 94103, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sightglass-coffee-san-francisco-7",
+        "sourceTitle": "SIGHTGLASS COFFEE - Updated September 2026 - 3278 Photos & 2230 Reviews - 270 Seventh St, San Francisco, California - Coffee Roasteries - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "3014 20th St, San Francisco, CA 94110, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sightglass-coffee-san-francisco-3",
+        "sourceTitle": "SIGHTGLASS COFFEE - Updated September 2026 - 348 Reviews - 592 Photos - 3014 20th St, San Francisco, California - Coffee & Tea - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "7051 W Willoughby Ave, Los Angeles, CA 90038, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sightglass-coffee-los-angeles",
+        "sourceTitle": "SIGHTGLASS COFFEE - Updated September 2026 - 749 Photos & 492 Reviews - 7051 W Willoughby Ave, Los Angeles, California - Coffee & Tea - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "151 3rd St, San Francisco, CA 94103, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sightglass-coffee-san-francisco-5",
+        "sourceTitle": "SIGHTGLASS COFFEE - CLOSED - Updated February 2026 - 97 Photos & 50 Reviews - 151 3rd St, San Francisco, California - Cafes - Restaurant Reviews - Phone Number - Yelp",
+        "closed": true
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-813e-a53f-f65ae1eb2c7b",
     "name": "Johnny's Doughnuts",
-    "status": "needs-you",
-    "note": "Three branches match the area; pick one.",
+    "status": "found",
+    "address": "2257 Larkspur Landing Cir, Larkspur, CA 94939, USA",
+    "sourceUrl": "https://www.yelp.com/biz/johnny-doughnuts-larkspur",
+    "sourceTitle": "JOHNNY DOUGHNUTS - Updated March 2026 - 441 Photos & 227 Reviews - 2257 Larkspur Landing Cir, Larkspur, California - Donuts - Phone Number - Menu - Yelp",
+    "note": "3 branches (Larkspur, San Rafael, Pacific Heights SF)",
     "closed": false,
-    "alternatives": [
-      "2257 Larkspur Landing Circle, Larkspur, CA",
-      "1617 4th Street, San Rafael, CA",
-      "2404 California Street, San Francisco, CA (Pacific Heights)"
+    "branches": [
+      {
+        "address": "2257 Larkspur Landing Cir, Larkspur, CA 94939, USA",
+        "sourceUrl": "https://www.yelp.com/biz/johnny-doughnuts-larkspur",
+        "sourceTitle": "JOHNNY DOUGHNUTS - Updated March 2026 - 441 Photos & 227 Reviews - 2257 Larkspur Landing Cir, Larkspur, California - Donuts - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1617 4th St, San Rafael, CA 94901, USA",
+        "sourceUrl": "https://www.yelp.com/biz/johnny-doughnuts-san-rafael",
+        "sourceTitle": "JOHNNY DOUGHNUTS - Updated July 2026 - 654 Photos & 654 Reviews - 1617 4th St, San Rafael, California - Donuts - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2404 California St, San Francisco, CA 94115, USA",
+        "sourceUrl": "https://www.yelp.com/biz/johnny-doughnuts-san-francisco-6",
+        "sourceTitle": "JOHNNY DOUGHNUTS - Updated September 2026 - 176 Photos & 135 Reviews - 2404 California St, San Francisco, California - Donuts - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -517,12 +611,43 @@
   {
     "id": "312f3cdd-67a4-8197-8ba2-e8d96be817f5",
     "name": "Souvla",
-    "status": "needs-you",
-    "note": "Multiple Souvla branches in SF and Marin match the area; pick one. Only two addresses confirmed by search.",
+    "status": "found",
+    "address": "517 Hayes St, San Francisco, CA 94102, USA",
+    "sourceUrl": "https://www.yelp.com/biz/souvla-san-francisco",
+    "sourceTitle": "SOUVLA - Updated September 2026 - 2514 Photos & 1933 Reviews - 517 Hayes St, San Francisco, California - Greek - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "5 branches (Hayes Valley, Dogpatch, Marina, Mission, Larkspur)",
     "closed": false,
-    "alternatives": [
-      "2505 3rd Street, San Francisco, CA (Dogpatch)",
-      "758 Valencia St, San Francisco, CA 94110 (Mission)"
+    "branches": [
+      {
+        "address": "517 Hayes St, San Francisco, CA 94102, USA",
+        "sourceUrl": "https://www.yelp.com/biz/souvla-san-francisco",
+        "sourceTitle": "SOUVLA - Updated September 2026 - 2514 Photos & 1933 Reviews - 517 Hayes St, San Francisco, California - Greek - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2505 3rd St, San Francisco, CA 94107, USA",
+        "sourceUrl": "https://www.yelp.com/biz/souvla-san-francisco-13",
+        "sourceTitle": "SOUVLA - Updated August 2026 - 302 Photos & 150 Reviews - 2505 3rd St, San Francisco, California - Greek - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2272 Chestnut St, San Francisco, CA 94123, USA",
+        "sourceUrl": "https://www.yelp.com/biz/souvla-san-francisco-9",
+        "sourceTitle": "SOUVLA - Updated September 2026 - 405 Photos & 304 Reviews - 2272 Chestnut St, San Francisco, California - Greek - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "758 Valencia St, San Francisco, CA 94110, USA",
+        "sourceUrl": "https://www.yelp.com/biz/souvla-san-francisco-7",
+        "sourceTitle": "SOUVLA - Updated July 2026 - 864 Photos & 623 Reviews - 758 Valencia St, San Francisco, California - Greek - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1805 Larkspur Landing Cir, Larkspur, CA 94939, USA",
+        "sourceUrl": "https://www.yelp.com/biz/souvla-larkspur-5",
+        "sourceTitle": "SOUVLA - Updated July 2026 - 153 Photos & 109 Reviews - 1805 Larkspur Landing Cir, Larkspur, California - Greek - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -728,25 +853,67 @@
   {
     "id": "312f3cdd-67a4-8158-a5d3-ec07621e804d",
     "name": "Rustic Bakery",
-    "status": "needs-you",
-    "note": "Several branches in area (Larkspur, Novato, Tiburon), cannot pick one.",
+    "status": "found",
+    "address": "1139 Magnolia Ave, Larkspur, CA 94939, USA",
+    "sourceUrl": "https://www.yelp.com/biz/rustic-bakery-larkspur",
+    "sourceTitle": "Rustic Bakery - Updated August 2026 - 178 Photos - 277 Reviews - 1139 Magnolia Ave, Larkspur, California - Bakeries - Restaurant Reviews - Phone Number - Official Yelp Page",
+    "note": "5 branches (2 Larkspur, 2 Novato, Tiburon)",
     "closed": false,
-    "alternatives": [
-      "1139 Magnolia Ave, Larkspur, CA 94939",
-      "1407 Grant Ave, Novato, CA 94945",
-      "2017 Larkspur Landing Cir, Larkspur, CA 94939"
+    "branches": [
+      {
+        "address": "1139 Magnolia Ave, Larkspur, CA 94939, USA",
+        "sourceUrl": "https://www.yelp.com/biz/rustic-bakery-larkspur",
+        "sourceTitle": "Rustic Bakery - Updated August 2026 - 178 Photos - 277 Reviews - 1139 Magnolia Ave, Larkspur, California - Bakeries - Restaurant Reviews - Phone Number - Official Yelp Page",
+        "closed": false
+      },
+      {
+        "address": "2017 Larkspur Landing Cir, Larkspur, CA 94939, USA",
+        "sourceUrl": "https://www.yelp.com/biz/rustic-bakery-larkspur-3",
+        "sourceTitle": "RUSTIC BAKERY - Updated August 2026 - 661 Reviews - 705 Photos - 2017 Larkspur Landing Cir, Larkspur, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1407 Grant Ave, Novato, CA 94945, USA",
+        "sourceUrl": "https://www.yelp.com/biz/rustic-bakery-novato",
+        "sourceTitle": "RUSTIC BAKERY - Updated September 2026 - 268 Photos & 382 Reviews - 1407 Grant Ave, Novato, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "5800 Nave Dr, Novato, CA 94945, USA",
+        "sourceUrl": "https://www.yelp.com/biz/rustic-bakery-novato-5",
+        "sourceTitle": "RUSTIC BAKERY - Updated September 2026 - 23 Photos & 13 Reviews - 5800 Nave Dr, Novato, California - Bakeries - Restaurant Reviews - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1550 Tiburon Blvd, Tiburon, CA 94920, USA",
+        "sourceUrl": "https://www.yelp.com/biz/rustic-bakery-belvedere-tiburon",
+        "sourceTitle": "RUSTIC BAKERY - Updated August 2026 - 191 Photos & 192 Reviews - 1550 Tiburon Blvd, Belvedere Tiburon, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-815c-863e-dd00873f3531",
     "name": "Sol Food",
-    "status": "needs-you",
-    "note": "Branches in both Mill Valley and San Rafael, both in area.",
+    "status": "found",
+    "address": "401 Miller Ave, Mill Valley, CA 94941, USA",
+    "sourceUrl": "https://www.yelp.com/biz/sol-food-mill-valley-mill-valley",
+    "sourceTitle": "SOL FOOD MILL VALLEY - Updated August 2026 - 1060 Photos & 1200 Reviews - 401 Miller Ave, Mill Valley, California - Latin American - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 branches (Mill Valley, San Rafael)",
     "closed": false,
-    "alternatives": [
-      "401 Miller Ave, Mill Valley, CA 94941",
-      "901 Lincoln Ave, San Rafael, CA 94901",
-      "903 Lincoln Ave, San Rafael, CA 94901"
+    "branches": [
+      {
+        "address": "401 Miller Ave, Mill Valley, CA 94941, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sol-food-mill-valley-mill-valley",
+        "sourceTitle": "SOL FOOD MILL VALLEY - Updated August 2026 - 1060 Photos & 1200 Reviews - 401 Miller Ave, Mill Valley, California - Latin American - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "901 Lincoln Ave, San Rafael, CA 94901, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sol-food-san-rafael-3",
+        "sourceTitle": "SOL FOOD - Updated July 2026 - 4547 Photos & 5924 Reviews - 901 Lincoln Ave, San Rafael, California - Puerto Rican - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -794,35 +961,97 @@
   {
     "id": "312f3cdd-67a4-81a5-be51-f17c70d02353",
     "name": "Tacos el Gordo",
-    "status": "needs-you",
-    "note": "Two San Diego branches found, no Orange County address confirmed.",
+    "status": "found",
+    "address": "511 F St, San Diego, CA 92101, USA",
+    "sourceUrl": "https://www.yelp.com/biz/tacos-el-gordo-san-diego-7",
+    "sourceTitle": "TACOS EL GORDO - Updated September 2026 - 2931 Photos & 1726 Reviews - 511 F St, San Diego, California - Tacos - Restaurant Reviews - Phone Number - Yelp",
+    "note": "3 branches in San Diego area (Downtown, Palm Ave, Chula Vista); no OC branch confirmed",
     "closed": false,
-    "alternatives": [
-      "511 F St, San Diego, CA 92101",
-      "3265 Palm Ave, San Diego, CA 92154"
+    "branches": [
+      {
+        "address": "511 F St, San Diego, CA 92101, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tacos-el-gordo-san-diego-7",
+        "sourceTitle": "TACOS EL GORDO - Updated September 2026 - 2931 Photos & 1726 Reviews - 511 F St, San Diego, California - Tacos - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "3265 Palm Ave, San Diego, CA 92154, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tacos-el-gordo-san-diego",
+        "sourceTitle": "TACOS EL GORDO - Updated September 2026 - 1287 Photos & 1264 Reviews - 3265 Palm Ave, San Diego, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "556 Broadway, Chula Vista, CA 91910, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tacos-el-gordo-chula-vista-6",
+        "sourceTitle": "TACOS EL GORDO - Updated September 2026 - 7090 Reviews - 7431 Photos - 556 Broadway, Chula Vista, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-81ab-8bf8-ca99e5eb448e",
     "name": "Lighthouse Cafe",
-    "status": "needs-you",
-    "note": "Two branches, Corte Madera and Sausalito, both in area.",
+    "status": "found",
+    "address": "12 Tamalpais Dr, Corte Madera, CA 94925, USA",
+    "sourceUrl": "https://www.yelp.com/biz/lighthouse-cafe-corte-madera",
+    "sourceTitle": "LIGHTHOUSE CAFE - Updated June 2026 - 135 Photos & 178 Reviews - 12 Tamalpais Dr, Corte Madera, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Yelp",
+    "note": "2 branches (Corte Madera, Sausalito)",
     "closed": false,
-    "alternatives": [
-      "12 Tamalpais Dr, Corte Madera, CA 94925",
-      "1311 Bridgeway, Sausalito, CA 94965"
+    "branches": [
+      {
+        "address": "12 Tamalpais Dr, Corte Madera, CA 94925, USA",
+        "sourceUrl": "https://www.yelp.com/biz/lighthouse-cafe-corte-madera",
+        "sourceTitle": "LIGHTHOUSE CAFE - Updated June 2026 - 135 Photos & 178 Reviews - 12 Tamalpais Dr, Corte Madera, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1311 Bridgeway, Sausalito, CA 94965, USA",
+        "sourceUrl": "https://www.yelp.com/biz/lighthouse-cafe-sausalito",
+        "sourceTitle": "LIGHTHOUSE CAFE - Updated September 2026 - 770 Photos & 896 Reviews - 1311 Bridgeway, Sausalito, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-81ca-9287-dfbd75ef6411",
     "name": "Puesto",
-    "status": "needs-you",
-    "note": "Several San Diego branches, area does not pick one.",
+    "status": "found",
+    "address": "789 West Harbor Dr, Unit 155, San Diego, CA 92101, USA",
+    "sourceUrl": "https://www.yelp.com/biz/puesto-at-the-headquarters-san-diego-9",
+    "sourceTitle": "PUESTO AT THE HEADQUARTERS - Updated September 2026 - 6608 Photos & 5704 Reviews - 789 West Harbor Dr, San Diego, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "5 branches (3 San Diego, 2 Irvine)",
     "closed": false,
-    "alternatives": [
-      "789 West Harbor Dr, Unit 155, San Diego, CA 92101",
-      "5010 Mission Center Rd, San Diego, CA 92108",
-      "1026 Wall St, La Jolla, San Diego, CA"
+    "branches": [
+      {
+        "address": "789 West Harbor Dr, Unit 155, San Diego, CA 92101, USA",
+        "sourceUrl": "https://www.yelp.com/biz/puesto-at-the-headquarters-san-diego-9",
+        "sourceTitle": "PUESTO AT THE HEADQUARTERS - Updated September 2026 - 6608 Photos & 5704 Reviews - 789 West Harbor Dr, San Diego, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "5010 Mission Center Rd, San Diego, CA 92108, USA",
+        "sourceUrl": "https://www.yelp.com/biz/puesto-mission-valley-san-diego",
+        "sourceTitle": "PUESTO MISSION VALLEY - Updated August 2026 - 2279 Photos & 1600 Reviews - 5010 Mission Center Rd, San Diego, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1026 Wall St, La Jolla, CA 92037, USA",
+        "sourceUrl": "https://www.yelp.com/biz/puesto-la-jolla-la-jolla-5",
+        "sourceTitle": "PUESTO LA JOLLA - Updated September 2026 - 4179 Photos & 3997 Reviews - 1026 Wall St, La Jolla, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "8577 Irvine Center Dr, Irvine, CA 92618, USA",
+        "sourceUrl": "https://www.yelp.com/biz/puesto-irvine-8",
+        "sourceTitle": "PUESTO LOS OLIVOS - Updated September 2026 - 3122 Photos & 3120 Reviews - 8577 Irvine Center Dr, Irvine, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "3311 Michelson Dr, Irvine, CA 92612, USA",
+        "sourceUrl": "https://www.yelp.com/biz/puesto-park-place-irvine-irvine-2",
+        "sourceTitle": "PUESTO PARK PLACE - Updated September 2026 - 2274 Photos & 2584 Reviews - 3311 Michelson Dr, Irvine, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -847,13 +1076,31 @@
   {
     "id": "312f3cdd-67a4-8100-b312-d0c9f77bc1d5",
     "name": "Mian",
-    "status": "needs-you",
-    "note": "Several branches match the area, so cannot pick one.",
+    "status": "found",
+    "address": "3333 Bristol St, Costa Mesa, CA 92626, USA",
+    "sourceUrl": "https://www.yelp.com/biz/mian-costa-mesa-2",
+    "sourceTitle": "MIAN - Updated July 2026 - 1849 Photos & 1078 Reviews - 3333 Bristol St, Costa Mesa, California - Noodles - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "3 branches (Costa Mesa, San Gabriel, West Adams LA); the LA branch is on W Adams Blvd, next to Culver City.",
     "closed": false,
-    "alternatives": [
-      "3333 Bristol St, Suite 1075, Costa Mesa, CA 92626",
-      "301 W Valley Blvd, Ste 114-115, San Gabriel, CA 91776",
-      "5263 W Adams Blvd, Los Angeles, CA 90016"
+    "branches": [
+      {
+        "address": "3333 Bristol St, Costa Mesa, CA 92626, USA",
+        "sourceUrl": "https://www.yelp.com/biz/mian-costa-mesa-2",
+        "sourceTitle": "MIAN - Updated July 2026 - 1849 Photos & 1078 Reviews - 3333 Bristol St, Costa Mesa, California - Noodles - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "301 W Valley Blvd, Ste 114-115, San Gabriel, CA 91776, USA",
+        "sourceUrl": "https://www.yelp.com/biz/mian-san-gabriel-5",
+        "sourceTitle": "MIAN - Updated September 2026 - 3483 Photos & 1709 Reviews - 301 W Valley Blvd, San Gabriel, California - Szechuan - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "5263 W Adams Blvd, Los Angeles, CA 90016, USA",
+        "sourceUrl": "https://www.yelp.com/biz/mian-los-angeles-2",
+        "sourceTitle": "MIAN - Updated September 2026 - 871 Photos & 574 Reviews - 5263 W Adams Blvd, Los Angeles, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -869,12 +1116,25 @@
   {
     "id": "312f3cdd-67a4-8105-818f-f4796a2f94e0",
     "name": "Luscious Dumplings",
-    "status": "needs-you",
-    "note": "Branches in both 626 (Monrovia) and LA (Beverly Hills); area does not pick one.",
+    "status": "found",
+    "address": "919 W Duarte Rd, Monrovia, CA 91016, USA",
+    "sourceUrl": "https://www.yelp.com/biz/luscious-dumplings-monrovia",
+    "sourceTitle": "LUSCIOUS DUMPLINGS - Updated September 2026 - 1544 Photos & 960 Reviews - 919 W Duarte Rd, Monrovia, California - Noodles - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 branches in the 626: Monrovia (open) and San Gabriel (closed).",
     "closed": false,
-    "alternatives": [
-      "919 W Duarte Rd, Monrovia, CA 91016",
-      "9605 S Santa Monica Blvd, Beverly Hills, CA 90210"
+    "branches": [
+      {
+        "address": "919 W Duarte Rd, Monrovia, CA 91016, USA",
+        "sourceUrl": "https://www.yelp.com/biz/luscious-dumplings-monrovia",
+        "sourceTitle": "LUSCIOUS DUMPLINGS - Updated September 2026 - 1544 Photos & 960 Reviews - 919 W Duarte Rd, Monrovia, California - Noodles - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "704 W Las Tunas Dr, San Gabriel, CA 91776, USA",
+        "sourceUrl": "https://www.yelp.com/biz/luscious-dumplings-san-gabriel-3",
+        "sourceTitle": "LUSCIOUS DUMPLINGS - CLOSED - Updated May 2026 - 872 Photos & 866 Reviews - 704 W Las Tunas Dr, San Gabriel, California - Chinese - Restaurant Reviews - Phone Number - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -930,24 +1190,61 @@
   {
     "id": "312f3cdd-67a4-8162-b26d-c5975aed3526",
     "name": "Zooies Cookies",
-    "status": "needs-you",
-    "note": "More than one Culver City area location; area does not pick one.",
+    "status": "found",
+    "address": "9815 National Blvd, Los Angeles, CA 90034, USA",
+    "sourceUrl": "https://www.yelp.com/biz/zooies-los-angeles",
+    "sourceTitle": "ZOOIES - Updated September 2026 - 637 Photos & 532 Reviews - 9815 National Blvd, Los Angeles, California - Bakeries - Phone Number - Menu - Yelp",
+    "note": "2 branches in Culver City area",
     "closed": false,
-    "alternatives": [
-      "9815 National Blvd, Los Angeles, CA 90034",
-      "9355 Culver Blvd, Culver City, CA"
+    "branches": [
+      {
+        "address": "9815 National Blvd, Los Angeles, CA 90034, USA",
+        "sourceUrl": "https://www.yelp.com/biz/zooies-los-angeles",
+        "sourceTitle": "ZOOIES - Updated September 2026 - 637 Photos & 532 Reviews - 9815 National Blvd, Los Angeles, California - Bakeries - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "9355 Culver Blvd, Culver City, CA 90232, USA",
+        "sourceUrl": "https://www.toasttab.com/local/zooies-culver-city-9355-culver-blvd/r-05f6918a-4231-4e3d-aa30-a3c1504c3c9c",
+        "sourceTitle": "Zooies - Culver City 9355 Culver Blvd | Toast",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-8172-a5d3-fef10e91a01a",
     "name": "Sichuan Impression",
-    "status": "needs-you",
-    "note": "Several branches match the area, so cannot pick one.",
+    "status": "found",
+    "address": "13816 Red Hill Ave, Tustin, CA 92780, USA",
+    "sourceUrl": "https://www.yelp.com/biz/sichuan-impression-tustin-3",
+    "sourceTitle": "SICHUAN IMPRESSION - Updated September 2026 - 4286 Photos & 1553 Reviews - 13816 Red Hill Ave, Tustin, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "4 branches (Tustin, West LA, Alhambra, City of Industry)",
     "closed": false,
-    "alternatives": [
-      "13816 Red Hill Ave, Tustin, CA",
-      "11057 Santa Monica Blvd, Los Angeles, CA",
-      "235 W Main St Ste B, Alhambra, CA"
+    "branches": [
+      {
+        "address": "13816 Red Hill Ave, Tustin, CA 92780, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sichuan-impression-tustin-3",
+        "sourceTitle": "SICHUAN IMPRESSION - Updated September 2026 - 4286 Photos & 1553 Reviews - 13816 Red Hill Ave, Tustin, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "11057 Santa Monica Blvd, Los Angeles, CA 90025, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sichuan-impression-los-angeles-2",
+        "sourceTitle": "SICHUAN IMPRESSION - Updated July 2026 - 1732 Photos & 944 Reviews - 11057 Santa Monica Blvd, Los Angeles, California - Szechuan - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "235 W Main St, Ste B, Alhambra, CA 91801, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sichuan-impression-alhambra-3",
+        "sourceTitle": "SICHUAN IMPRESSION - Updated August 2026 - 1348 Reviews - 4483 Photos - 235 West Main St, Alhambra, California - Szechuan - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "18065 Gale Ave, City of Industry, CA 91748, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sichuan-impression-city-of-industry",
+        "sourceTitle": "SICHUAN IMPRESSION - Updated June 2026 - 1186 Photos & 410 Reviews - 18065 Gale Ave, City of Industry, California - Chinese - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -963,13 +1260,37 @@
   {
     "id": "312f3cdd-67a4-817e-89ed-d08b6d1516e6",
     "name": "Farmhouse Thai",
-    "status": "needs-you",
-    "note": "Several branches match the area, so cannot pick one.",
+    "status": "found",
+    "address": "1549 Shattuck Ave, Berkeley, CA 94709, USA",
+    "sourceUrl": "https://www.yelp.com/biz/farmhouse-kitchen-thai-cuisine-berkeley",
+    "sourceTitle": "FARMHOUSE KITCHEN THAI CUISINE - Updated July 2026 - 1266 Photos & 1209 Reviews - 1549 Shattuck Ave, Berkeley, California - Thai - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "4 branches (Berkeley, Mission SF, Oakland, West Adams LA); the LA branch is on W Adams Blvd, next to Culver City.",
     "closed": false,
-    "alternatives": [
-      "1549 Shattuck Ave, Berkeley, CA 94709",
-      "710 Florida St, San Francisco, CA 94110",
-      "336 Water St, Oakland, CA 94607"
+    "branches": [
+      {
+        "address": "1549 Shattuck Ave, Berkeley, CA 94709, USA",
+        "sourceUrl": "https://www.yelp.com/biz/farmhouse-kitchen-thai-cuisine-berkeley",
+        "sourceTitle": "FARMHOUSE KITCHEN THAI CUISINE - Updated July 2026 - 1266 Photos & 1209 Reviews - 1549 Shattuck Ave, Berkeley, California - Thai - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "710 Florida St, San Francisco, CA 94110, USA",
+        "sourceUrl": "https://www.yelp.com/biz/farmhouse-kitchen-thai-cuisine-san-francisco",
+        "sourceTitle": "FARMHOUSE KITCHEN THAI CUISINE - Updated September 2026 - 9546 Photos & 4440 Reviews - 710 Florida St, San Francisco, California - Thai - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "336 Water St, Oakland, CA 94607, USA",
+        "sourceUrl": "https://www.yelp.com/biz/farmhouse-kitchen-thai-cuisine-oakland",
+        "sourceTitle": "FARMHOUSE KITCHEN THAI CUISINE - Updated September 2026 - 7071 Photos & 2418 Reviews - 336 Water St, Oakland, California - Thai - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "5560 W Adams Blvd, Los Angeles, CA 90016, USA",
+        "sourceUrl": "https://www.yelp.com/biz/farmhouse-kitchen-thai-cuisine-la-los-angeles",
+        "sourceTitle": "FARMHOUSE KITCHEN THAI CUISINE LA - Updated September 2026 - 2614 Photos & 755 Reviews - 5560 W Adams Blvd, Los Angeles, California - Wine Bars - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
