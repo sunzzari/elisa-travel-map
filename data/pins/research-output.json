@@ -1306,23 +1306,49 @@
   {
     "id": "312f3cdd-67a4-818a-913f-c2706133bbc3",
     "name": "Tacos Los Cholos",
-    "status": "needs-you",
-    "note": "Branches in both Anaheim and Huntington Park; area does not pick one.",
+    "status": "found",
+    "address": "821 S State College Blvd, Anaheim, CA 92806, USA",
+    "sourceUrl": "https://www.yelp.com/biz/tacos-los-cholos-anaheim-anaheim",
+    "sourceTitle": "TACOS LOS CHOLOS - ANAHEIM - Updated September 2026 - 6489 Reviews - 5926 Photos - 821 S State College, Anaheim, California - Tacos - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 branches in the named areas: Anaheim and Huntington Park.",
     "closed": false,
-    "alternatives": [
-      "821 S State College, Anaheim, CA",
-      "7127 Pacific Blvd, Huntington Park, CA 90255"
+    "branches": [
+      {
+        "address": "821 S State College Blvd, Anaheim, CA 92806, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tacos-los-cholos-anaheim-anaheim",
+        "sourceTitle": "TACOS LOS CHOLOS - ANAHEIM - Updated September 2026 - 6489 Reviews - 5926 Photos - 821 S State College, Anaheim, California - Tacos - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "7127 Pacific Blvd, Huntington Park, CA 90255, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tacos-los-cholos-huntington-park-huntington-park",
+        "sourceTitle": "TACOS LOS CHOLOS - HUNTINGTON PARK - Updated July 2026 - 814 Photos & 817 Reviews - 7127 Pacific Blvd, Huntington Park, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-818d-b091-c16db79c45f0",
     "name": "Gracias Madre",
-    "status": "needs-you",
-    "note": "West Hollywood is open; Mission SF branch closed Aug 2023. Area lists both cities.",
+    "status": "found",
+    "address": "8905 Melrose Ave, West Hollywood, CA 90069, USA",
+    "sourceUrl": "https://www.yelp.com/biz/gracias-madre-west-hollywood-3",
+    "sourceTitle": "GRACIAS MADRE - Updated September 2026 - 6702 Photos & 5354 Reviews - 8905 Melrose Ave, West Hollywood, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 branches (West Hollywood open, Mission SF closed)",
     "closed": false,
-    "alternatives": [
-      "8905 Melrose Ave, West Hollywood, CA 90069",
-      "2211 Mission St, San Francisco, CA (closed)"
+    "branches": [
+      {
+        "address": "8905 Melrose Ave, West Hollywood, CA 90069, USA",
+        "sourceUrl": "https://www.yelp.com/biz/gracias-madre-west-hollywood-3",
+        "sourceTitle": "GRACIAS MADRE - Updated September 2026 - 6702 Photos & 5354 Reviews - 8905 Melrose Ave, West Hollywood, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2211 Mission St, San Francisco, CA 94110, USA",
+        "sourceUrl": "https://www.yelp.com/biz/gracias-madre-san-francisco?start=1340",
+        "sourceTitle": "GRACIAS MADRE - CLOSED - Updated February 2026 - 2633 Photos & 3582 Reviews - 2211 Mission St, San Francisco, California - Vegan - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -1350,13 +1376,37 @@
   {
     "id": "312f3cdd-67a4-819f-9618-db5b307ba2d8",
     "name": "Chip Cookies",
-    "status": "needs-you",
-    "note": "Chain with several branches across the named cities; Culver City and Huntington Beach listed as closed on Yelp.",
+    "status": "found",
+    "address": "3850 Barranca Pkwy, Suite D, Irvine, CA 92606, USA",
+    "sourceUrl": "https://www.yelp.com/biz/chip-cookies-irvine",
+    "sourceTitle": "CHIP COOKIES - Updated July 2026 - 203 Photos & 108 Reviews - 3850 Barranca Pkwy, Irvine, California - Bakeries - +19494844232 - Yelp",
+    "note": "4 branches (Irvine and Torrance open; Culver City and Huntington Beach closed)",
     "closed": false,
-    "alternatives": [
-      "3850 Barranca Pkwy, Irvine, CA 92606",
-      "25360 Crenshaw Blvd, Torrance, CA 90505",
-      "10716 Jefferson Blvd, Culver City, CA 90230 (listed closed)"
+    "branches": [
+      {
+        "address": "3850 Barranca Pkwy, Suite D, Irvine, CA 92606, USA",
+        "sourceUrl": "https://www.yelp.com/biz/chip-cookies-irvine",
+        "sourceTitle": "CHIP COOKIES - Updated July 2026 - 203 Photos & 108 Reviews - 3850 Barranca Pkwy, Irvine, California - Bakeries - +19494844232 - Yelp",
+        "closed": false
+      },
+      {
+        "address": "25360 Crenshaw Blvd, Torrance, CA 90505, USA",
+        "sourceUrl": "https://www.yelp.com/biz/chip-cookies-rolling-hills-torrance",
+        "sourceTitle": "CHIP COOKIES - ROLLING HILLS - Updated August 2026 - 335 Photos & 193 Reviews - 25360 Crenshaw Blvd, Torrance, California - Bakeries - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "10716 Jefferson Blvd, Culver City, CA 90230, USA",
+        "sourceUrl": "https://www.yelp.com/biz/chip-cookies-culver-city",
+        "sourceTitle": "CHIP COOKIES - CLOSED - Updated August 2026 - 105 Photos & 67 Reviews - 10716 Jefferson Blvd, Culver City, California - Bakeries - Phone Number - Menu - Yelp",
+        "closed": true
+      },
+      {
+        "address": "19738 Beach Blvd, Huntington Beach, CA 92648, USA",
+        "sourceUrl": "https://www.yelp.com/biz/chip-cookies-huntington-beach-3",
+        "sourceTitle": "CHIP COOKIES - CLOSED - Updated May 2026 - 161 Photos & 210 Reviews - 19738 Beach Blvd, Huntington Beach, California - Bakeries - Phone Number - Menu - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -1394,12 +1444,25 @@
   {
     "id": "312f3cdd-67a4-81cb-9c2f-ee4b43a69f66",
     "name": "Nook Coffee Bar",
-    "status": "needs-you",
-    "note": "Two branches match the named cities (Costa Mesa and Torrance); also a Rancho Cucamonga branch.",
+    "status": "found",
+    "address": "2930 Bristol St, Ste B105, Costa Mesa, CA 92626, USA",
+    "sourceUrl": "https://www.yelp.com/biz/nook-coffee-bar-costa-mesa",
+    "sourceTitle": "NOOK COFFEE BAR - Updated September 2026 - 1286 Photos - 748 Reviews - 2930 Bristol St, Costa Mesa, California - Coffee & Tea - Yelp",
+    "note": "2 branches (Costa Mesa, Torrance)",
     "closed": false,
-    "alternatives": [
-      "2930 Bristol St, Ste B105, Costa Mesa, CA 92626",
-      "980 W 190th St, Suite B1, Torrance, CA"
+    "branches": [
+      {
+        "address": "2930 Bristol St, Ste B105, Costa Mesa, CA 92626, USA",
+        "sourceUrl": "https://www.yelp.com/biz/nook-coffee-bar-costa-mesa",
+        "sourceTitle": "NOOK COFFEE BAR - Updated September 2026 - 1286 Photos - 748 Reviews - 2930 Bristol St, Costa Mesa, California - Coffee & Tea - Yelp",
+        "closed": false
+      },
+      {
+        "address": "980 W 190th St, Suite B1, Torrance, CA 90502, USA",
+        "sourceUrl": "https://www.yelp.com/biz/nook-coffee-bar-torrance-2",
+        "sourceTitle": "NOOK COFFEE BAR - Updated August 2026 - 1243 Photos & 646 Reviews - 980 W 190th St, Torrance, California - Coffee & Tea - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -1654,36 +1717,85 @@
   {
     "id": "312f3cdd-67a4-81be-a62a-ebd2e69d0664",
     "name": "Lunasia Dim Sum House",
-    "status": "needs-you",
-    "note": "Several branches in the area (Alhambra, Torrance, closed Pasadena); cannot pick one.",
+    "status": "found",
+    "address": "500 W Main St, Alhambra, CA 91801, USA",
+    "sourceUrl": "https://www.yelp.com/biz/lunasia-dimsum-house-alhambra-2",
+    "sourceTitle": "LUNASIA DIMSUM HOUSE - Updated September 2026 - 7239 Photos & 2440 Reviews - 500 W Main St, Alhambra, California - Dim Sum - Restaurant Reviews - Phone Number - Yelp",
+    "note": "3 branches (Alhambra, Torrance open; Pasadena closed)",
     "closed": false,
-    "alternatives": [
-      "500 W Main St, Alhambra, CA 91801",
-      "2575 E Pacific Coast Hwy, Torrance, CA 90505",
-      "239 E Colorado Blvd, Pasadena, CA 91101 (closed)"
+    "branches": [
+      {
+        "address": "500 W Main St, Alhambra, CA 91801, USA",
+        "sourceUrl": "https://www.yelp.com/biz/lunasia-dimsum-house-alhambra-2",
+        "sourceTitle": "LUNASIA DIMSUM HOUSE - Updated September 2026 - 7239 Photos & 2440 Reviews - 500 W Main St, Alhambra, California - Dim Sum - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2575 E Pacific Coast Hwy, Torrance, CA 90505, USA",
+        "sourceUrl": "https://www.yelp.com/biz/lunasia-dim-sum-house-torrance",
+        "sourceTitle": "LUNASIA DIM SUM HOUSE - Updated July 2026 - 1818 Photos & 683 Reviews - 2575 E Pacific Coast Hwy, Torrance, California - Dim Sum - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "239 E Colorado Blvd, Pasadena, CA 91101, USA",
+        "sourceUrl": "https://www.yelp.com/biz/lunasia-dim-sum-house-pasadena-4",
+        "sourceTitle": "LUNASIA DIM SUM HOUSE - CLOSED - Updated September 2026 - 5188 Photos & 2513 Reviews - 239 E Colorado Blvd, Pasadena, California - Dim Sum - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": true
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-81c0-95cb-cd8b74c072ef",
     "name": "Banh Mi My-Tho",
-    "status": "needs-you",
-    "note": "Multiple 626 branches (Alhambra and Rosemead); cannot pick one.",
+    "status": "found",
+    "address": "304 W Valley Blvd, Alhambra, CA 91803, USA",
+    "sourceUrl": "https://www.yelp.com/biz/banh-mi-my-tho-alhambra",
+    "sourceTitle": "BANH MI MY THO - Updated July 2026 - 1996 Photos & 2386 Reviews - 304 W Valley Blvd, Alhambra, California - Sandwiches - Restaurant Reviews - Phone Number - Yelp",
+    "note": "3 branches in 626 (Alhambra, 2 in Rosemead)",
     "closed": false,
-    "alternatives": [
-      "304 W Valley Blvd, Alhambra, CA 91801",
-      "9011 Garvey Ave, Rosemead, CA",
-      "7434 Garvey Ave, Rosemead, CA"
+    "branches": [
+      {
+        "address": "304 W Valley Blvd, Alhambra, CA 91803, USA",
+        "sourceUrl": "https://www.yelp.com/biz/banh-mi-my-tho-alhambra",
+        "sourceTitle": "BANH MI MY THO - Updated July 2026 - 1996 Photos & 2386 Reviews - 304 W Valley Blvd, Alhambra, California - Sandwiches - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "7434 Garvey Ave, Rosemead, CA 91770, USA",
+        "sourceUrl": "https://www.yelp.com/biz/banh-mi-my-tho-rosemead-5",
+        "sourceTitle": "BANH MI MY THO - Updated July 2026 - 446 Photos & 236 Reviews - 7434 Garvey Ave, Rosemead, California - Vietnamese - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "9011 Garvey Ave, Ste C, Rosemead, CA 91770, USA",
+        "sourceUrl": "https://www.yelp.com/biz/banh-mi-my-tho-rosemead-4",
+        "sourceTitle": "BANH MI MY THO - Updated July 2026 - 1084 Photos & 650 Reviews - 9011 Garvey Ave, Rosemead, California - Vietnamese - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-81ce-9121-f2d1e7991493",
     "name": "Holy Basil",
-    "status": "needs-you",
-    "note": "Two Downtown LA branches; cannot pick one.",
+    "status": "found",
+    "address": "2000 E 7th St, Los Angeles, CA 90021, USA",
+    "sourceUrl": "https://www.yelp.com/biz/holy-basil-los-angeles",
+    "sourceTitle": "HOLY BASIL - Updated September 2026 - 701 Photos & 397 Reviews - 2000 E. 7th St, Los Angeles, California - Thai - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 Downtown LA branches (7th St open, S Los Angeles St closed)",
     "closed": false,
-    "alternatives": [
-      "718 S Los Angeles St, Los Angeles, CA 90014",
-      "2000 E 7th St, Los Angeles, CA 90021"
+    "branches": [
+      {
+        "address": "2000 E 7th St, Los Angeles, CA 90021, USA",
+        "sourceUrl": "https://www.yelp.com/biz/holy-basil-los-angeles",
+        "sourceTitle": "HOLY BASIL - Updated September 2026 - 701 Photos & 397 Reviews - 2000 E. 7th St, Los Angeles, California - Thai - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "718 S Los Angeles St, Los Angeles, CA 90014, USA",
+        "sourceUrl": "https://www.yelp.com/biz/holy-basil-los-angeles?start=5",
+        "sourceTitle": "HOLY BASIL - CLOSED - Updated July 2026 - 688 Photos & 392 Reviews - 718 S Los Angeles St, Los Angeles, California - Thai - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -1759,12 +1871,31 @@
   {
     "id": "312f3cdd-67a4-8122-9bea-cbf180190fd7",
     "name": "Boy and the Bear",
-    "status": "needs-you",
-    "note": "Several branches in area (Culver City area roastery on Washington Blvd and Redondo Beach); cannot pick one.",
+    "status": "found",
+    "address": "12712 Washington Blvd, Suite 101, Los Angeles, CA 90066, USA",
+    "sourceUrl": "https://www.yelp.com/biz/the-boy-and-the-bear-los-angeles-7",
+    "sourceTitle": "THE BOY & THE BEAR - Updated July 2026 - 501 Photos & 410 Reviews - 12712 Washington Blvd, Los Angeles, California - Coffee Roasteries - Yelp",
+    "note": "3 branches (Culver City area, Redondo Beach, Pasadena)",
     "closed": false,
-    "alternatives": [
-      "12712 Washington Blvd, Suite 101, Los Angeles, CA 90066",
-      "350 N Pacific Coast Hwy, Redondo Beach, CA 90277"
+    "branches": [
+      {
+        "address": "12712 Washington Blvd, Suite 101, Los Angeles, CA 90066, USA",
+        "sourceUrl": "https://www.yelp.com/biz/the-boy-and-the-bear-los-angeles-7",
+        "sourceTitle": "THE BOY & THE BEAR - Updated July 2026 - 501 Photos & 410 Reviews - 12712 Washington Blvd, Los Angeles, California - Coffee Roasteries - Yelp",
+        "closed": false
+      },
+      {
+        "address": "350 N Pacific Coast Hwy, Redondo Beach, CA 90277, USA",
+        "sourceUrl": "https://www.yelp.com/biz/the-boy-and-the-bear-redondo-beach-3",
+        "sourceTitle": "THE BOY & THE BEAR - Updated September 2026 - 925 Photos & 775 Reviews - 350 N Pacific Coast Hwy, Redondo Beach, California - Coffee Roasteries - Yelp",
+        "closed": false
+      },
+      {
+        "address": "951 E Green St, Pasadena, CA 91106, USA",
+        "sourceUrl": "https://www.yelp.com/biz/the-boy-and-the-bear-pasadena",
+        "sourceTitle": "THE BOY & THE BEAR - Updated July 2026 - 489 Photos & 283 Reviews - 951 E Green St, Pasadena, California - Coffee & Tea - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -1790,12 +1921,25 @@
   {
     "id": "312f3cdd-67a4-8133-b9b6-f63ee23fe336",
     "name": "Artelice",
-    "status": "needs-you",
-    "note": "Branches in both Burbank and Sawtelle, both in area; cannot pick one.",
+    "status": "found",
+    "address": "117 N San Fernando Blvd, Burbank, CA 91502, USA",
+    "sourceUrl": "https://www.yelp.com/biz/artelice-patisserie-burbank",
+    "sourceTitle": "ARTELICE PATISSERIE - Updated September 2026 - 1773 Photos & 767 Reviews - 117 N San Fernando Blvd, Burbank, California - Patisserie/Cake Shop - Phone Number - Yelp",
+    "note": "2 branches (Burbank, Sawtelle)",
     "closed": false,
-    "alternatives": [
-      "117 N San Fernando Blvd, Burbank, CA 91502",
-      "11301 W Olympic Blvd, Ste 123, Los Angeles, CA 90064"
+    "branches": [
+      {
+        "address": "117 N San Fernando Blvd, Burbank, CA 91502, USA",
+        "sourceUrl": "https://www.yelp.com/biz/artelice-patisserie-burbank",
+        "sourceTitle": "ARTELICE PATISSERIE - Updated September 2026 - 1773 Photos & 767 Reviews - 117 N San Fernando Blvd, Burbank, California - Patisserie/Cake Shop - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "11301 W Olympic Blvd, Ste 123, Los Angeles, CA 90064, USA",
+        "sourceUrl": "https://www.yelp.com/biz/artelice-patisserie-los-angeles-2",
+        "sourceTitle": "ARTELICE PATISSERIE - Updated July 2026 - 2953 Photos & 1187 Reviews - 11301 W Olympic Blvd, Los Angeles, California - Patisserie/Cake Shop - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -1841,13 +1985,43 @@
   {
     "id": "312f3cdd-67a4-817b-95ef-cc9553755a50",
     "name": "Half & Half Tea Express",
-    "status": "needs-you",
-    "note": "Many SGV branches; cannot pick one.",
+    "status": "found",
+    "address": "141 N Atlantic Blvd, Ste 112, Monterey Park, CA 91754, USA",
+    "sourceUrl": "https://www.yelp.com/biz/half-and-half-tea-express-monterey-park",
+    "sourceTitle": "HALF & HALF TEA EXPRESS - Updated September 2026 - 2871 Photos - 2948 Reviews - 141 N Atlantic Blvd, Monterey Park, California - Juice Bars & Smoothies - Phone Number - Menu - Yelp",
+    "note": "5 SGV branches (Monterey Park, Arcadia, City of Industry, Rowland Heights open; Pasadena closed)",
     "closed": false,
-    "alternatives": [
-      "704 W Las Tunas Dr #2, San Gabriel, CA 91776",
-      "141 N Atlantic Blvd #112, Monterey Park, CA",
-      "1421 S Baldwin Ave, Arcadia, CA"
+    "branches": [
+      {
+        "address": "141 N Atlantic Blvd, Ste 112, Monterey Park, CA 91754, USA",
+        "sourceUrl": "https://www.yelp.com/biz/half-and-half-tea-express-monterey-park",
+        "sourceTitle": "HALF & HALF TEA EXPRESS - Updated September 2026 - 2871 Photos - 2948 Reviews - 141 N Atlantic Blvd, Monterey Park, California - Juice Bars & Smoothies - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1421 S Baldwin Ave, Arcadia, CA 91007, USA",
+        "sourceUrl": "https://www.yelp.com/biz/half-and-half-tea-express-arcadia-2",
+        "sourceTitle": "HALF AND HALF TEA EXPRESS - Updated September 2026 - 689 Photos & 469 Reviews - 1421 S Baldwin Ave, Arcadia, California - Coffee & Tea - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "18558 Gale Ave, Ste 152, City of Industry, CA 91748, USA",
+        "sourceUrl": "https://www.yelp.com/biz/half-and-half-tea-express-city-of-industry-3",
+        "sourceTitle": "HALF & HALF TEA EXPRESS - Updated September 2026 - 1265 Photos & 1043 Reviews - 18558 Gale Ave, City of Industry, California - Coffee & Tea - Yelp",
+        "closed": false
+      },
+      {
+        "address": "17575 Colima Rd, Ste C, Rowland Heights, CA 91748, USA",
+        "sourceUrl": "https://www.yelp.com/biz/half-and-half-tea-express-rowland-heights",
+        "sourceTitle": "HALF & HALF TEA EXPRESS - Updated September 2026 - 1623 Photos & 2011 Reviews - 17575 Colima Rd, Rowland Heights, California - Coffee & Tea - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "3007 Huntington Dr, Ste 104, Pasadena, CA 91107, USA",
+        "sourceUrl": "https://www.yelp.com/biz/half-and-half-tea-express-pasadena",
+        "sourceTitle": "HALF AND HALF TEA EXPRESS - CLOSED - Updated September 2026 - 990 Photos & 817 Reviews - 3007 Huntington Dr, Pasadena, California - Coffee & Tea - Phone Number - Menu - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -1885,34 +2059,109 @@
   {
     "id": "312f3cdd-67a4-81b7-911c-eb0e22579966",
     "name": "Porto's",
-    "status": "needs-you",
-    "note": "Several branches in area; cannot pick one.",
+    "status": "found",
+    "address": "3614 W Magnolia Blvd, Burbank, CA 91505, USA",
+    "sourceUrl": "https://www.yelp.com/biz/portos-bakery-and-cafe-burbank",
+    "sourceTitle": "PORTO’S BAKERY & CAFE - Updated September 2026 - 13678 Reviews - 14036 Photos - 3614 W Magnolia Blvd, Burbank, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "4 branches (Burbank, Glendale, Northridge, West Covina in 626)",
     "closed": false,
-    "alternatives": [
-      "3614 W Magnolia Blvd, Burbank, CA",
-      "315 N Brand Blvd, Glendale, CA",
-      "19467 Nordhoff St, Northridge, CA"
+    "branches": [
+      {
+        "address": "3614 W Magnolia Blvd, Burbank, CA 91505, USA",
+        "sourceUrl": "https://www.yelp.com/biz/portos-bakery-and-cafe-burbank",
+        "sourceTitle": "PORTO’S BAKERY & CAFE - Updated September 2026 - 13678 Reviews - 14036 Photos - 3614 W Magnolia Blvd, Burbank, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "315 N Brand Blvd, Glendale, CA 91203, USA",
+        "sourceUrl": "https://m.yelp.com/biz/portos-bakery-and-cafe-glendale",
+        "sourceTitle": "PORTO’S BAKERY & CAFE - Updated September 2026 - 14228 Photos & 12858 Reviews - 315 N Brand Blvd, Glendale, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "19467 Nordhoff St, Northridge, CA 91324, USA",
+        "sourceUrl": "https://www.yelp.com/biz/portos-bakery-and-cafe-northridge",
+        "sourceTitle": "PORTO’S BAKERY AND CAFE - Updated September 2026 - 2341 Reviews - 4502 Photos - 19467 Nordhoff St, Northridge, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "584 S Sunset Ave, West Covina, CA 91790, USA",
+        "sourceUrl": "https://www.yelp.com/biz/portos-bakery-and-cafe-west-covina-west-covina",
+        "sourceTitle": "PORTO’S BAKERY & CAFE - WEST COVINA - Updated September 2026 - 4430 Reviews - 10920 Photos - 584 S Sunset Ave, West Covina, California - Custom Cakes - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-81c3-baaa-f94adae414ce",
     "name": "Wanderlust Ice Cream",
-    "status": "needs-you",
-    "note": "Branches in both Sawtelle and Venice, both in area; cannot pick one.",
+    "status": "found",
+    "address": "2105 Sawtelle Blvd, Los Angeles, CA 90025, USA",
+    "sourceUrl": "https://www.yelp.com/biz/wanderlust-creamery-los-angeles-9",
+    "sourceTitle": "WANDERLUST CREAMERY - Updated September 2026 - 322 Reviews - 751 Photos - 2105 Sawtelle Blvd, Los Angeles, California - Ice Cream & Frozen Yogurt - Phone Number - Menu - Yelp",
+    "note": "3 branches (Sawtelle, Venice open; Fairfax near La Brea closed)",
     "closed": false,
-    "alternatives": [
-      "2105 Sawtelle Blvd, Los Angeles, CA 90025",
-      "609 Lincoln Blvd, Ste B, Los Angeles, CA 90291"
+    "branches": [
+      {
+        "address": "2105 Sawtelle Blvd, Los Angeles, CA 90025, USA",
+        "sourceUrl": "https://www.yelp.com/biz/wanderlust-creamery-los-angeles-9",
+        "sourceTitle": "WANDERLUST CREAMERY - Updated September 2026 - 322 Reviews - 751 Photos - 2105 Sawtelle Blvd, Los Angeles, California - Ice Cream & Frozen Yogurt - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "609 Lincoln Blvd, Ste B, Los Angeles, CA 90291, USA",
+        "sourceUrl": "https://www.yelp.com/biz/wanderlust-creamery-los-angeles-6",
+        "sourceTitle": "WANDERLUST CREAMERY - Updated August 2026 - 641 Reviews - 1153 Photos - 609 Lincoln Blvd, Los Angeles, California - Desserts - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "7920 W 3rd St, Los Angeles, CA 90048, USA",
+        "sourceUrl": "https://www.yelp.com/biz/wanderlust-creamery-los-angeles-7?hrid=_W-Gmyi0xxhfK3Q5nQw-FA",
+        "sourceTitle": "WANDERLUST CREAMERY - CLOSED - Updated September 2026 - 459 Photos & 255 Reviews - 7920 W 3rd St, Los Angeles, California - Ice Cream & Frozen Yogurt - Phone Number - Menu - Yelp",
+        "closed": true
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-81ce-9c5c-f5498fae93ed",
     "name": "Tartine",
-    "status": "needs-you",
-    "note": "Only confirmed Silver Lake branch; other listed areas unconfirmed, so cannot pick one.",
+    "status": "found",
+    "address": "3921 Sunset Blvd, Ste 101, Los Angeles, CA 90029, USA",
+    "sourceUrl": "https://www.yelp.com/biz/tartine-silverlake-los-angeles-4",
+    "sourceTitle": "TARTINE SILVERLAKE - Updated September 2026 - 336 Photos & 185 Reviews - 3921 Sunset Blvd, Los Angeles, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "5 branches (Silver Lake, Pasadena, 2 in Santa Monica, Sycamore next to West Hollywood); none found in Culver City",
     "closed": false,
-    "alternatives": [
-      "3921 Sunset Blvd, Ste 101, Los Angeles, CA 90029"
+    "branches": [
+      {
+        "address": "3921 Sunset Blvd, Ste 101, Los Angeles, CA 90029, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tartine-silverlake-los-angeles-4",
+        "sourceTitle": "TARTINE SILVERLAKE - Updated September 2026 - 336 Photos & 185 Reviews - 3921 Sunset Blvd, Los Angeles, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "277 W Green St, Pasadena, CA 91105, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tartine-pasadena-pasadena-2",
+        "sourceTitle": "Tartine - Pasadena - Official Yelp Page - Updated August 2026 - 520 Photos - 250 Reviews - 277 W Green St, Pasadena, California - Bakeries - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1925 Arizona Ave, Santa Monica, CA 90404, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tartine-santa-monica-8",
+        "sourceTitle": "TARTINE - Updated September 2026 - 1902 Photos & 888 Reviews - 1925 Arizona Ave, Santa Monica, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2903 Lincoln Blvd, Ste 110, Santa Monica, CA 90405, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tartine-santa-monica-7",
+        "sourceTitle": "TARTINE - Updated August 2026 - 68 Reviews - 82 Photos - 2903 Lincoln Blvd, Santa Monica, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "911 N Sycamore Ave, Los Angeles, CA 90038, USA",
+        "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g33252-d19500793-Reviews-Tartine-West_Hollywood_California.html",
+        "sourceTitle": "TARTINE, West Hollywood - 911 N Sycamore Ave, Hollywood - Restaurant Reviews & Phone Number - Tripadvisor",
+        "closed": false
+      }
     ]
   },
   {
@@ -1928,12 +2177,31 @@
   {
     "id": "312f3cdd-67a4-811c-a970-c43ffe67f40f",
     "name": "Haidilao",
-    "status": "needs-you",
-    "note": "Branches in both Arcadia (626) and Century City, both in area; cannot pick one.",
+    "status": "found",
+    "address": "10250 Santa Monica Blvd, Ste 2610, Los Angeles, CA 90067, USA",
+    "sourceUrl": "https://www.yelp.com/biz/haidilao-hotpot-century-city-los-angeles",
+    "sourceTitle": "Haidilao Hotpot - Updated August 2026 - 4193 Photos - 3403 Reviews - 10250 Santa Monica Blvd, Los Angeles, California - Hot Pot - Restaurant Reviews - Phone Number - Official Yelp Page",
+    "note": "3 branches (Century City, Arcadia, City of Industry in 626)",
     "closed": false,
-    "alternatives": [
-      "10250 Santa Monica Blvd, Ste 2610, Los Angeles, CA 90067",
-      "400 S Baldwin Ave, Ste 2015, Arcadia, CA"
+    "branches": [
+      {
+        "address": "10250 Santa Monica Blvd, Ste 2610, Los Angeles, CA 90067, USA",
+        "sourceUrl": "https://www.yelp.com/biz/haidilao-hotpot-century-city-los-angeles",
+        "sourceTitle": "Haidilao Hotpot - Updated August 2026 - 4193 Photos - 3403 Reviews - 10250 Santa Monica Blvd, Los Angeles, California - Hot Pot - Restaurant Reviews - Phone Number - Official Yelp Page",
+        "closed": false
+      },
+      {
+        "address": "400 S Baldwin Ave, Ste 2015, Arcadia, CA 91007, USA",
+        "sourceUrl": "https://www.yelp.com/biz/haidilao-hotpot-arcadia-4",
+        "sourceTitle": "HAIDILAO HOTPOT - Updated September 2026 - 5420 Photos & 4507 Reviews - 400 S Baldwin Ave, Arcadia, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1560 S Azusa Ave, Unit 178, City of Industry, CA 91748, USA",
+        "sourceUrl": "https://www.yelp.com/biz/haidilao-hotpot-city-of-industry-city-of-industry-2",
+        "sourceTitle": "HAIDILAO HOTPOT CITY OF INDUSTRY - Updated July 2026 - 5429 Photos & 4204 Reviews - 1560 S Azusa Ave, City of Industry, California - Do-It-Yourself Food - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -1949,13 +2217,25 @@
   {
     "id": "312f3cdd-67a4-813b-bdfa-c193d65c99f2",
     "name": "Pine & Crane",
-    "status": "needs-you",
-    "sourceUrl": "https://www.pineandcrane.com/silverlake",
-    "sourceTitle": "PINE & CRANE SILVERLAKE — Pine & Crane",
-    "note": "Area names both Downtown and Silver Lake branches; only the Silver Lake address was confirmed, so pick the branch you meant.",
+    "status": "found",
+    "address": "1521 Griffith Park Blvd, Los Angeles, CA 90026, USA",
+    "sourceUrl": "https://www.yelp.com/biz/pine-and-crane-los-angeles-5",
+    "sourceTitle": "PINE & CRANE - Updated September 2026 - 6027 Photos - 3454 Reviews - 1521 Griffith Park Blvd, Los Angeles, California - Taiwanese - Restaurant Reviews - Phone Number - Yelp",
+    "note": "2 branches (Silver Lake, Downtown)",
     "closed": false,
-    "alternatives": [
-      "1521 Griffith Park Blvd, Los Angeles, CA 90026, USA"
+    "branches": [
+      {
+        "address": "1521 Griffith Park Blvd, Los Angeles, CA 90026, USA",
+        "sourceUrl": "https://www.yelp.com/biz/pine-and-crane-los-angeles-5",
+        "sourceTitle": "PINE & CRANE - Updated September 2026 - 6027 Photos - 3454 Reviews - 1521 Griffith Park Blvd, Los Angeles, California - Taiwanese - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1120 S Grand Ave, Ste 101, Los Angeles, CA 90015, USA",
+        "sourceUrl": "https://www.yelp.com/biz/pine-and-crane-dtla-los-angeles-3",
+        "sourceTitle": "PINE & CRANE DTLA - Updated September 2026 - 2844 Photos & 1082 Reviews - 1120 S Grand Ave, Los Angeles, California - Taiwanese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -2001,29 +2281,103 @@
   {
     "id": "312f3cdd-67a4-8165-9320-ef6a1456d38b",
     "name": "Leo's Tacos",
-    "status": "needs-you",
-    "note": "Many Leo's Tacos Truck locations in LA and area does not pick one; choose a branch.",
-    "sourceUrl": "https://www.leostacostruck.com/locations",
-    "sourceTitle": "Locations",
+    "status": "found",
+    "address": "1515 S La Brea Ave, Los Angeles, CA 90019, USA",
+    "sourceUrl": "https://www.yelp.com/biz/leos-tacos-truck-los-angeles-11",
+    "sourceTitle": "LEO’S TACOS TRUCK - Updated September 2026 - 2548 Photos - 2510 Reviews - 1515 S La Brea Ave, Los Angeles, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "7 Leo's Tacos Truck branches in LA",
     "closed": false,
-    "alternatives": [
-      "1515 S La Brea Ave, Los Angeles, CA 90019",
-      "5525 Sunset Blvd, Los Angeles, CA 90028",
-      "415 Glendale Blvd, Los Angeles, CA 90026"
+    "branches": [
+      {
+        "address": "1515 S La Brea Ave, Los Angeles, CA 90019, USA",
+        "sourceUrl": "https://www.yelp.com/biz/leos-tacos-truck-los-angeles-11",
+        "sourceTitle": "LEO’S TACOS TRUCK - Updated September 2026 - 2548 Photos - 2510 Reviews - 1515 S La Brea Ave, Los Angeles, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "5525 Sunset Blvd, Los Angeles, CA 90028, USA",
+        "sourceUrl": "https://www.yelp.com/biz/leos-tacos-truck-los-angeles-5?start=40",
+        "sourceTitle": "LEO’S TACOS TRUCK - Updated July 2026 - 626 Photos & 525 Reviews - 5525 Sunset Blvd, Los Angeles, California - +13233462001 - Food Trucks - Yelp",
+        "closed": false
+      },
+      {
+        "address": "415 Glendale Blvd, Los Angeles, CA 90026, USA",
+        "sourceUrl": "https://www.yelp.com/biz/leos-tacos-truck-los-angeles-3",
+        "sourceTitle": "LEO’S TACOS TRUCK - Updated September 2026 - 692 Photos & 499 Reviews - 415 Glendale Blvd, Los Angeles, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "3485 S La Cienega Blvd, Los Angeles, CA 90016, USA",
+        "sourceUrl": "https://www.yelp.com/biz/leo-s-tacos-truck-los-angeles",
+        "sourceTitle": "LEO’S TACOS TRUCK - Updated August 2026 - 193 Photos & 167 Reviews - 3485 S La Cienega Blvd, Los Angeles, California - Tacos - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1533 Vermont Ave, Los Angeles, CA 90006, USA",
+        "sourceUrl": "https://www.yelp.com/biz/leos-tacos-truck-los-angeles-2",
+        "sourceTitle": "LEO’S TACOS TRUCK - Updated June 2026 - 88 Photos & 79 Reviews - 1533 Vermont Ave, Los Angeles, California - Food Trucks - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "15421 Parthenia St, Los Angeles, CA 91343, USA",
+        "sourceUrl": "https://www.yelp.com/biz/leos-tacos-truck-los-angeles-6",
+        "sourceTitle": "LEO’S TACOS TRUCK - Updated August 2026 - 167 Photos & 229 Reviews - 15421 Parthenia St, Los Angeles, California - Food Trucks - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2400 W Pico Blvd, Los Angeles, CA 90019, USA",
+        "sourceUrl": "https://www.yelp.com/biz/leos-tacos-truck-los-angeles-4",
+        "sourceTitle": "LEO’S TACOS TRUCK - Updated September 2026 - 111 Photos & 105 Reviews - 2400 W Pico Blvd, Los Angeles, California - Food Trucks - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-816c-bf86-d8e4b9acb0a7",
     "name": "Zinque",
-    "status": "needs-you",
-    "note": "Several Zinque branches in LA and area does not pick one; choose a branch.",
+    "status": "found",
+    "address": "939 S Broadway, Los Angeles, CA 90015, USA",
     "sourceUrl": "https://www.yelp.com/biz/zinqu%C3%A9-los-angeles",
     "sourceTitle": "ZINQUÉ - Updated September 2026 - 1095 Photos - 611 Reviews - 939 S Broadway, Los Angeles, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "6 LA-area branches (5 open, Westlake Village closed)",
     "closed": false,
-    "alternatives": [
-      "939 S Broadway, Los Angeles, CA 90015",
-      "10250 Santa Monica Blvd, Suite 2790, Los Angeles, CA 90067",
-      "1440 Lincoln Blvd, Los Angeles, CA 90291"
+    "branches": [
+      {
+        "address": "939 S Broadway, Los Angeles, CA 90015, USA",
+        "sourceUrl": "https://www.yelp.com/biz/zinqu%C3%A9-los-angeles",
+        "sourceTitle": "ZINQUÉ - Updated September 2026 - 1095 Photos - 611 Reviews - 939 S Broadway, Los Angeles, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "10250 Santa Monica Blvd, Suite 2790, Los Angeles, CA 90067, USA",
+        "sourceUrl": "https://www.yelp.com/biz/zinqu%C3%A9-los-angeles-3",
+        "sourceTitle": "ZINQUÉ - Updated September 2026 - 965 Photos & 563 Reviews - 10250 Santa Monica Blvd, Los Angeles, California - French - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1440 Lincoln Blvd, Los Angeles, CA 90291, USA",
+        "sourceUrl": "https://www.yelp.com/biz/zinqu%C3%A9-los-angeles-4",
+        "sourceTitle": "ZINQUÉ - Updated September 2026 - 582 Photos & 444 Reviews - 1440 Lincoln Blvd, Los Angeles, California - French - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "8684 Melrose Ave, West Hollywood, CA 90069, USA",
+        "sourceUrl": "https://www.yelp.com/biz/zinqu%C3%A9-west-hollywood-2",
+        "sourceTitle": "ZINQUÉ - Updated July 2026 - 1316 Photos & 1190 Reviews - 8684 Melrose, West Hollywood, California - French - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "23841 Malibu Rd, Spc 21, Malibu, CA 90265, USA",
+        "sourceUrl": "https://www.yelp.com/biz/zinqu%C3%A9-malibu",
+        "sourceTitle": "ZINQUE - Updated September 2026 - 382 Photos & 205 Reviews - 23841 Malibu Rd, Malibu, California - French - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2809 Agoura Rd, Westlake Village, CA 91361, USA",
+        "sourceUrl": "https://www.yelp.com/biz/zinqu%C3%A9-westlake-village-3",
+        "sourceTitle": "ZINQUÉ - CLOSED - Updated June 2026 - 129 Photos & 117 Reviews - 2809 Agoura Rd, Westlake Village, California - French - Restaurant Reviews - Phone Number - Yelp",
+        "closed": true
+      }
     ]
   },
   {
