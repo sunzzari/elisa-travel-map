@@ -2409,5 +2409,162 @@
     "status": "not-a-place",
     "note": "An activity, not a named venue.",
     "closed": false
+  },
+  {
+    "id": "3c1f3cdd-67a4-815c-ac0a-c0b65acad30f",
+    "name": "Piccala Dine LA",
+    "status": "found",
+    "address": "3337 S La Cienega Blvd, Los Angeles, CA 90016, USA",
+    "sourceUrl": "https://www.yelp.com/biz/picala-los-angeles",
+    "sourceTitle": "PICALA - Updated September 2026 - 188 Photos - 58 Reviews - 3337 S La Cienega Blvd, Los Angeles, California - Spanish - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Spelled Picala (spelling variant of Piccala), listed for Dine LA; other search snippets gave 3321 S La Cienega, Yelp says 3337.",
+    "closed": false
+  },
+  {
+    "id": "3c1f3cdd-67a4-814d-a650-ff2aa21cee18",
+    "name": "Thatchers Brentwood",
+    "status": "found",
+    "address": "11718 San Vicente Blvd, Los Angeles, CA 90049, USA",
+    "sourceUrl": "https://www.yelp.com/biz/thatchers-wine-los-angeles",
+    "sourceTitle": "THATCHER’S WINE - Updated August 2026 - 11718 San Vicente Blvd, Los Angeles, California - Beer, Wine & Spirits - Phone Number - Yelp",
+    "note": "Thatcher's Wine, Brentwood LA location (apostrophe spelling variant).",
+    "closed": false
+  },
+  {
+    "id": "3c1f3cdd-67a4-8180-9d21-ce8045b829e8",
+    "name": "Chapter 4",
+    "status": "found",
+    "address": "2476 Lincoln Blvd, Los Angeles, CA 90291, USA",
+    "sourceUrl": "https://www.yelp.com/biz/chapter-4-fine-rare-supply-los-angeles",
+    "sourceTitle": "CHAPTER 4 FINE RARE SUPPLY - Updated June 2026 - 106 Photos - 2476 Lincoln Blvd, Los Angeles, California - Beer, Wine & Spirits - Phone Number - Yelp",
+    "note": "Chapter 4 Fine + Rare Wine Supply; a different Chapter 4 whiskey lounge is in Fullerton (outside LA).",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-8105-8cc0-dc9a27209495",
+    "name": "MASH Date Night",
+    "status": "not-a-place",
+    "note": "Date night outing, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-811e-a27f-ce43ac2f6099",
+    "name": "Wine Tasting",
+    "status": "not-a-place",
+    "note": "Activity, not a named venue.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-812e-8198-dc2878cfe52b",
+    "name": "Asian Night Market",
+    "status": "not-a-place",
+    "note": "Generic event, no specific venue named.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-8155-b626-e594599d1cdb",
+    "name": "Nintendo World",
+    "status": "found",
+    "address": "100 Universal City Plaza, Universal City, CA 91608, USA",
+    "sourceUrl": "https://www.yelp.com/biz/super-nintendo-world-universal-city-3",
+    "sourceTitle": "SUPER NINTENDO WORLD - Updated September 2026 - 1692 Photos & 169 Reviews - 100 Universal City Plz, Universal City, California - Amusement Parks - Yelp",
+    "note": "Super Nintendo World at Universal Studios Hollywood.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-8161-ae1f-d78f751007cc",
+    "name": "Thai Food Market",
+    "status": "not-a-place",
+    "note": "Generic activity, no specific venue named.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-816e-8c35-eb387e564ed6",
+    "name": "Street Food Cinema",
+    "status": "not-a-place",
+    "note": "Event/outing, no fixed venue.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-8183-87ce-c6baf9daddec",
+    "name": "Malibu Waterfall Hike",
+    "status": "not-a-place",
+    "note": "Activity, no specific trail named.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-8193-9d6b-ee16a5dc6890",
+    "name": "Little Tokyo Farmers Market",
+    "status": "found",
+    "address": "244 S San Pedro St, Los Angeles, CA 90012, USA",
+    "sourceUrl": "https://www.yelp.com/biz/little-tokyo-farmers-market-los-angeles-4",
+    "sourceTitle": "LITTLE TOKYO FARMERS’ MARKET - Updated September 2026 - 11 Photos - 244 San Pedro St, Los Angeles, California - Farmers Market - Yelp",
+    "note": "Saturday market at JACCC Noguchi Plaza, Little Tokyo.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-819e-9886-cfea653d24c4",
+    "name": "First Fridays @ Natural History Museum",
+    "status": "found",
+    "address": "900 Exposition Blvd, Los Angeles, CA 90007, USA",
+    "sourceUrl": "https://www.yelp.com/biz/natural-history-museum-of-los-angeles-county-los-angeles-4",
+    "sourceTitle": "NATURAL HISTORY MUSEUM OF LOS ANGELES COUNTY - Updated September 2026 - 9570 Photos & 1514 Reviews - 900 Exposition Blvd, Los Angeles, California - Museums - Phone Number - Yelp",
+    "note": "Recurring event held at the Natural History Museum in Exposition Park; recording the host venue.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-81a1-97a5-d42e9a9e38d6",
+    "name": "Smorgasburg",
+    "status": "found",
+    "address": "777 S Alameda St, Los Angeles, CA 90021, USA",
+    "sourceUrl": "https://www.yelp.com/biz/smorgasburg-los-angeles",
+    "sourceTitle": "SMORGASBURG - Updated July 2026 - 10400 Photos & 1392 Reviews - 777 Alameda St, Los Angeles, California - Street Vendors - Phone Number - Menu - Yelp",
+    "note": "Smorgasburg LA, Sundays at ROW DTLA.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-81a5-aff5-e19f8fe267ee",
+    "name": "Pool & BBQ",
+    "status": "not-a-place",
+    "note": "Activity, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-81aa-bb4c-c604fc15e565",
+    "name": "Griffith Park & Los Feliz",
+    "status": "not-a-place",
+    "note": "Combined outing of an area and a park, not one venue.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-81b0-839d-c559a2bed63e",
+    "name": "Bonsai Bar",
+    "status": "found",
+    "address": "11573 Santa Monica Blvd, Los Angeles, CA 90025, USA",
+    "sourceUrl": "https://www.corner.inc/place/723541",
+    "sourceTitle": "Bonsai Bar - 11573 Santa Monica Blvd, Los Angeles | Corner",
+    "note": "Listed as Bonsai Bar; also known as Bonsai Coffee Bar at same address.",
+    "closed": false
+  },
+  {
+    "id": "324f3cdd-67a4-81e7-bba0-e5b1e7487aec",
+    "name": "Malibu Day",
+    "status": "not-a-place",
+    "note": "Day outing, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-810e-a365-c86a3f9d19c7",
+    "name": "Martial Arts",
+    "status": "not-a-place",
+    "note": "Activity, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-8110-86b3-eeca9dca64c3",
+    "name": "House Roll",
+    "status": "needs-you",
+    "note": "No venue named House Roll found in search results.",
+    "closed": false
   }
 ]
