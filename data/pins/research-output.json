@@ -610,5 +610,201 @@
     "sourceTitle": "HOUSE OF DIM SUM - Updated July 2026 - 1606 Photos & 767 Reviews - 735 Jackson St, San Francisco, California - Dim Sum - Restaurant Reviews - Phone Number - Menu - Yelp",
     "note": "Chinatown; a smaller listing exists at 1242 Stockton St.",
     "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8119-b6d7-e1c00d3df99a",
+    "name": "Marketbar SF",
+    "status": "found",
+    "address": "1 Ferry Building, San Francisco, CA 94111, USA",
+    "sourceUrl": "https://www.yelp.com/biz/marketbar-san-francisco-3",
+    "sourceTitle": "MARKETBAR - CLOSED - Updated July 2026 - 854 Photos & 1290 Reviews - 1 Ferry Bldg, San Francisco, California - New American - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Ferry Building on the Embarcadero; Yelp lists it as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-8125-b1a2-f9d1907d79cc",
+    "name": "Rooftop 25",
+    "status": "found",
+    "address": "25 Lusk St, San Francisco, CA 94107, USA",
+    "sourceUrl": "https://25lusk.com/rooftop-25/",
+    "sourceTitle": "Rooftop 25 – 25 Lusk",
+    "note": "Rooftop bar at 25 Lusk in SoMa.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8134-8203-ec2dba8cb2e7",
+    "name": "Rise Biscuits",
+    "status": "found",
+    "address": "6364 El Cajon Blvd, San Diego, CA 92115, USA",
+    "sourceUrl": "https://www.yelp.com/biz/rise-southern-biscuits-and-righteous-chicken-san-diego-2",
+    "sourceTitle": "RISE SOUTHERN BISCUITS & RIGHTEOUS CHICKEN - SAN DIEGO - Updated September 2026 - 837 Photos & 496 Reviews - 6364 El Cajon Blvd, San Diego, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Rise Southern Biscuits & Righteous Chicken, only San Diego location found.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-815e-b290-cce9c230b6cf",
+    "name": "Madison",
+    "status": "found",
+    "address": "4622 Park Blvd, San Diego, CA 92116, USA",
+    "sourceUrl": "https://www.madisononpark.com/",
+    "sourceTitle": "Madison on Park // San Diego",
+    "note": "Madison on Park restaurant in University Heights.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81a3-be44-d8050531dd87",
+    "name": "Popi's Oysterette",
+    "status": "found",
+    "address": "2095 Chestnut St, San Francisco, CA 94123, USA",
+    "sourceUrl": "https://www.popisoysterette.com/location/popis-oysterette/",
+    "sourceTitle": "Location & Hours | Popi’s Oysterette in San Francisco Marina",
+    "note": "Marina location on Chestnut at Steiner.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81d8-8c4e-f048bd2af796",
+    "name": "Purple Kow Boba",
+    "status": "found",
+    "address": "3620 Balboa St, San Francisco, CA 94121, USA",
+    "sourceUrl": "https://www.yelp.com/biz/purple-kow-san-francisco-2",
+    "sourceTitle": "PURPLE KOW - Updated September 2026 - 2153 Photos & 2656 Reviews - 3620 Balboa St, San Francisco, California - Coffee & Tea - Phone Number - Yelp",
+    "note": "Purple Kow in the Outer Richmond.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81de-ba9d-fde2d9a586b9",
+    "name": "Roxie Food Center",
+    "status": "found",
+    "address": "1901 San Jose Ave, San Francisco, CA 94112, USA",
+    "sourceUrl": "https://www.yelp.com/biz/roxie-food-center-san-francisco",
+    "sourceTitle": "ROXIE FOOD CENTER - Updated September 2026 - 636 Photos & 1244 Reviews - 1901 San Jose Ave, San Francisco, California - Grocery - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Deli at San Jose Ave and San Juan Ave, near Glen Park.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81e7-81c0-f1757cbdff06",
+    "name": "Neighbor Bakehouse",
+    "status": "found",
+    "address": "2343 3rd St, San Francisco, CA 94107, USA",
+    "sourceUrl": "https://www.yelp.com/biz/neighbor-bakehouse-san-francisco",
+    "sourceTitle": "NEIGHBOR BAKEHOUSE - Updated August 2026 - 2229 Photos & 1182 Reviews - 2343 3rd St, San Francisco, California - Bakeries - Phone Number - Menu - Yelp",
+    "note": "Bakery in Dogpatch.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8101-8c55-f2cff2a955da",
+    "name": "Bay Thai",
+    "status": "found",
+    "address": "809 4th St, San Rafael, CA 94901, USA",
+    "sourceUrl": "https://downtownsanrafael.org/bay-thai-cuisine/",
+    "sourceTitle": "Bay Thai Cuisine - Downtown San Rafael",
+    "note": "Listed as Bay Thai Cuisine in downtown San Rafael.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-811a-800b-e5dffcd3f38d",
+    "name": "Michael's Sourdough Sandwiches",
+    "status": "found",
+    "address": "999 Andersen Dr Ste 165, San Rafael, CA 94901, USA",
+    "sourceUrl": "https://www.yelp.com/biz/michaels-sourdough-sandwiches-san-rafael",
+    "sourceTitle": "MICHAEL’S SOURDOUGH SANDWICHES - Updated September 2026 - 147 Photos & 412 Reviews - 999 Andersen Dr, San Rafael, California - Sandwiches - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "San Rafael location.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-811d-bf0a-e15b6f88b808",
+    "name": "Guesthouse",
+    "status": "found",
+    "address": "850 College Ave, Kentfield, CA 94904, USA",
+    "sourceUrl": "https://www.guesthousemarin.com/",
+    "sourceTitle": "Guesthouse Marin | American Cuisine & Classic Cocktails",
+    "note": "Guesthouse Marin in Kentfield.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8158-a5d3-ec07621e804d",
+    "name": "Rustic Bakery",
+    "status": "needs-you",
+    "note": "Several branches in area (Larkspur, Novato, Tiburon), cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "1139 Magnolia Ave, Larkspur, CA 94939",
+      "1407 Grant Ave, Novato, CA 94945",
+      "2017 Larkspur Landing Cir, Larkspur, CA 94939"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-815c-863e-dd00873f3531",
+    "name": "Sol Food",
+    "status": "needs-you",
+    "note": "Branches in both Mill Valley and San Rafael, both in area.",
+    "closed": false,
+    "alternatives": [
+      "401 Miller Ave, Mill Valley, CA 94941",
+      "901 Lincoln Ave, San Rafael, CA 94901",
+      "903 Lincoln Ave, San Rafael, CA 94901"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8167-97c6-d3d8bf445a98",
+    "name": "Harmony",
+    "status": "found",
+    "address": "800 Redwood Hwy Ste 401, Mill Valley, CA 94941, USA",
+    "sourceUrl": "https://www.visitmarin.org/things-to-do/dining/asian-pacific-rim-restaurants/harmony-restaurant-at-strawberry-village-1/",
+    "sourceTitle": "Harmony Restaurant at Strawberry Village - Asian and Pacific Rim | Marin Convention & Visitors Bureau",
+    "note": "Harmony Restaurant at Strawberry Village, Mill Valley.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8169-a74a-cbd79c97c1de",
+    "name": "Rutherford Grill",
+    "status": "found",
+    "address": "1180 Rutherford Rd, Rutherford, CA 94573, USA",
+    "sourceUrl": "https://rutherfordgrill.com/",
+    "sourceTitle": "Rutherford Grill",
+    "note": "Single location; in Rutherford, Napa County (Napa Valley), not Napa city itself.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8193-9f99-cd2cc49013ef",
+    "name": "A & J Restaurant",
+    "status": "found",
+    "address": "14805 Jeffrey Rd Ste D, Irvine, CA 92618, USA",
+    "sourceUrl": "https://www.yelp.com/biz/a-and-j-restaurant-irvine",
+    "sourceTitle": "A & J Restaurant - Irvine, CA",
+    "note": "A&J Restaurant in Irvine.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8196-91ea-e9608eaae672",
+    "name": "Kientz Hall",
+    "status": "found",
+    "address": "625 San Anselmo Ave, San Anselmo, CA 94960, USA",
+    "sourceUrl": "https://www.yelp.com/biz/kientz-hall-san-anselmo",
+    "sourceTitle": "KIENTZ HALL - CLOSED - Updated September 2026 - 244 Photos - 241 Reviews - 625 San Anselmo Ave, San Anselmo, California - Mediterranean - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Yelp lists it as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-81a5-be51-f17c70d02353",
+    "name": "Tacos el Gordo",
+    "status": "needs-you",
+    "note": "Two San Diego branches found, no Orange County address confirmed.",
+    "closed": false,
+    "alternatives": [
+      "511 F St, San Diego, CA 92101",
+      "3265 Palm Ave, San Diego, CA 92154"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ab-8bf8-ca99e5eb448e",
+    "name": "Lighthouse Cafe",
+    "status": "needs-you",
+    "note": "Two branches, Corte Madera and Sausalito, both in area.",
+    "closed": false,
+    "alternatives": [
+      "12 Tamalpais Dr, Corte Madera, CA 94925",
+      "1311 Bridgeway, Sausalito, CA 94965"
+    ]
   }
 ]
