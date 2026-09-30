@@ -2566,5 +2566,156 @@
     "status": "needs-you",
     "note": "No venue named House Roll found in search results.",
     "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-811b-9eca-cb2195a948fa",
+    "name": "Spa Day",
+    "status": "not-a-place",
+    "note": "Generic activity, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-811d-971a-f3b42d6547a7",
+    "name": "Escape Room",
+    "status": "not-a-place",
+    "note": "Generic activity, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-8121-844c-f9499b5d2e27",
+    "name": "Sandbox VR",
+    "status": "needs-you",
+    "note": "Chain with several LA-area locations; area does not pick one.",
+    "closed": false,
+    "sourceUrl": "https://www.yelp.com/biz/sandbox-vr-los-angeles-4",
+    "sourceTitle": "SANDBOX VR - Updated September 2026 - 76 Photos & 88 Reviews - 3341 La Cienega Blvd, Los Angeles, California - Virtual Reality Centers - Phone Number - Schedule - Yelp",
+    "alternatives": [
+      "3341 La Cienega Blvd, Los Angeles, CA",
+      "6316 CA-27, Los Angeles, CA (Woodland Hills)"
+    ]
+  },
+  {
+    "id": "322f3cdd-67a4-813c-8a47-c9d818ca56ff",
+    "name": "Huntington Gardens + Post + 626",
+    "status": "not-a-place",
+    "note": "Multi-stop outing combining several places, not a single venue.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-8168-9b1c-ce6352bbd021",
+    "name": "Activate",
+    "status": "needs-you",
+    "note": "Name too ambiguous to identify a specific venue in Los Angeles.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-8172-91d2-dee89ed4508e",
+    "name": "DS Night Market",
+    "status": "needs-you",
+    "note": "Could not identify this event or its venue with a stated address.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-8183-856d-e3aeedda69a0",
+    "name": "Groupon",
+    "status": "not-a-place",
+    "note": "A deal, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-81a7-9f7a-d9442b4c0b20",
+    "name": "Pickleball",
+    "status": "not-a-place",
+    "note": "Generic activity, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-81bb-936a-f667daa1fa34",
+    "name": "Sunset & Dinner @ Yamashiro",
+    "status": "found",
+    "note": "Venue is Yamashiro Hollywood; Yelp title shows the address.",
+    "closed": false,
+    "address": "1999 N Sycamore Ave, Los Angeles (Hollywood), CA 90068, USA",
+    "sourceUrl": "https://www.yelp.com/biz/yamashiro-hollywood-los-angeles",
+    "sourceTitle": "YAMASHIRO HOLLYWOOD - Updated September 2026 - 12867 Photos & 7104 Reviews - 1999 N Sycamore Ave, Los Angeles, California - Japanese - Restaurant Reviews - Phone Number - Yelp"
+  },
+  {
+    "id": "322f3cdd-67a4-81f5-a86b-dcc275cfa936",
+    "name": "Calamigos Guest Ranch",
+    "status": "found",
+    "note": "Yelp listing with the exact name shows the address in Malibu.",
+    "closed": false,
+    "address": "327 S Latigo Canyon Rd, Malibu, CA 90265, USA",
+    "sourceUrl": "https://www.yelp.com/biz/calamigos-guest-ranch-malibu-2",
+    "sourceTitle": "CALAMIGOS GUEST RANCH - Updated August 2025 - 414 Photos & 131 Reviews - 327 S Latigo Canyon Rd, Malibu, California - Resorts - Phone Number - Yelp"
+  },
+  {
+    "id": "322f3cdd-67a4-81f8-8cab-df9a0f32d1bb",
+    "name": "Skewers Night",
+    "status": "not-a-place",
+    "note": "Meal/outing slot, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "322f3cdd-67a4-81f9-acb4-c7085c2f7b16",
+    "name": "Bonsai Bar and Sawtelle",
+    "status": "found",
+    "note": "Bonsai Bar in Sawtelle; page title shows address (Infatuation lists it under Sawtelle).",
+    "closed": false,
+    "address": "11573 Santa Monica Blvd, Los Angeles, CA 90025, USA",
+    "sourceUrl": "https://www.corner.inc/place/723541",
+    "sourceTitle": "Bonsai Bar - 11573 Santa Monica Blvd, Los Angeles | Corner"
+  },
+  {
+    "id": "3cff3cdd-67a4-817c-998c-f98a374c78f2",
+    "name": "102 House",
+    "status": "found",
+    "note": "Cantonese restaurant on the Bund, Shanghai; Trip.com title shows the address.",
+    "closed": false,
+    "address": "5F, The House of Roosevelt, Bund 27, 27 Zhongshan Dong Yi Road, Huangpu, Shanghai, China",
+    "sourceUrl": "https://us.trip.com/travel-guide/foods/shanghai-2-restaurant/102-house-131114290/",
+    "sourceTitle": "102 House restaurants, addresses, phone numbers, photos, real user reviews, 5F, The House of Roosevelt, Bund 27, 27 Zhongshan Dong Yi Road, Shanghai, Shanghai restaurant recommendations - Trip.com"
+  },
+  {
+    "id": "3cff3cdd-67a4-8187-9897-c7b9c2890d7c",
+    "name": "Private guide, 2 full days",
+    "status": "not-a-place",
+    "note": "Guided service, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-8191-927c-e3906a30c141",
+    "name": "Shanghai bakery morning",
+    "status": "not-a-place",
+    "note": "Meal slot/outing, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-8193-b7f9-f8bfdd9ff32a",
+    "name": "Lao Zhao Dong Ting Hotpot",
+    "status": "needs-you",
+    "note": "Likely the Dongting hot pot on Zhongshan San Rd, Chongqing, but no readable cited page states the address.",
+    "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-81c2-92da-fb60eef4321b",
+    "name": "Canton 8 (Huangpu)",
+    "status": "needs-you",
+    "note": "Michelin/Trip.com pages found but could not be read to confirm the address on the page (search summary only).",
+    "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-81ea-9233-e60dcf6193ad",
+    "name": "Ma'anshan Taoyuan Hotpot",
+    "status": "needs-you",
+    "note": "Located near Ma'anshan, Chongqing per search results, but no page found stating a street address.",
+    "closed": false
+  },
+  {
+    "id": "3cff3cdd-67a4-81f2-bb04-fb29bd2ffdad",
+    "name": "Xiaolongbao crawl",
+    "status": "not-a-place",
+    "note": "Food crawl outing, not a single venue.",
+    "closed": false
   }
 ]
