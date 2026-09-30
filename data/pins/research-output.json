@@ -231,5 +231,189 @@
     "status": "not-a-place",
     "note": "Describes a train route/leg, not a named venue; no venue given for this trip item.",
     "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-813a-b0b0-c9d1124d3e9f",
+    "name": "Mamie",
+    "status": "found",
+    "address": "7900 Santa Monica Blvd, West Hollywood, CA 90046, USA",
+    "sourceUrl": "https://www.yelp.com/biz/mamie-west-hollywood-2",
+    "sourceTitle": "MAMIE - Updated September 2026 - 858 Photos & 545 Reviews - 7900 Santa Monica Blvd, West Hollywood, California - Italian - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Mamie Italian Kitchen, matches OSM hit",
+    "closed": false
+  },
+  {
+    "id": "3e3f3cdd-67a4-81a6-9788-ec4edc73b6a6",
+    "name": "Nandao Rice & Noodle",
+    "status": "found",
+    "address": "101 W Garvey Ave, Ste 111, Monterey Park, CA 91754, USA",
+    "sourceUrl": "https://www.yelp.com/biz/nandao-rice-and-noodle-monterey-park",
+    "sourceTitle": "Nandao Rice & Noodle - Monterey Park, CA",
+    "note": "Address from search summary; Yelp page for the Monterey Park shop",
+    "closed": false
+  },
+  {
+    "id": "3e3f3cdd-67a4-81f6-a1f6-e572f1d2c7c1",
+    "name": "Congee King",
+    "status": "needs-you",
+    "note": "Only a Congee King LLC filing found; could not confirm a restaurant address (Huo Zhou Wang at 227 W Valley Blvd is a different name)",
+    "closed": false
+  },
+  {
+    "id": "3d3f3cdd-67a4-8198-a615-de6492be75e3",
+    "name": "The Oolong Tea Project",
+    "status": "found",
+    "address": "1015 S Nogales St, Ste 130, Rowland Heights, CA 91748, USA",
+    "sourceUrl": "https://www.yelp.com/biz/oolong-tea-project-rowland-heights",
+    "sourceTitle": "OOLONG TEA PROJECT - Updated September 2026 - 214 Photos & 93 Reviews - 1015 S Nogales St, Rowland Heights, California - Bubble Tea - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Only US location, in Rowland Heights",
+    "closed": false
+  },
+  {
+    "id": "3c2f3cdd-67a4-818f-a89c-f84165b16126",
+    "name": "Rokusho",
+    "status": "found",
+    "address": "6634 W Sunset Blvd, Los Angeles, CA 90028, USA",
+    "sourceUrl": "https://www.yelp.com/biz/rokusho-la-los-angeles",
+    "sourceTitle": "ROKUSHO LA - Updated July 2026 - 220 Photos & 64 Reviews - 6634 Sunset blvd, Los Angeles, California - Japanese - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Hollywood Japanese restaurant on Sunset Blvd",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8108-97de-d130379946fb",
+    "name": "Sichuan Tasty",
+    "status": "found",
+    "address": "1829 Clement St, San Francisco, CA 94121, USA",
+    "sourceUrl": "https://sichuantastyrestaurant.com/location/",
+    "sourceTitle": "Location & Hours | Sichuan Tasty Restaurant | 1829 Clement St",
+    "note": "In SF but Richmond District (Clement St), not Chinatown",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-810f-84c2-e556ed34654a",
+    "name": "Heng Heng Chicken Rice",
+    "status": "found",
+    "address": "5420 Hollywood Blvd, Los Angeles, CA 90027, USA",
+    "sourceUrl": "https://www.yelp.com/biz/heng-heng-chicken-rice-los-angeles",
+    "sourceTitle": "HENG HENG CHICKEN RICE - Updated September 2026 - 976 Photos & 430 Reviews - 5420 Hollywood Blvd, Los Angeles, California - Chicken Shop - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Thai Town branch; other branch is in Hawthorne",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8134-aa10-d288b14fe147",
+    "name": "Blue Magpie",
+    "status": "found",
+    "address": "41 W Huntington Dr, Arcadia, CA 91007, USA",
+    "sourceUrl": "https://www.yelp.com/biz/blue-magpie-arcadia",
+    "sourceTitle": "BLUE MAGPIE - Updated September 2026 - 1073 Photos & 168 Reviews - 41 W Huntington Dr, Arcadia, California - Bars - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Taiwanese restaurant in Arcadia",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8147-83a1-d90786b2f173",
+    "name": "Matu Philly Cheesesteak",
+    "status": "found",
+    "address": "239 S Beverly Dr, Ste 100, Beverly Hills, CA 90212, USA",
+    "sourceUrl": "https://www.yelp.com/biz/matu-beverly-hills-4",
+    "sourceTitle": "MATU - Updated July 2026 - 2243 Photos & 829 Reviews - 239 S Beverly Dr, Beverly Hills, California - Steakhouses - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Cheesesteaks by Matu, Beverly Hills",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8148-9209-de5e6f990b1a",
+    "name": "Ans Ice Cream",
+    "status": "needs-you",
+    "note": "Likely An's Dry Cleaning gelato, 3017 Adams Ave, San Diego 92116, but name not confirmed as same",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8158-b05b-dc88f8a9b239",
+    "name": "Parachute Bakery",
+    "status": "found",
+    "address": "1 Ferry Building, Ste 5, San Francisco, CA 94111, USA",
+    "sourceUrl": "https://www.parachutebakery.com/contact",
+    "sourceTitle": "Contact 2 - Parachute Bakery",
+    "note": "Ferry Building bakery in SF",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8169-a072-ee501b3d3c22",
+    "name": "Stoa Wine Bar",
+    "status": "found",
+    "address": "4210 Via Marina, Marina del Rey, CA 90292, USA",
+    "sourceUrl": "https://stoawinebar.com/pages/contact",
+    "sourceTitle": "Contact - Stoa Wine Bar and Market",
+    "note": "Stoa Wine Bar and Market",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-817b-928c-e0a2cca55052",
+    "name": "Mulberry",
+    "status": "found",
+    "address": "1800 Sawtelle Blvd, Los Angeles, CA 90025, USA",
+    "sourceUrl": "https://www.yelp.com/biz/the-mulberry-los-angeles",
+    "sourceTitle": "THE MULBERRY - Updated September 2026 - 523 Photos & 140 Reviews - 1800 Sawtelle Blvd, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Yelp",
+    "note": "The Mulberry, Sawtelle Blvd",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8186-b455-e720c1bc790a",
+    "name": "Gorigen Tori",
+    "status": "found",
+    "address": "4410 Sepulveda Blvd, Culver City, CA 90230, USA",
+    "sourceUrl": "https://www.yelp.com/biz/gokigen-tori-culver-city-2",
+    "sourceTitle": "GOKIGEN TORI - Updated July 2026 - 292 Photos & 98 Reviews - 4410 Sepulveda Blvd, Culver City, California - Izakaya - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Input spelled Gorigen; real name is Gokigen Tori, a Culver City yakitori spot",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-818e-8e70-d2c8b968c80e",
+    "name": "Keung Kee BBQ",
+    "status": "found",
+    "address": "420 Ord St, Ste 101, Los Angeles, CA 90012, USA",
+    "sourceUrl": "https://www.yelp.com/biz/keung-kee-bbq-los-angeles",
+    "sourceTitle": "KEUNG KEE BBQ - Updated June 2026 - 121 Photos & 54 Reviews - 420 Ord St, Los Angeles, California - +12136803608 - Chinese - Yelp",
+    "note": "Chinatown LA",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8190-a96e-f80d83a59fcc",
+    "name": "Golden House",
+    "status": "found",
+    "address": "9608 Las Tunas Dr, Temple City, CA 91780, USA",
+    "sourceUrl": "https://www.yelp.com/biz/a-golden-house-temple-city",
+    "sourceTitle": "A GOLDEN HOUSE - Updated August 2026 - 269 Photos - 107 Reviews - 9608 Las Tunas Dr, Temple City, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Listed as A Golden House; only Golden House found in Temple City",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8192-acf2-c0ddba6f9a51",
+    "name": "Bar Etoile",
+    "status": "found",
+    "address": "632 N Western Ave, Los Angeles, CA 90004, USA",
+    "sourceUrl": "https://www.baretoile.com/visit",
+    "sourceTitle": "Visit - Bar Etoile",
+    "note": "East Hollywood wine bar",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b0-8e57-e5640d62f748",
+    "name": "Monsieur Marcel",
+    "status": "found",
+    "address": "6333 W 3rd St, Ste 150, Los Angeles, CA 90036, USA",
+    "sourceUrl": "https://www.yelp.com/biz/monsieur-marcel-bistro-los-angeles-2",
+    "sourceTitle": "MONSIEUR MARCEL BISTRO - Updated September 2026 - 1867 Photos & 1128 Reviews - 6333 W 3rd St, Los Angeles, California - French - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Farmers Market next to The Grove; bistro and market share this address",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81ba-b694-ce4df311976c",
+    "name": "Almost Famous",
+    "status": "found",
+    "address": "15301 Ventura Blvd, Ste P17, Sherman Oaks, CA 91403, USA",
+    "sourceUrl": "https://shermanoaksgalleria.com/store/almost-famous/",
+    "sourceTitle": "Almost Famous - Sherman Oaks Galleria",
+    "note": "Burger shop in Sherman Oaks Galleria",
+    "closed": false
   }
 ]
