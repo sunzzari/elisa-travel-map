@@ -1614,5 +1614,208 @@
       "10250 Santa Monica Blvd, Ste 2610, Los Angeles, CA 90067",
       "400 S Baldwin Ave, Ste 2015, Arcadia, CA"
     ]
+  },
+  {
+    "id": "312f3cdd-67a4-8130-838e-dee3cdd90ff7",
+    "name": "Hotel Erwin Rooftop Bar",
+    "status": "found",
+    "address": "1697 Pacific Ave, Venice, CA 90291, USA",
+    "sourceUrl": "https://www.hotelerwin.com/food-drink/",
+    "sourceTitle": "Food & Drink | Hotel Erwin Venice Beach | Restaurants & Bars",
+    "note": "Rooftop bar is at Hotel Erwin, Venice.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-813b-bdfa-c193d65c99f2",
+    "name": "Pine & Crane",
+    "status": "needs-you",
+    "sourceUrl": "https://www.pineandcrane.com/silverlake",
+    "sourceTitle": "PINE & CRANE SILVERLAKE — Pine & Crane",
+    "note": "Area names both Downtown and Silver Lake branches; only the Silver Lake address was confirmed, so pick the branch you meant.",
+    "closed": false,
+    "alternatives": [
+      "1521 Griffith Park Blvd, Los Angeles, CA 90026, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8140-af73-cd0a8b7c71dc",
+    "name": "Milk Bar LA",
+    "status": "found",
+    "address": "7150 Melrose Ave, Los Angeles, CA 90046, USA",
+    "sourceUrl": "https://milkbarstore.com/pages/melrose-flagship",
+    "sourceTitle": "Milk Bar LA Flagship - Cakes, Cookies & Desserts Plus Delivery",
+    "note": "Melrose Ave flagship.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8153-a344-c233a575a9c7",
+    "name": "Girl and the Goat",
+    "status": "found",
+    "address": "555 Mateo St, Suite 300, Los Angeles, CA 90013, USA",
+    "sourceUrl": "https://downtownla.com/go/girl-and-the-goat",
+    "sourceTitle": "Girl & the Goat | Downtown LA",
+    "note": "Arts District location on Mateo St.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8156-af5e-daa5aa0f6012",
+    "name": "Pijja Palace",
+    "status": "found",
+    "address": "2711 W Sunset Blvd, Los Angeles, CA 90026, USA",
+    "sourceUrl": "https://www.timeout.com/los-angeles/restaurants/pijja-palace",
+    "sourceTitle": "Pijja Palace | Restaurants in Silver Lake, Los Angeles",
+    "note": "Silver Lake restaurant on Sunset Blvd.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8161-a2a1-dac43b1e0a35",
+    "name": "Roger Room",
+    "status": "found",
+    "address": "370 N La Cienega Blvd, West Hollywood, CA 90048, USA",
+    "sourceUrl": "https://www.therogerroom.com/",
+    "sourceTitle": "The Roger Room",
+    "note": "Official site of the West Hollywood bar.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8165-9320-ef6a1456d38b",
+    "name": "Leo's Tacos",
+    "status": "needs-you",
+    "note": "Many Leo's Tacos Truck locations in LA and area does not pick one; choose a branch.",
+    "sourceUrl": "https://www.leostacostruck.com/locations",
+    "sourceTitle": "Locations",
+    "closed": false,
+    "alternatives": [
+      "1515 S La Brea Ave, Los Angeles, CA 90019",
+      "5525 Sunset Blvd, Los Angeles, CA 90028",
+      "415 Glendale Blvd, Los Angeles, CA 90026"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-816c-bf86-d8e4b9acb0a7",
+    "name": "Zinque",
+    "status": "needs-you",
+    "note": "Several Zinque branches in LA and area does not pick one; choose a branch.",
+    "sourceUrl": "https://www.yelp.com/biz/zinqu%C3%A9-los-angeles",
+    "sourceTitle": "ZINQUÉ - Updated September 2026 - 1095 Photos - 611 Reviews - 939 S Broadway, Los Angeles, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "closed": false,
+    "alternatives": [
+      "939 S Broadway, Los Angeles, CA 90015",
+      "10250 Santa Monica Blvd, Suite 2790, Los Angeles, CA 90067",
+      "1440 Lincoln Blvd, Los Angeles, CA 90291"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8178-bdc3-e3df514ef476",
+    "name": "Neat Bar",
+    "status": "found",
+    "address": "11780 W Pico Blvd, Los Angeles, CA, USA",
+    "sourceUrl": "https://neat.la/west-los-angeles/sawtelle/",
+    "sourceTitle": "Cocktail Bar in Sawtelle, Los Angeles - Neat LA",
+    "note": "Sawtelle cocktail bar; postal code not stated in source.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-817c-8a7c-dbab802f4a6c",
+    "name": "The Rose Venice",
+    "status": "found",
+    "address": "220 Rose Ave, Venice, CA 90291, USA",
+    "sourceUrl": "https://www.yelp.com/biz/the-rose-venice-venice",
+    "sourceTitle": "THE ROSE VENICE - CLOSED - Updated September 2026 - 3238 Photos - 2670 Reviews - 220 Rose Ave, Venice, California - Cafes - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Listed as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-818a-8f8d-f7d838bf913b",
+    "name": "Kateen",
+    "status": "found",
+    "address": "6516 Selma Ave, Los Angeles, CA 90028, USA",
+    "sourceUrl": "https://www.timeout.com/los-angeles/restaurants/kateen",
+    "sourceTitle": "Ka'Teen | Restaurants in Hollywood, Los Angeles",
+    "note": "Ka'Teen in Hollywood.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8195-94b8-d1aa80a59aa0",
+    "name": "Main Chick",
+    "status": "found",
+    "address": "11419 Santa Monica Blvd, Los Angeles, CA 90025, USA",
+    "sourceUrl": "https://www.yelp.com/biz/main-chick-hot-chicken-los-angeles-3",
+    "sourceTitle": "MAIN CHICK HOT CHICKEN - Updated September 2026 - 545 Photos & 628 Reviews - 11419 Santa Monica Blvd, Los Angeles, California - Chicken Shop - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Sawtelle branch of Main Chick Hot Chicken; a second branch on Victory Blvd is outside the area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81aa-9038-e9074f2d11c1",
+    "name": "HiHo Cheeseburger",
+    "status": "needs-you",
+    "note": "Multiple branches across the listed areas; Studio City address not found.",
+    "sourceUrl": "https://www.hiho.la/hh-marina/",
+    "sourceTitle": "Marina del Rey - HiHo Cheeseburger",
+    "closed": false,
+    "alternatives": [
+      "4625 Admiralty Way, #109, Marina Del Rey, CA 90292",
+      "1320 2nd Street Ste. B, Santa Monica, CA 90401"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ae-8af4-cd09a4adc517",
+    "name": "For the Win Burger",
+    "status": "needs-you",
+    "note": "Both Hollywood and Glendale branches fall in the area; choose one.",
+    "sourceUrl": "https://www.forthewinla.com/hollywood",
+    "sourceTitle": "For The Win Hollywood | Best Smash Burgers in Hollywood, Los Angeles, CA",
+    "closed": false,
+    "alternatives": [
+      "6221 Franklin Ave, Los Angeles, CA 90028",
+      "1200 S Brand Blvd #3, Glendale, CA 91204"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81af-80b6-dd399fc194f7",
+    "name": "La Cha Cha Cha",
+    "status": "found",
+    "address": "812 E 3rd St, Los Angeles, CA 90013, USA",
+    "sourceUrl": "https://www.yelp.com/biz/la-cha-cha-ch%C3%A1-los-angeles-2",
+    "sourceTitle": "LA CHA CHA CHÁ - CLOSED - Updated July 2026 - 2290 Photos & 916 Reviews - 812 E 3rd St, Los Angeles, California - Mexican - Restaurant Reviews - Menu - Yelp",
+    "note": "La Cha Cha Cha rooftop in the Arts District; Yelp lists it as closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-81e0-a0eb-fe656839dc41",
+    "name": "Levain Bakery",
+    "status": "found",
+    "address": "227 N Larchmont Blvd, Los Angeles, CA 90004, USA",
+    "sourceUrl": "https://levainbakery.com/pages/larchmont",
+    "sourceTitle": "Larchmont Village, Los Angeles – Levain Bakery",
+    "note": "Larchmont Village branch.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81eb-98d3-c87b58a20b07",
+    "name": "Teleferic",
+    "status": "found",
+    "address": "11930 San Vicente Blvd, Los Angeles, CA, USA",
+    "sourceUrl": "https://www.telefericbarcelona.com/los-angeles",
+    "sourceTitle": "Spanish Tapas & Paella in Brentwood LA | Telefèric Barcelona",
+    "note": "Brentwood location; postal code not stated in source.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81f0-958d-f0c7dbb06e57",
+    "name": "Grand Central Market",
+    "status": "found",
+    "address": "317 S Broadway, Los Angeles, CA 90013, USA",
+    "sourceUrl": "https://grandcentralmarket.com/contact/",
+    "sourceTitle": "Contact – Grand Central Market",
+    "note": "Downtown market.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81f1-924a-f23e3f9dd40e",
+    "name": "Waka Sushi",
+    "status": "needs-you",
+    "note": "No Waka Sushi in Torrance confirmed; only similarly named Waka Takei/Wakatake at 3525 Pacific Coast Hwy, not substituted.",
+    "closed": false
   }
 ]
