@@ -3021,5 +3021,135 @@
     "status": "not-a-place",
     "note": "Train leg, not a venue",
     "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-810e-8f77-e0681dbed42f",
+    "name": "Pienza Pecorino Cheese Tasting",
+    "status": "found",
+    "address": "Via Pian del Nocio 1, Pienza, Siena, Tuscany, Italy",
+    "sourceUrl": "https://www.yelp.com/biz/zazzeri-commerciale-pienza-2",
+    "sourceTitle": "ZAZZERI COMMERCIALE - Updated July 2025 - Via Pian del Nocio, 1, Pienza, Siena, Italy - Phone Number - Yelp",
+    "note": "Zazzeri pecorino shop in Pienza (Val d'Orcia); postal code not stated on page.",
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-815a-a41b-fd640d58a46f",
+    "name": "Truffle Dinner Experience",
+    "status": "needs-you",
+    "note": "Savini Tartufi is in Montanelli, Forcoli (Pisa), not Val d'Orcia; no page stating the address was confirmed.",
+    "alternatives": [
+      "Piazza D'Ascanio, Loc. Montanelli, Forcoli (Pisa), Italy"
+    ],
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-8156-a0b8-f22c1d00593b",
+    "name": "L'Osteria di Passignano",
+    "status": "found",
+    "address": "Via Passignano 33, 50028 Badia a Passignano, Florence, Tuscany, Italy",
+    "sourceUrl": "https://www.oadguides.com/restaurant/osteria-di-passagnano",
+    "sourceTitle": "Osteria di Passignano - Via Passignano, 33, 50028 Badia A Passignano FI, Italy",
+    "note": "Osteria di Passignano at the Antinori estate, Badia a Passignano (Chianti); Yelp lists it as Strada Comunale di Badia 33.",
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-8161-9a5f-c963f530f6de",
+    "name": "Ristorante di Fonterutoli",
+    "status": "needs-you",
+    "note": "Found Osteria di Fonterutoli (Mazzei), not the exact name Ristorante di Fonterutoli; no citable page read for the address.",
+    "alternatives": [
+      "Via Gaetano Donizetti 2, 53011 Castellina in Chianti SI, Italy"
+    ],
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-81e2-9688-c16ca33c9372",
+    "name": "Chianti Classico Black Rooster Wine Road Drive",
+    "status": "not-a-place",
+    "note": "Self-guided drive with a private driver, no venue.",
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-81d8-9fb6-fd92fc643995",
+    "name": "Ristorante Cheo",
+    "status": "needs-you",
+    "note": "No Ristorante Cheo found in Genova; only Cantina Cheo in Vernazza, a different name and town.",
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-81e8-a0fc-eb1ac19fc669",
+    "name": "Portofino",
+    "status": "not-a-place",
+    "note": "Self-drive leg to the town of Portofino, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-811d-b85e-eaea14dec289",
+    "name": "Artisan Pesto Tasting + Focaccia Stop",
+    "status": "not-a-place",
+    "note": "Activity with unnamed local producers and bakery, no single venue.",
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-81b5-8edd-c0880d3d299a",
+    "name": "Scuba Diving – Cala Gonone Diving Center",
+    "status": "needs-you",
+    "note": "No dive center with this exact name found; Cala Gonone has Bluforia, Argonauta, ProTec and others.",
+    "closed": false
+  },
+  {
+    "id": "313f3cdd-67a4-8185-9268-f7d98e23ae48",
+    "name": "Beaune High-End Cellar Tasting (Backup – Day 1)",
+    "status": "not-a-place",
+    "note": "Generic backup tasting, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "32af3cdd-67a4-819c-a7d4-fe4c0d4576a4",
+    "name": "Camogli Village",
+    "status": "not-a-place",
+    "note": "A village to visit, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "32af3cdd-67a4-81e0-a25c-cb59f2855dd2",
+    "name": "Santa Margherita Ligure",
+    "status": "not-a-place",
+    "note": "A town to visit, no venue named.",
+    "closed": false
+  },
+  {
+    "id": "31df3cdd-67a4-81be-89a9-e019e945cc84",
+    "name": "Beaune → Dijon Train",
+    "status": "not-a-place",
+    "note": "Train journey, transport leg.",
+    "closed": false
+  },
+  {
+    "id": "31df3cdd-67a4-8102-a364-cb591f185717",
+    "name": "Train – TER Burgundy",
+    "status": "not-a-place",
+    "note": "Regional train operator (TER), transport not a venue.",
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-81d2-829f-cf1591a51b62",
+    "name": "La Chiusa",
+    "status": "found",
+    "address": "Montefollonico 88, Torrita di Siena, Siena, Tuscany, Italy",
+    "sourceUrl": "https://www.yelp.com/biz/la-chiusa-torrita-di-siena-3",
+    "sourceTitle": "LA CHIUSA - Updated December 2025 - 98 Photos & 15 Reviews - Montefollonico 88, Torrita di Siena, Siena, Italy - Italian - Restaurant Reviews - Phone Number - Yelp",
+    "note": "La Chiusa hotel and restaurant in Montefollonico, Tuscany; postal code not stated on page.",
+    "closed": false
+  },
+  {
+    "id": "314f3cdd-67a4-81e3-8507-ca38b8f7f6b9",
+    "name": "Borgo San Felice",
+    "status": "found",
+    "address": "Localita San Felice, Castelnuovo Berardenga, Siena, Tuscany, Italy",
+    "sourceUrl": "https://www.yelp.com/biz/borgo-san-felice-castelnuovo-berardenga",
+    "sourceTitle": "BORGO SAN FELICE - Updated May 2026 - 62 Photos - Località San Felice, Castelnuovo Berardenga, Siena, Italy - Hotels - Phone Number - Yelp",
+    "note": "Borgo San Felice resort in Chianti; page title does not mention Autograph Collection.",
+    "closed": false
   }
 ]
