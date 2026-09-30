@@ -4,10 +4,7 @@ import type { TripItem } from './types'
 import {
   regionFromText,
   regionFromCoords,
-  PREFERENCE_COLORS,
-  NOT_RATED_COLOR,
-  ACTIVITY_COLOR,
-  BEEN_THERE_COLOR,
+  colorFor,
 } from './aroundtown-shared'
 import type {
   AroundTownKind,
@@ -116,6 +113,7 @@ interface Raw {
   comments: string
   thinkingAbout: boolean
   done: boolean
+  address: string
 }
 
 function rawRestaurants(pages: any[]): Raw[] {
@@ -150,6 +148,7 @@ function rawRestaurants(pages: any[]): Raw[] {
       comments: getText(p['Comments']),
       thinkingAbout: getCheckbox(p['Thinking About']),
       done: getCheckbox(p['Been There?']),
+      address: getText(p['Address']),
     })
   }
   return out
@@ -181,15 +180,10 @@ function rawActivities(pages: any[]): Raw[] {
       comments: '',
       thinkingAbout: getCheckbox(p['Thinking About']),
       done: getCheckbox(p['Done?']),
+      address: getText(p['Address']),
     })
   }
   return out
-}
-
-function color(raw: Raw): string {
-  if (raw.done) return BEEN_THERE_COLOR
-  if (raw.kind === 'activity') return ACTIVITY_COLOR
-  return (raw.preference && PREFERENCE_COLORS[raw.preference]) ?? NOT_RATED_COLOR
 }
 
 /** Restaurants get neighborhood plus city; activities carry their own text. */
@@ -224,9 +218,12 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
     // The fallback drops the neighborhood. For most activities that produces
     // the SAME string as the first attempt, so asking twice is one wasted
     // request per row and no new information.
+    // A confirmed street address is the most exact input there is, so it goes
+    // first; the name lookups remain for rows that have none.
     const primary = geoCity(raw)
     const fallback = geoCityFallback(raw)
-    let coords = await geocodeVenue(raw.name, primary)
+    let coords = raw.address ? await geocodeVenue(raw.address, '', metroHint(raw.locationText)) : null
+    if (!coords) coords = await geocodeVenue(raw.name, primary)
     if (!coords && fallback !== primary) {
       coords = await geocodeVenue(raw.name, fallback)
     }
@@ -248,7 +245,8 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
       comments: raw.comments,
       thinkingAbout: raw.thinkingAbout,
       done: raw.done,
-      color: color(raw),
+      address: raw.address,
+      color: colorFor(raw),
     }
 
     items.push({
@@ -269,7 +267,7 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
       assignedToDate: null,
       assignedToDateEnd: null,
       timeText: '',
-      address: raw.locationText,
+      address: raw.address || raw.locationText,
       confirmationNumber: '',
       bookedVia: '',
       reservationRequired: false,

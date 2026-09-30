@@ -4,6 +4,7 @@ import { useMemo, useState, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import TripMap from './TripMap'
 import UnmappedList from './UnmappedList'
+import { AddPlaceForm, PlaceEditor, UnlockForm, usePasscode } from './PlaceEditing'
 import type { TripItem } from '@/lib/types'
 // From the shared module, never from `lib/aroundtown` - that one imports the
 // geocoder, which reads the coordinate table off disk, and a client component
@@ -14,6 +15,7 @@ import {
   ACTIVITY_COLOR,
   BEEN_THERE_COLOR,
   regionFromCoords,
+  colorFor,
 } from '@/lib/aroundtown-shared'
 
 /**
@@ -63,13 +65,24 @@ function Chip({
 
 export default function AroundTownClient({
   items,
-  meta,
+  meta: initialMeta,
   apiKey,
 }: {
   items: TripItem[]
   meta: Record<string, AroundTownMeta>
   apiKey: string
 }) {
+  // Edits update this copy immediately; the server page catches up on its
+  // next revalidation.
+  const [meta, setMeta] = useState(initialMeta)
+  const { passcode, unlocked, unlock, lock } = usePasscode()
+  const [adding, setAdding] = useState(false)
+  const [notice, setNotice] = useState<string | null>(null)
+
+  const onSaved = useCallback((id: string, next: AroundTownMeta) => {
+    setMeta(prev => ({ ...prev, [id]: { ...next, color: colorFor(next) } }))
+  }, [])
+
   const [region, setRegion] = useState<AroundTownRegion | null>(null)
   const [kind, setKind] = useState<AroundTownKind | null>(null)
   const [wantToTryOnly, setWantToTryOnly] = useState(false)
@@ -231,6 +244,17 @@ export default function AroundTownClient({
           </button>
         )}
 
+        <button
+          onClick={() => {
+            setAdding(!adding)
+            setSelected(null)
+            setNotice(null)
+          }}
+          className="flex-shrink-0 rounded-full border border-amber-400/40 px-2.5 py-1 text-xs font-medium text-amber-300 hover:bg-white/5"
+        >
+          {adding ? 'Close' : '+ Add place'}
+        </button>
+
         <span className="flex-shrink-0 pl-2 text-xs text-white/30">
           {mapped.length} on the map
           {unmapped.length > 0 ? ` - ${unmapped.length} without a location` : ''}
@@ -277,6 +301,52 @@ export default function AroundTownClient({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
+          {notice && (
+            <p className="border-b border-white/10 px-4 py-2 text-xs text-green-300">{notice}</p>
+          )}
+
+          {(adding || selected) && (
+            <section className="border-b border-white/10 px-4 py-4">
+              {adding ? (
+                <h2 className="mb-3 text-sm font-semibold text-white">Add a place</h2>
+              ) : (
+                <div className="mb-3">
+                  <h2 className="text-sm font-semibold text-white">{selected!.name}</h2>
+                  <p className="text-xs text-white/40">
+                    {[meta[selected!.id]?.address || meta[selected!.id]?.neighborhood || meta[selected!.id]?.locationText]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </p>
+                </div>
+              )}
+
+              {!unlocked ? (
+                <UnlockForm onUnlock={unlock} />
+              ) : adding ? (
+                <AddPlaceForm
+                  passcode={passcode}
+                  onDone={message => {
+                    setAdding(false)
+                    setNotice(message)
+                  }}
+                />
+              ) : selected && meta[selected.id] ? (
+                <PlaceEditor
+                  item={selected}
+                  meta={meta[selected.id]}
+                  passcode={passcode}
+                  onSaved={next => onSaved(selected.id, next)}
+                />
+              ) : null}
+
+              {unlocked && (
+                <button onClick={lock} className="mt-3 text-[11px] text-white/30 hover:text-white/60">
+                  Lock editing on this browser
+                </button>
+              )}
+            </section>
+          )}
+
           <section className="px-4 py-4">
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">
               {mapped.length} place{mapped.length === 1 ? '' : 's'} on the map

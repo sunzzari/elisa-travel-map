@@ -24,6 +24,8 @@ export interface AroundTownMeta {
   comments: string
   thinkingAbout: boolean
   done: boolean
+  /** Street address from Notion; empty when none has been set. */
+  address: string
   /** Pin colour, matching the phone exactly. */
   color: string
 }
@@ -43,6 +45,22 @@ export const PREFERENCE_COLORS: Record<string, string> = {
 export const NOT_RATED_COLOR = '#E2E8F0'
 export const ACTIVITY_COLOR = '#A78BFA'
 export const BEEN_THERE_COLOR = '#8E8E93'
+
+export const PREFERENCES = ['Top Choice', 'Great', 'Good', 'Bad'] as const
+
+/** The Restaurant Guide's Location options, as they are in Notion. */
+export const RESTAURANT_LOCATIONS = [
+  'Denver', 'East Bay', 'Hong Kong', 'Joshua Tree', 'Koh Samui', 'LA', 'LA / OC', 'LA / SF',
+  'Marin', 'Maui', 'Napa', 'NYC', 'OC', 'OC / San Diego', 'Paris', 'San Diego', 'SF', 'SF / LA',
+  'SF / Marin', 'SF / Napa', 'Singapore', 'Vancouver', 'Tuscany', 'Burgundy', 'Sardinia',
+  'Liguria', 'Park City',
+]
+
+export function colorFor(m: Pick<AroundTownMeta, 'kind' | 'done' | 'preference'>): string {
+  if (m.done) return BEEN_THERE_COLOR
+  if (m.kind === 'activity') return ACTIVITY_COLOR
+  return (m.preference && PREFERENCE_COLORS[m.preference]) ?? NOT_RATED_COLOR
+}
 
 // MARK: - Region classification
 //

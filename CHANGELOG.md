@@ -2,6 +2,15 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-09-30
+
+- `10:56am` **Around Town can be edited here, behind a passcode, and places have real addresses** - Elisa wanted the phone's new restaurant editing on the web too. Pick a place and the side panel now edits Been there / Done, Want to try, Preference, Review / comments, Top dishes and Address (activities get Done, Want to try and Address - their Notion table has no preference or review columns). **+ Add place** creates a restaurant or activity. Viewing stays public; editing asks for a passcode once per browser, and the server checks it on every write.
+  - **Needs `AROUND_TOWN_PASSCODE` set on Vercel.** Without it every write answers "Editing is not set up" rather than failing open.
+  - Writes go through `app/api/places/*`. `lib/places-write.ts` checks that a page id's parent is the Restaurant Guide or Activities database before touching it, so the passcode cannot edit any other Notion page, and accepts only known fields with the right types (preference must be one of the four, Location one of the Restaurant Guide options).
+  - **Address lookup** (`/api/places/lookup`, passcode-gated because every call is billed) asks Google Places text search for up to five matches and falls back to the Geocoding API if Places is not enabled on the key. Nothing is filled in until one is picked.
+  - Restaurants and Activities gained a Notion `Address` column. `lib/aroundtown.ts` reads it and geocodes the address first, then the name as before. The coordinate table still decides what is placed: a new address is a new lookup, so run `npm run geocache:fill` and commit `data/geocache.json` after adding addresses in bulk, or the live 40-lookup cap leaves most of them unplaced.
+  - `colorFor` moved into `lib/aroundtown-shared.ts` so the server and an edit in the browser colour a pin the same way.
+
 ## 2026-09-14
 
 - `5:58pm` **The changelog moved out of the README into this file, and a hook now enforces it** - the README had grown to 212 lines, ~190 of them changelog, so the setup information Cathy needs was buried under six months of history. The changelog is now `CHANGELOG.md` (moved verbatim, nothing reworded or dropped), the README is a short map, and new `CONTRIBUTING.md` covers clone, keys, `npm run build`, and the fact that a push to `master` deploys production with no staging gate. `.githooks/pre-push` refuses a push that changes `app/`, `components/` or `lib/` without touching this file - turn it on with `git config core.hooksPath .githooks`. Same setup now exists in `sunzzari-app`, whose changelog had gone unwritten for 41 commits because nothing checked.
