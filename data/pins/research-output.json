@@ -1817,5 +1817,206 @@
     "status": "needs-you",
     "note": "No Waka Sushi in Torrance confirmed; only similarly named Waka Takei/Wakatake at 3525 Pacific Coast Hwy, not substituted.",
     "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8102-b7df-c39103d517f9",
+    "name": "Picalilli",
+    "status": "found",
+    "address": "3850 Main St, Unit A, Culver City, CA 90232, USA",
+    "sourceUrl": "https://www.yelp.com/biz/piccalilli-culver-city",
+    "sourceTitle": "PICCALILLI - Updated September 2026 - 996 Photos & 520 Reviews - 3850 Main St, Culver City, California - Asian Fusion - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Spelled Piccalilli on the source; Culver City Main St.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8112-8ac0-d5325d2d5a5c",
+    "name": "Bombay Frankie Company",
+    "status": "found",
+    "address": "6000 Sepulveda Blvd, Suite 1601, Culver City, CA 90230, USA",
+    "sourceUrl": "https://www.yelp.com/biz/the-bombay-frankie-company-culver-city-2",
+    "sourceTitle": "THE BOMBAY FRANKIE COMPANY - CLOSED - Updated September 2026 - 1142 Photos & 1178 Reviews - 6000 Sepulveda Blvd, Culver City, California - Indian - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Westfield Culver City location; Yelp title marks it CLOSED.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-8119-b43a-e245978eae99",
+    "name": "Lan Noodle",
+    "status": "needs-you",
+    "sourceUrl": "https://www.yelp.com/biz/lan-noodle-west-hollywood",
+    "sourceTitle": "Lan Noodle - Updated August 2026 - 571 Photos - 384 Reviews - 7100 Santa Monica Blvd, West Hollywood, California - Noodles - Restaurant Reviews - Phone Number - Official Yelp Page",
+    "note": "Area names both 626 and WeHo; only the West Hollywood branch was confirmed, so pick the branch you meant.",
+    "closed": false,
+    "alternatives": [
+      "7100 Santa Monica Blvd, Suite 130, West Hollywood, CA 90046, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8130-91a7-f2154c9ab0c1",
+    "name": "EP & LP",
+    "status": "needs-you",
+    "sourceUrl": "https://www.discoverlosangeles.com/eat-drink/ep-lp",
+    "sourceTitle": "E.P. & L.P. | Discover Los Angeles",
+    "note": "Only location is in West Hollywood at Melrose and La Cienega, not Melrose in LA proper; please confirm.",
+    "closed": false,
+    "alternatives": [
+      "603 N La Cienega Blvd, West Hollywood, CA 90069, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8135-bbd8-da103b17a70d",
+    "name": "Bodega Wine Bar",
+    "status": "found",
+    "address": "814 Broadway, Santa Monica, CA 90401, USA",
+    "sourceUrl": "https://www.yelp.com/biz/bodega-wine-bar-santa-monica",
+    "sourceTitle": "BODEGA WINE BAR - Updated September 2026 - 820 Photos & 1271 Reviews - 814 Broadway, Santa Monica, California - Wine Bars - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Santa Monica Broadway location.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8154-86ea-e636143e6e7c",
+    "name": "Ggiata",
+    "status": "found",
+    "address": "5009 Melrose Ave, Los Angeles, CA 90038, USA",
+    "sourceUrl": "https://www.yelp.com/biz/ggiata-los-angeles-13",
+    "sourceTitle": "GGIATA - Updated September 2026 - 778 Photos & 753 Reviews - 5009 Melrose Ave, Los Angeles, California - Delis - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Ggiata Delicatessen on Melrose Ave.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-816e-96b4-f17464b8f842",
+    "name": "Monterey Palace Restaurant",
+    "status": "found",
+    "address": "1001 E Garvey Ave, Monterey Park, CA 91755, USA",
+    "sourceUrl": "https://www.yelp.com/biz/monterey-palace-restaurant-monterey-park",
+    "sourceTitle": "MONTEREY PALACE RESTAURANT - Updated June 2026 - 1974 Photos & 646 Reviews - 1001 E Garvey Ave, Monterey Park, California - Dim Sum - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Monterey Park dim sum restaurant on Garvey Ave.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8173-ba69-ff14d897f940",
+    "name": "Bang Bang Noodles",
+    "status": "found",
+    "address": "9355 Culver Blvd, Culver City, CA 90232, USA",
+    "sourceUrl": "https://www.yelp.com/biz/bang-bang-noodles-culver-city-6",
+    "sourceTitle": "BANG BANG NOODLES - CLOSED - Updated September 2026 - 809 Photos & 571 Reviews - 9355 Culver Blvd, Culver City, California - Noodles - Restaurant Reviews - Yelp",
+    "note": "Culver City branch; Yelp title marks it CLOSED.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-817b-9b7a-fe29f5064af7",
+    "name": "Badmaash",
+    "status": "found",
+    "address": "418 N Fairfax Ave, Los Angeles, CA 90036, USA",
+    "sourceUrl": "https://www.yelp.com/biz/badmaash-fairfax-los-angeles-2",
+    "sourceTitle": "BADMAASH - FAIRFAX - Updated September 2026 - 839 Photos - 599 Reviews - 418 N Fairfax Ave, Los Angeles, California - Indian - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Fairfax branch on N Fairfax Ave.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-817e-9dba-d6848b8252a4",
+    "name": "El Chato",
+    "status": "found",
+    "address": "5300 W Olympic Blvd, Los Angeles, CA 90036, USA",
+    "sourceUrl": "https://www.yelp.com/biz/el-chato-taco-truck-los-angeles-2",
+    "sourceTitle": "EL CHATO TACO TRUCK - Updated July 2026 - 838 Photos & 1473 Reviews - 5300 W Olympic Blvd, Los Angeles, California - Mexican - Restaurant Reviews - Phone Number - Yelp",
+    "note": "El Chato Taco Truck at Olympic and La Brea, Mid-Wilshire.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8184-b65e-e04135e37cb5",
+    "name": "Mandarin Noodle House",
+    "status": "found",
+    "address": "701 W Garvey Ave, Monterey Park, CA 91754, USA",
+    "sourceUrl": "https://www.yelp.com/biz/mandarin-noodle-house-monterey-park-8",
+    "sourceTitle": "MANDARIN NOODLE HOUSE - CLOSED - Updated June 2026 - 1567 Photos & 1228 Reviews - 701 W Garvey Ave, Monterey Park, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Monterey Park on W Garvey Ave; Yelp title marks it CLOSED.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-8188-8eab-d9e8a6889e27",
+    "name": "Cafe Vida",
+    "status": "needs-you",
+    "note": "Three branches match the area, so cannot pick one; Pacific Palisades one was fire-destroyed and reopening at the new address.",
+    "closed": false,
+    "alternatives": [
+      "9755 Culver Blvd, Culver City, CA 90232, USA",
+      "2250 Park Pl, El Segundo, CA 90245, USA",
+      "548 Palisades Dr, Pacific Palisades, CA 90272, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81a0-b711-eaa3a5a95579",
+    "name": "Esther's Wine Bar",
+    "status": "found",
+    "address": "1314 7th St, Santa Monica, CA 90401, USA",
+    "sourceUrl": "https://www.yelp.com/biz/esters-wine-shop-and-oyster-bar-santa-monica",
+    "sourceTitle": "ESTERS WINE SHOP & OYSTER BAR - CLOSED - Updated September 2026 - 402 Photos - 355 Reviews - 1314 7th St, Santa Monica, California - Wine Bars - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Listed as Esters Wine Shop & Oyster Bar; Yelp title marks it CLOSED.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-81a3-9038-c13c88f95be9",
+    "name": "Cold Shoulder Bar",
+    "status": "needs-you",
+    "sourceUrl": "https://www.yelp.com/biz/cold-shoulder-bar-los-angeles",
+    "sourceTitle": "COLD SHOULDER BAR - Updated September 2026 - 151 Photos & 63 Reviews - 359 South Fairfax Ave, Los Angeles, California - Whiskey Bars - Phone Number - Yelp",
+    "note": "Only location found is on S Fairfax Ave in the Fairfax District, not La Brea.",
+    "closed": false,
+    "alternatives": [
+      "359 S Fairfax Ave, Los Angeles, CA 90036, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81bc-b0f8-f2f7dc587e8e",
+    "name": "Bud Namu",
+    "status": "found",
+    "address": "809 S Ardmore Ave, Los Angeles, CA 90005, USA",
+    "sourceUrl": "https://www.yelp.com/biz/bud-namu-korean-bbq-los-angeles",
+    "sourceTitle": "BUD NAMU KOREAN BBQ - Updated September 2026 - 1164 Photos & 1535 Reviews - 809 S Ardmore Ave, Los Angeles, California - Barbeque - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Bud Namu Korean BBQ in Koreatown.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81bc-b2b7-f62df6618980",
+    "name": "ABSteak by Chef Akira Back",
+    "status": "found",
+    "address": "8500 Beverly Blvd, Suite 111, Los Angeles, CA 90048, USA",
+    "sourceUrl": "https://www.yelp.com/biz/absteak-by-chef-akira-back-los-angeles",
+    "sourceTitle": "ABSTEAK BY CHEF AKIRA BACK - Updated September 2026 - 919 Photos & 248 Reviews - 8500 Beverly Blvd, Los Angeles, California - Steakhouses - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Beverly Blvd near La Cienega, Beverly Grove.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81c5-851a-fa6e37141c51",
+    "name": "Daybird",
+    "status": "needs-you",
+    "note": "Sources conflict: Silver Lake Plaza on Virgil Ave vs a Yelp listing on Melrose Ave; cannot confirm current location.",
+    "closed": false,
+    "alternatives": [
+      "240 N Virgil Ave, Ste 5, Los Angeles, CA 90004, USA",
+      "7217 Melrose Ave, Los Angeles, CA 90046, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ca-82f5-c78d36a29a7e",
+    "name": "Alibi Room",
+    "status": "found",
+    "address": "12236 W Washington Blvd, Culver City, CA 90066, USA",
+    "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g32272-d2324255-Reviews-Alibi_Room-Culver_City_California.html",
+    "sourceTitle": "ALIBI ROOM, Culver City - Restaurant Reviews, Photos & Phone Number - Tripadvisor",
+    "note": "Culver City bar on W Washington Blvd.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81dc-932a-e51fcda61ed5",
+    "name": "AOC",
+    "status": "needs-you",
+    "sourceUrl": "https://www.yelp.com/biz/aoc-brentwood-los-angeles",
+    "sourceTitle": "AOC BRENTWOOD - CLOSED - Updated August 2026 - 1167 Photos & 1395 Reviews - 11648 San Vicente Blvd, Los Angeles, California - New American - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Area names both Brentwood and WeHo; only the Brentwood branch (listed closed) was confirmed, so pick the branch you meant.",
+    "closed": true,
+    "alternatives": [
+      "11648 San Vicente Blvd, Los Angeles, CA 90049, USA"
+    ]
   }
 ]
