@@ -1414,5 +1414,205 @@
     "sourceTitle": "Kyuramen Arcadia",
     "note": "Official Arcadia location page.",
     "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8104-a121-d7cdd930aeb6",
+    "name": "Palm's Thai",
+    "status": "found",
+    "address": "5900 Hollywood Blvd, Ste B, Los Angeles, CA 90028, USA",
+    "sourceUrl": "https://www.palmsthai.com/",
+    "sourceTitle": "Palms Thai Restaurant | Home - Los Angeles",
+    "note": "Palms Thai Restaurant on Hollywood Blvd, Hollywood.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8106-a97a-decd08a83cd2",
+    "name": "La Tropezienne",
+    "status": "found",
+    "address": "211 S La Brea Ave, Los Angeles, CA 90036, USA",
+    "sourceUrl": "https://www.yelp.com/biz/la-trop%C3%A9zienne-bakery-los-angeles-2",
+    "sourceTitle": "LA TROPEZIENNE BAKERY - CLOSED - Updated September 2026 - 748 Photos & 489 Reviews - 211 S La Brea Ave, Los Angeles, California - Bakeries - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Listed as permanently closed on Yelp; address on La Brea Ave.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-8122-9bea-cbf180190fd7",
+    "name": "Boy and the Bear",
+    "status": "needs-you",
+    "note": "Several branches in area (Culver City area roastery on Washington Blvd and Redondo Beach); cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "12712 Washington Blvd, Suite 101, Los Angeles, CA 90066",
+      "350 N Pacific Coast Hwy, Redondo Beach, CA 90277"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8126-967d-fe1c5321cd23",
+    "name": "Bonsai Coffee",
+    "status": "found",
+    "address": "11573 Santa Monica Blvd, Los Angeles, CA 90025, USA",
+    "sourceUrl": "https://www.yelp.com/biz/bonsai-coffee-bar-los-angeles-5",
+    "sourceTitle": "BONSAI COFFEE BAR - Updated September 2026 - 904 Photos & 541 Reviews - 11573 Santa Monica Blvd, Los Angeles, California - Coffee & Tea - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Bonsai Coffee Bar on Santa Monica Blvd in Sawtelle.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-812e-8d33-dd60920634f6",
+    "name": "Lilou Bakery",
+    "status": "needs-you",
+    "note": "Only found Lilou at 4847 Oakwood Ave, which is not clearly within Koreatown; source does not confirm neighborhood.",
+    "closed": false,
+    "alternatives": [
+      "4847 Oakwood Ave, Los Angeles, CA 90004"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8133-b9b6-f63ee23fe336",
+    "name": "Artelice",
+    "status": "needs-you",
+    "note": "Branches in both Burbank and Sawtelle, both in area; cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "117 N San Fernando Blvd, Burbank, CA 91502",
+      "11301 W Olympic Blvd, Ste 123, Los Angeles, CA 90064"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8142-aabe-fbd10026676a",
+    "name": "Chengdu Taste",
+    "status": "found",
+    "address": "828 W Valley Blvd, Alhambra, CA 91803, USA",
+    "sourceUrl": "https://www.yelp.com/biz/chengdu-taste-alhambra-6",
+    "sourceTitle": "CHENGDU TASTE - Updated September 2026 - 2509 Photos & 1020 Reviews - 828 W Valley Blvd, Alhambra, California - Szechuan - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Chengdu Taste in Alhambra, San Gabriel Valley.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8145-a4eb-c81544c8eb7f",
+    "name": "Kirin Chinese Restaurant",
+    "status": "needs-you",
+    "note": "Only found in Richmond District of San Francisco, not LA.",
+    "closed": false,
+    "alternatives": [
+      "6135 Geary Blvd, San Francisco, CA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8152-9cba-e73b476e5b70",
+    "name": "Little Fatty",
+    "status": "needs-you",
+    "note": "Address found is on Grandview Blvd with a Los Angeles 90066 address, not Culver City.",
+    "closed": false,
+    "alternatives": [
+      "3809-3813 Grandview Blvd, Los Angeles, CA 90066"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8176-b90c-c1e3dfa8c700",
+    "name": "Mumu Bakery and Cafe",
+    "status": "found",
+    "address": "3109 W Olympic Blvd, Ste D, Los Angeles, CA 90006, USA",
+    "sourceUrl": "https://www.yelp.com/biz/mumu-bakery-and-cafe-los-angeles",
+    "sourceTitle": "MUMU BAKERY & CAFE - Updated September 2026 - 1238 Photos & 521 Reviews - 3109 W Olympic Blvd, Los Angeles, California - Bakeries - Phone Number - Yelp",
+    "note": "Mumu Bakery & Cafe on Olympic Blvd in Koreatown.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-817b-95ef-cc9553755a50",
+    "name": "Half & Half Tea Express",
+    "status": "needs-you",
+    "note": "Many SGV branches; cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "704 W Las Tunas Dr #2, San Gabriel, CA 91776",
+      "141 N Atlantic Blvd #112, Monterey Park, CA",
+      "1421 S Baldwin Ave, Arcadia, CA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-819c-bcff-df0461d56daf",
+    "name": "The Alley",
+    "status": "needs-you",
+    "sourceUrl": "https://www.yelp.com/biz/alley-lounge-culver-city-2",
+    "sourceTitle": "ALLEY LOUNGE - CLOSED - Updated August 2026 - 542 Photos & 361 Reviews - 12223 West Washington Blvd, Culver City, California - Cocktail Bars - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Closest match is Alley Lounge (12223 W Washington Blvd, Culver City, listed closed); name differs, confirm it is the same place.",
+    "closed": true,
+    "alternatives": [
+      "12223 W Washington Blvd, Culver City, CA 90066, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81a4-afaa-c325ac267199",
+    "name": "Raffi's",
+    "status": "found",
+    "address": "211 E Broadway, Glendale, CA 91205, USA",
+    "sourceUrl": "https://www.yelp.com/biz/raffis-place-glendale-2",
+    "sourceTitle": "RAFFI'S PLACE - Updated September 2026 - 7283 Photos & 7473 Reviews - 211 E Broadway, Glendale, California - Middle Eastern - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Raffi's Place in Glendale.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b1-863e-d8dfef1eed11",
+    "name": "Dragon River Restaurant",
+    "status": "needs-you",
+    "note": "Only found in Richmond District of San Francisco, not LA.",
+    "closed": false,
+    "alternatives": [
+      "5045 Geary Blvd, San Francisco, CA 94118"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81b7-911c-eb0e22579966",
+    "name": "Porto's",
+    "status": "needs-you",
+    "note": "Several branches in area; cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "3614 W Magnolia Blvd, Burbank, CA",
+      "315 N Brand Blvd, Glendale, CA",
+      "19467 Nordhoff St, Northridge, CA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81c3-baaa-f94adae414ce",
+    "name": "Wanderlust Ice Cream",
+    "status": "needs-you",
+    "note": "Branches in both Sawtelle and Venice, both in area; cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "2105 Sawtelle Blvd, Los Angeles, CA 90025",
+      "609 Lincoln Blvd, Ste B, Los Angeles, CA 90291"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ce-9c5c-f5498fae93ed",
+    "name": "Tartine",
+    "status": "needs-you",
+    "note": "Only confirmed Silver Lake branch; other listed areas unconfirmed, so cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "3921 Sunset Blvd, Ste 101, Los Angeles, CA 90029"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81e1-90e1-f51a2123e911",
+    "name": "Origins KBBQ",
+    "status": "found",
+    "address": "3465 W 6th St, Ste 20, Los Angeles, CA 90020, USA",
+    "sourceUrl": "https://www.yelp.com/biz/origin-korean-bbq-los-angeles",
+    "sourceTitle": "ORIGIN KOREAN BBQ - Updated August 2026 - 1375 Photos & 536 Reviews - 3465 W 6th St, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Listed as Origin Korean BBQ in Chapman Plaza, Koreatown; name is a close variant.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-811c-a970-c43ffe67f40f",
+    "name": "Haidilao",
+    "status": "needs-you",
+    "note": "Branches in both Arcadia (626) and Century City, both in area; cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "10250 Santa Monica Blvd, Ste 2610, Los Angeles, CA 90067",
+      "400 S Baldwin Ave, Ste 2015, Arcadia, CA"
+    ]
   }
 ]
