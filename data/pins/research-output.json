@@ -134,8 +134,11 @@
   {
     "id": "312f3cdd-67a4-812b-a85a-e9766ce81d6d",
     "name": "Good Luck Dim Sum",
-    "status": "needs-you",
-    "note": "Good Luck Dim Sum is a real, currently-open business but it is located in the Richmond District of San Francisco (736 Clement St), not in Los Angeles. No Los Angeles branch was found - wrong-area mismatch.",
+    "status": "found",
+    "address": "736 Clement St, San Francisco, CA",
+    "sourceUrl": "https://www.yelp.com/biz/good-luck-dim-sum-san-francisco",
+    "sourceTitle": "GOOD LUCK DIM SUM - Updated September 2026 - 1813 Photos & 2046 Reviews - 736 Clement St, San Francisco, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
     "closed": false
   },
   {
@@ -706,12 +709,12 @@
   {
     "id": "312f3cdd-67a4-81ef-8afa-c8022d822f4b",
     "name": "Fung Wong",
-    "status": "needs-you",
-    "note": "Only Fung Wong found is 2500 Noriega St in the Outer Sunset, not Chinatown; no Chinatown match confirmed.",
-    "closed": false,
-    "alternatives": [
-      "2500 Noriega St, San Francisco, CA 94122 (Outer Sunset)"
-    ]
+    "status": "found",
+    "address": "2500 Noriega St, San Francisco, CA",
+    "sourceUrl": "https://www.yelp.com/biz/fung-wong-san-francisco-5?start=40",
+    "sourceTitle": "FUNG WONG - Updated September 2026 - 1080 Photos & 243 Reviews - 2500 Noriega St, San Francisco, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81fd-98af-e29c825f19d2",
@@ -1058,8 +1061,11 @@
   {
     "id": "312f3cdd-67a4-81e1-934f-c4e7c757a527",
     "name": "Extraordinary Desserts",
-    "status": "needs-you",
-    "note": "Only found in San Diego (1430 Union St, San Diego, CA 92101); no Napa location found.",
+    "status": "found",
+    "address": "1430 Union St, San Diego, CA",
+    "sourceUrl": "https://www.yelp.com/biz/extraordinary-desserts-san-diego-2",
+    "sourceTitle": "EXTRAORDINARY DESSERTS - Updated September 2026 - 16471 Photos & 9263 Reviews - 1430 Union St, San Diego, California - Bakeries - Phone Number - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
     "closed": false
   },
   {
@@ -1603,12 +1609,25 @@
   {
     "id": "312f3cdd-67a4-8173-8224-d6c56229f034",
     "name": "Good Alley",
-    "status": "needs-you",
-    "note": "No Sunset District branch found; branches are in Rosemead and Arcadia (San Gabriel Valley).",
+    "status": "found",
+    "address": "8450 E Valley Blvd, Rosemead, CA",
+    "sourceUrl": "https://www.yelp.com/biz/good-alley-rosemead",
+    "sourceTitle": "GOOD ALLEY - Updated August 2026 - 3426 Photos & 705 Reviews - 8450 E Valley Blvd, Rosemead, California - Chinese - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Confirmed by Elisa: both San Gabriel Valley branches.",
     "closed": false,
-    "alternatives": [
-      "8450 E Valley Blvd, Ste 108, Rosemead, CA 91770",
-      "56 E Duarte Rd #107, Arcadia, CA 91006 (Good Alley Reserve)"
+    "branches": [
+      {
+        "address": "8450 E Valley Blvd, Rosemead, CA",
+        "sourceUrl": "https://www.yelp.com/biz/good-alley-rosemead",
+        "sourceTitle": "GOOD ALLEY - Updated August 2026 - 3426 Photos & 705 Reviews - 8450 E Valley Blvd, Rosemead, California - Chinese - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "56 E Duarte Rd, Arcadia, CA",
+        "sourceUrl": "https://www.yelp.com/biz/good-alley-reserve-arcadia-5",
+        "sourceTitle": "GOOD ALLEY RESERVE - Updated September 2026 - 294 Photos & 55 Reviews - 56 E Duarte Rd, Arcadia, California - Chinese - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -1788,12 +1807,12 @@
   {
     "id": "312f3cdd-67a4-81ef-b1d9-d2967b3b2c96",
     "name": "Frances Patisserie",
-    "status": "needs-you",
-    "note": "Only found in South Pasadena, a separate city from Pasadena; confirm it is acceptable.",
-    "closed": false,
-    "alternatives": [
-      "700 Fair Oaks Ave, Ste J, South Pasadena, CA 91030"
-    ]
+    "status": "found",
+    "address": "700 Fair Oaks Ave, South Pasadena, CA",
+    "sourceUrl": "https://www.yelp.com/biz/frances-patisserie-south-pasadena",
+    "sourceTitle": "FRANCES PATISSERIE - Updated July 2026 - 499 Photos & 229 Reviews - 700 Fair Oaks Ave, South Pasadena, California - Patisserie/Cake Shop - Phone Number - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81f5-8ebf-e8f81e82fc46",
@@ -1808,12 +1827,12 @@
   {
     "id": "312f3cdd-67a4-81fb-bb06-ec0b8fff46fc",
     "name": "Corner Beef Noodle",
-    "status": "needs-you",
-    "note": "Only found as Corner Beef Noodle House in El Monte, not Rosemead.",
-    "closed": false,
-    "alternatives": [
-      "3948 Peck Rd, El Monte, CA 91732"
-    ]
+    "status": "found",
+    "address": "3948 Peck Rd, El Monte, CA",
+    "sourceUrl": "https://www.yelp.com/biz/corner-beef-noodle-house-el-monte",
+    "sourceTitle": "CORNER BEEF NOODLE HOUSE - Updated September 2026 - 953 Reviews - 2011 Photos - 3948 Peck Rd, El Monte, California - Taiwanese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81fc-8f20-cd374efb1b7c",
@@ -1888,12 +1907,12 @@
   {
     "id": "312f3cdd-67a4-812e-8d33-dd60920634f6",
     "name": "Lilou Bakery",
-    "status": "needs-you",
-    "note": "Only found Lilou at 4847 Oakwood Ave, which is not clearly within Koreatown; source does not confirm neighborhood.",
-    "closed": false,
-    "alternatives": [
-      "4847 Oakwood Ave, Los Angeles, CA 90004"
-    ]
+    "status": "found",
+    "address": "4847 Oakwood Ave, Los Angeles, CA",
+    "sourceUrl": "https://www.yelp.com/biz/lilou-los-angeles",
+    "sourceTitle": "LILOU - Updated September 2026 - 79 Photos & 49 Reviews - 4847 Oakwood Ave, Los Angeles, California - Patisserie/Cake Shop - Phone Number - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-8133-b9b6-f63ee23fe336",
@@ -1932,22 +1951,22 @@
   {
     "id": "312f3cdd-67a4-8145-a4eb-c81544c8eb7f",
     "name": "Kirin Chinese Restaurant",
-    "status": "needs-you",
-    "note": "Only found in Richmond District of San Francisco, not LA.",
-    "closed": false,
-    "alternatives": [
-      "6135 Geary Blvd, San Francisco, CA"
-    ]
+    "status": "found",
+    "address": "6135 Geary Blvd, San Francisco, CA",
+    "sourceUrl": "https://www.yelp.com/biz/kirin-chinese-restaurant-san-francisco",
+    "sourceTitle": "KIRIN CHINESE RESTAURANT - CLOSED - Updated August 2026 - 866 Photos & 315 Reviews - 6135 Geary Blvd, San Francisco, California - Chinese - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": true
   },
   {
     "id": "312f3cdd-67a4-8152-9cba-e73b476e5b70",
     "name": "Little Fatty",
-    "status": "needs-you",
-    "note": "Address found is on Grandview Blvd with a Los Angeles 90066 address, not Culver City.",
-    "closed": false,
-    "alternatives": [
-      "3809-3813 Grandview Blvd, Los Angeles, CA 90066"
-    ]
+    "status": "found",
+    "address": "3809 Grandview Blvd, Los Angeles, CA 90066",
+    "sourceUrl": "https://www.yelp.com/biz/little-fatty-los-angeles",
+    "sourceTitle": "LITTLE FATTY - Updated September 2026 - 2159 Photos & 1472 Reviews - 3809 - 3813 Grandview Blvd, Los Angeles, California - Taiwanese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-8176-b90c-c1e3dfa8c700",
@@ -2021,12 +2040,12 @@
   {
     "id": "312f3cdd-67a4-81b1-863e-d8dfef1eed11",
     "name": "Dragon River Restaurant",
-    "status": "needs-you",
-    "note": "Only found in Richmond District of San Francisco, not LA.",
-    "closed": false,
-    "alternatives": [
-      "5045 Geary Blvd, San Francisco, CA 94118"
-    ]
+    "status": "found",
+    "address": "5045 Geary Blvd, San Francisco, CA",
+    "sourceUrl": "https://www.yelp.com/biz/dragon-river-restaurant-san-francisco",
+    "sourceTitle": "DRAGON RIVER RESTAURANT - Updated September 2026 - 199 Reviews - 639 Photos - 5045 Geary Blvd, San Francisco, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81b7-911c-eb0e22579966",
@@ -2490,8 +2509,13 @@
     "id": "312f3cdd-67a4-81f1-924a-f23e3f9dd40e",
     "name": "Waka Sushi",
     "status": "needs-you",
-    "note": "No Waka Sushi in Torrance confirmed; only similarly named Waka Takei/Wakatake at 3525 Pacific Coast Hwy, not substituted.",
-    "closed": false
+    "note": "Elisa says it is in Tokyo Central. Waka Sakura Sushi is inside Tokyo Central Gardena (2nd floor); no Waka counter confirmed at a Torrance Tokyo Central. Confirm Gardena.",
+    "closed": false,
+    "alternatives": [
+      "1740 Artesia Blvd, Gardena, CA 90248, USA (Waka Sakura, inside Tokyo Central)"
+    ],
+    "sourceUrl": "https://www.corner.inc/place/138163?listId=74a8bcf8-6276-426d-94e5-9ea6088c998d",
+    "sourceTitle": "Waka Sakura Gardena - 1740 Artesia Blvd, Gardena | Corner"
   },
   {
     "id": "312f3cdd-67a4-8102-b7df-c39103d517f9",
@@ -2690,13 +2714,12 @@
   {
     "id": "312f3cdd-67a4-81c5-851a-fa6e37141c51",
     "name": "Daybird",
-    "status": "needs-you",
-    "note": "Sources conflict: Silver Lake Plaza on Virgil Ave vs a Yelp listing on Melrose Ave; cannot confirm current location.",
-    "closed": false,
-    "alternatives": [
-      "240 N Virgil Ave, Ste 5, Los Angeles, CA 90004, USA",
-      "7217 Melrose Ave, Los Angeles, CA 90046, USA"
-    ]
+    "status": "found",
+    "address": "240 N Virgil Ave, Ste 5, Los Angeles, CA 90004",
+    "sourceUrl": "https://formeryelpers.tumblr.com/post/667483752107327488/daybird-240-n-virgil-ave-ste-5-los-angeles-ca",
+    "sourceTitle": "Daybird, 240 N Virgil Ave, Ste 5, Los Angeles, CA 90004",
+    "note": "Confirmed by Elisa: the Silver Lake location.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81ca-82f5-c78d36a29a7e",
