@@ -14,6 +14,7 @@ import {
   ACTIVITY_COLOR,
   BEEN_THERE_COLOR,
   regionFromCoords,
+  fitAreaContains,
 } from '@/lib/aroundtown-shared'
 
 /**
@@ -109,6 +110,10 @@ export default function AroundTownClient({
   // explicit LA / SF Bay choice wins; with no choice made it is whichever area
   // holds more of the places on screen. Pins outside it stay on the map and
   // stay clickable, they just never stretch the frame.
+  //
+  // The vote uses the WIDE box on purpose - it is choosing LA vs the Bay, not
+  // drawing the frame. The frame uses `fitAreaContains`, which is LA County
+  // only, so San Diego and Orange County never stretch it.
   const fitRegion: AroundTownRegion = useMemo(() => {
     if (region) return region
     let la = 0
@@ -125,7 +130,7 @@ export default function AroundTownClient({
     () =>
       new Set(
         mapped
-          .filter(i => regionFromCoords(i.coordinates!.lat, i.coordinates!.lng) === fitRegion)
+          .filter(i => fitAreaContains(fitRegion, i.coordinates!.lat, i.coordinates!.lng))
           .map(i => i.id)
       ),
     [mapped, fitRegion]
