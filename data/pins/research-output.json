@@ -1013,5 +1013,210 @@
     "sourceTitle": "Location & Hours | Mae Malai Thai | 5445 Hollywood Blvd unit a, LA",
     "note": "Official location page.",
     "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8197-94c2-df99a16ff645",
+    "name": "Loreto / Mariscos Za Za Za",
+    "status": "needs-you",
+    "sourceUrl": "https://maps.apple.com/place?address=1991+Blake+Ave,+Los+Angeles,+CA++90039,+United+States&coordinate=34.1009667,-118.2439506&name=Loreto&place-id=I17C98F02FF5E28CB&_provider=9902",
+    "sourceTitle": "Loreto in Los Angeles, CA United States - Apple Maps",
+    "note": "Located in Frogtown (Elysian Valley), not Downtown; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "1991 Blake Ave, Los Angeles, CA 90039, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-819f-9618-db5b307ba2d8",
+    "name": "Chip Cookies",
+    "status": "needs-you",
+    "note": "Chain with several branches across the named cities; Culver City and Huntington Beach listed as closed on Yelp.",
+    "closed": false,
+    "alternatives": [
+      "3850 Barranca Pkwy, Irvine, CA 92606",
+      "25360 Crenshaw Blvd, Torrance, CA 90505",
+      "10716 Jefferson Blvd, Culver City, CA 90230 (listed closed)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81b3-87e8-f4ef5056663c",
+    "name": "Majordomo",
+    "status": "found",
+    "address": "1725 Naud St, Los Angeles, CA 90012, USA",
+    "sourceUrl": "https://www.yelp.com/biz/majordomo-los-angeles-2",
+    "sourceTitle": "MAJORDOMO - Updated August 2026 - 8510 Photos & 1780 Reviews - 1725 Naud St, Los Angeles, California - New American - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Momofuku Majordomo, single location on the Chinatown edge of Downtown LA.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81c2-a7b1-e4231869cd75",
+    "name": "Salazar",
+    "status": "needs-you",
+    "sourceUrl": "https://www.yelp.com/biz/salazar-los-angeles-4?start=580",
+    "sourceTitle": "SALAZAR - Updated June 2026 - 1589 Photos & 1321 Reviews - 2490 Fletcher Dr, Los Angeles, California - Mexican - Restaurant Reviews - Menu - Yelp",
+    "note": "Located in Frogtown (Elysian Valley), not Downtown; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "2490 Fletcher Dr, Los Angeles, CA 90039, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81ca-8bc3-c60b7db4822f",
+    "name": "Sea Harbor Seafood Restaurant",
+    "status": "found",
+    "address": "3939 Rosemead Blvd, Rosemead, CA 91770, USA",
+    "sourceUrl": "https://www.yelp.com/biz/sea-harbour-rosemead",
+    "sourceTitle": "SEA HARBOUR - Updated September 2026 - 1752 Reviews - 4767 Photos - 3939 Rosemead Blvd, Rosemead, California - Seafood - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Real name is Sea Harbour Seafood Restaurant, Rosemead (626 area).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81cb-9c2f-ee4b43a69f66",
+    "name": "Nook Coffee Bar",
+    "status": "needs-you",
+    "note": "Two branches match the named cities (Costa Mesa and Torrance); also a Rancho Cucamonga branch.",
+    "closed": false,
+    "alternatives": [
+      "2930 Bristol St, Ste B105, Costa Mesa, CA 92626",
+      "980 W 190th St, Suite B1, Torrance, CA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81cc-9de5-e6001e323469",
+    "name": "Luyixian",
+    "status": "found",
+    "address": "2 E Valley Blvd, Ste 1E, Alhambra, CA 91801, USA",
+    "sourceUrl": "https://www.yelp.com/biz/luyixian-alhambra",
+    "sourceTitle": "LUYIXIAN - Updated August 2026 - 1428 Photos & 522 Reviews - 2 E Valley Blvd, Alhambra, California - Shanghainese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Alhambra, in the 626 area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81ce-8fe8-cdf644fc99fc",
+    "name": "Mae Ting's Coconut Cakes",
+    "status": "needs-you",
+    "sourceUrl": "https://www.yelp.com/biz/mae-tings-coconut-cakes-los-angeles",
+    "sourceTitle": "MAE TING'S COCONUT CAKES - Updated April 2026 - 483 Photos & 182 Reviews - 1100 N Main St, Los Angeles, California - Desserts - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Located in Chinatown, not Hollywood; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "1100 N Main St, Los Angeles, CA 90012, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81dd-b8f4-d47356f2d9ae",
+    "name": "Savoy Kitchen",
+    "status": "found",
+    "address": "138 E Valley Blvd, Alhambra, CA 91801, USA",
+    "sourceUrl": "https://www.yelp.com/biz/savoy-kitchen-alhambra",
+    "sourceTitle": "SAVOY KITCHEN - Updated September 2026 - 5486 Photos - 4926 Reviews - 138 E Valley Blvd, Alhambra, California - Asian Fusion - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Alhambra, in the 626 area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81e4-a837-cb76bdba2da8",
+    "name": "Ruby BBQ Food",
+    "status": "needs-you",
+    "sourceUrl": "https://www.yelp.com/biz/ruby-bbq-food-el-monte",
+    "sourceTitle": "RUBY BBQ FOOD - Updated September 2026 - 675 Photos & 281 Reviews - 9567 E Garvey Ave, El Monte, California - Barbeque - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Located in El Monte, not San Gabriel; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "9567 E Garvey Ave, Ste 1, El Monte, CA 91733, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81e9-a440-d194d84aefd7",
+    "name": "Ladyhawk",
+    "status": "found",
+    "address": "623 N La Peer Dr, West Hollywood, CA 90069, USA",
+    "sourceUrl": "https://www.yelp.com/biz/ladyhawk-west-hollywood",
+    "sourceTitle": "LADYHAWK - Updated July 2026 - 403 Photos & 215 Reviews - 623 North La Peer, West Hollywood, California - Bars - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "At Kimpton La Peer Hotel, West Hollywood.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81fd-9543-ca53b4dfadb2",
+    "name": "Superfine",
+    "status": "found",
+    "address": "12746 W Jefferson Blvd, Unit 2200, Playa Vista, CA 90094, USA",
+    "sourceUrl": "https://www.yelp.com/biz/superfine-pizza-and-bar-playa-vista",
+    "sourceTitle": "SUPERFINE PIZZA & BAR - CLOSED - Updated June 2026 - 254 Photos & 171 Reviews - 12746 Jefferson Blvd, Playa Vista, California - Pizza - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Superfine Playa; Yelp marks it closed.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-8113-a257-ed5435620c48",
+    "name": "Borit Gogae",
+    "status": "found",
+    "address": "3464 W 8th St, Los Angeles, CA 90005, USA",
+    "sourceUrl": "https://www.yelp.com/biz/borit-gogae-los-angeles-2",
+    "sourceTitle": "BORIT GOGAE - Updated July 2026 - 1852 Photos & 525 Reviews - 3464 W 8th St, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Koreatown, LA.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-811e-b732-e33d3370d51c",
+    "name": "Crossroads Kitchen",
+    "status": "found",
+    "address": "8284 Melrose Ave, Los Angeles, CA 90046, USA",
+    "sourceUrl": "https://www.yelp.com/biz/crossroads-kitchen-los-angeles-5",
+    "sourceTitle": "CROSSROADS KITCHEN - Updated September 2026 - 3890 Photos & 3523 Reviews - 8284 Melrose Ave, Los Angeles, California - Vegan - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Melrose Ave location, LA.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8139-a2b5-c0fca2e17ad7",
+    "name": "La Pupusa Urban Eatery",
+    "status": "needs-you",
+    "sourceUrl": "https://www.yelp.com/biz/la-pupusa-urban-eatery-los-angeles",
+    "sourceTitle": "LA PUPUSA URBAN EATERY - Updated September 2026 - 677 Photos & 497 Reviews - 1051 W Washington Blvd, Los Angeles, California - Salvadoran - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Located on W Washington Blvd south of Downtown, not Koreatown; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "1051 W Washington Blvd, Unit G, Los Angeles, CA 90015, USA"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-8144-a9d2-e0ede5a7b2f5",
+    "name": "Burritos La Palma",
+    "status": "found",
+    "address": "5120 N Peck Rd, El Monte, CA 91732, USA",
+    "sourceUrl": "https://www.yelp.com/biz/burritos-la-palma-el-monte-2",
+    "sourceTitle": "BURRITOS LA PALMA - Updated July 2026 - 809 Photos & 769 Reviews - 5120 N Peck Rd, El Monte, California - Mexican - Restaurant Reviews - Phone Number - Yelp",
+    "note": "El Monte branch, in the 626 area.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-814b-adae-ec4bc3ebe486",
+    "name": "Carrusel Bakery",
+    "status": "found",
+    "address": "14851 Victory Blvd, Van Nuys, CA 91411, USA",
+    "sourceUrl": "https://carruselbakery.com/",
+    "sourceTitle": "El Carrusel Bakery – Bakery and Cafe",
+    "note": "El Carrusel Bakery in the San Fernando Valley (Van Nuys).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8150-8898-f75d5989c75a",
+    "name": "Felix Trattoria",
+    "status": "found",
+    "address": "1023 Abbot Kinney Blvd, Los Angeles, CA 90291, USA",
+    "sourceUrl": "https://www.yelp.com/biz/felix-trattoria-los-angeles-2",
+    "sourceTitle": "FELIX TRATTORIA - Updated September 2026 - 3514 Photos & 1568 Reviews - 1023 Abbot Kinney Blvd, Los Angeles, California - Italian - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Venice, LA.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8162-8e94-f93732868462",
+    "name": "Holbox",
+    "status": "needs-you",
+    "sourceUrl": "https://www.mercadolapaloma.com/holbox",
+    "sourceTitle": "Holbox — Mercado la Paloma",
+    "note": "Located in Mercado La Paloma, South LA near USC, not Downtown; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "3655 S Grand Ave, Unit C9, Los Angeles, CA 90007, USA"
+    ]
   }
 ]
