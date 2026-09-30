@@ -2219,5 +2219,195 @@
       "2057 Sawtelle Blvd, Los Angeles, CA 90025",
       "2050 Sawtelle Blvd, Los Angeles, CA 90025"
     ]
+  },
+  {
+    "id": "312f3cdd-67a4-817a-9830-f8aa0303bf1a",
+    "name": "Cassia",
+    "status": "found",
+    "address": "1314 7th St, Santa Monica, CA 90401, USA",
+    "sourceUrl": "https://www.yelp.com/biz/cassia-santa-monica",
+    "sourceTitle": "CASSIA - CLOSED - Updated September 2026 - 3377 Photos & 1492 Reviews - 1314 7th St, Santa Monica, California - Singaporean - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Address in Santa Monica; Yelp title marks it CLOSED.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-817e-b803-f0bb7641ec0d",
+    "name": "Uzumaki Sushi",
+    "status": "found",
+    "address": "11060 Washington Blvd, Culver City, CA 90232, USA",
+    "sourceUrl": "https://www.yelp.com/biz/uzumaki-culver-city",
+    "sourceTitle": "UZUMAKI - Updated July 2026 - 1305 Photos & 827 Reviews - 11060 Washington Blvd, Culver City, California - Sushi Bars - +13104258904 - Yelp",
+    "note": "Culver City address; Yelp lists it as Uzumaki (Uzumaki Sushi on its own site).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8180-b8f5-ce621814e852",
+    "name": "Mother Wolf",
+    "status": "found",
+    "address": "1545 Wilcox Ave, Los Angeles, CA 90028, USA",
+    "sourceUrl": "https://savorytraveler.com/restaurant_reviews/mother-wolf/",
+    "sourceTitle": "MOTHER WOLF | Italian | 1545 Wilcox Ave, Los Angeles, CA 90028",
+    "note": "Hollywood restaurant per search results and review titles.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8182-a964-e686aa1b1193",
+    "name": "Myung In Dumplings",
+    "status": "found",
+    "address": "3109 W Olympic Blvd, Los Angeles, CA 90006, USA",
+    "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g32655-d4914072-Reviews-Myung_In_Dumplings-Los_Angeles_California.html",
+    "sourceTitle": "MYUNG IN DUMPLINGS, Los Angeles - 3109 W Olympic Blvd, Koreatown - Restaurant Reviews & Phone Number - Tripadvisor",
+    "note": "Tripadvisor lists it in Koreatown.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8185-a940-d465a0c306a3",
+    "name": "Gualaguetza",
+    "status": "found",
+    "address": "3014 W Olympic Blvd, Los Angeles, CA 90006, USA",
+    "sourceUrl": "https://www.yelp.com/biz/guelaguetza-restaurante-los-angeles",
+    "sourceTitle": "GUELAGUETZA RESTAURANTE - Updated September 2026 - 4771 Photos & 3251 Reviews - 3014 W Olympic Blvd, Los Angeles, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Spelling variant of Guelaguetza; search result describes it as in the heart of Koreatown.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-818e-aabf-c061f6ef6ef7",
+    "name": "Rosaline",
+    "status": "found",
+    "address": "8479 Melrose Ave, West Hollywood, CA 90069, USA",
+    "sourceUrl": "https://www.yelp.com/biz/rosaline-west-hollywood-2",
+    "sourceTitle": "ROSALINE - CLOSED - Updated June 2026 - 2149 Photos & 1218 Reviews - 8479 Melrose Ave, West Hollywood, California - Peruvian - Restaurant Reviews - Yelp",
+    "note": "On Melrose Ave in West Hollywood; Yelp title marks it CLOSED.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-818f-9432-fcb37cb737b0",
+    "name": "Bridgetown Roti",
+    "status": "found",
+    "address": "858 N Vermont Ave, Los Angeles, CA 90029, USA",
+    "sourceUrl": "https://www.bridgetownroti.com/location/bridgetown-roti/",
+    "sourceTitle": "Hours + Location | Bridgetown Roti | Caribbean American Restaurant in Los Angeles, CA",
+    "note": "Official location page; listed as Hollywood/East Hollywood in search results.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-819b-a331-e9a61ec14bfe",
+    "name": "El Flamin Taco",
+    "status": "needs-you",
+    "note": "Several branches (Echo Park, Koreatown, Los Feliz) match the multi-neighborhood area; cannot pick one.",
+    "closed": false,
+    "alternatives": [
+      "2028 W Sunset Blvd, Los Angeles, CA (Echo Park)",
+      "505 Vermont Ave, Los Angeles, CA 90020 (Koreatown)",
+      "3050 Los Feliz Blvd, Los Angeles, CA (Los Feliz)"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81a0-a564-e34e6782bcdb",
+    "name": "Cosetta",
+    "status": "found",
+    "address": "3150 Ocean Park Blvd, Santa Monica, CA 90405, USA",
+    "sourceUrl": "https://www.yelp.com/biz/cosetta-santa-monica",
+    "sourceTitle": "COSETTA - Updated September 2026 - 479 Photos & 222 Reviews - 3150 Ocean Park Blvd, Santa Monica, California - Italian - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Santa Monica address.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b4-82d2-d2572120313e",
+    "name": "Ditroit Taqueria",
+    "status": "found",
+    "address": "2117 Violet St, Los Angeles, CA 90021, USA",
+    "sourceUrl": "https://www.yelp.com/biz/ditroit-taqueria-los-angeles",
+    "sourceTitle": "DITROIT TAQUERIA - Updated September 2026 - 252 Photos & 138 Reviews - 2117 Violet St, Los Angeles, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Arts District taqueria per search results.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b4-90b8-d632783a5a2f",
+    "name": "The Edition Rooftop Bar",
+    "status": "needs-you",
+    "note": "The rooftop bar at the West Hollywood EDITION is called The Roof, a different name; confirm it is the intended place.",
+    "closed": false,
+    "alternatives": [
+      "9040 W Sunset Blvd, West Hollywood, CA 90069"
+    ],
+    "sourceUrl": "https://www.yelp.com/biz/the-roof-at-edition-west-hollywood",
+    "sourceTitle": "THE ROOF AT EDITION - Updated September 2026 - 401 Photos & 177 Reviews - 9040 W Sunset Blvd, West Hollywood, California - Cocktail Bars - Phone Number - Yelp"
+  },
+  {
+    "id": "312f3cdd-67a4-81be-ad93-d61bf3a9b1f3",
+    "name": "Caffe Luxxe",
+    "status": "needs-you",
+    "note": "Chain with many branches in the LA metro; area does not pick one.",
+    "closed": false,
+    "alternatives": [
+      "11640 San Vicente Blvd, Los Angeles, CA 90049",
+      "925 Montana Ave, Santa Monica, CA 90403",
+      "9718 Washington Blvd, Culver City, CA 90232"
+    ]
+  },
+  {
+    "id": "312f3cdd-67a4-81d0-969c-ea40bf79e693",
+    "name": "The Nook",
+    "status": "found",
+    "address": "17316 Ventura Blvd, Encino, Los Angeles, CA 91316, USA",
+    "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g32655-d8046143-Reviews-The_Nook-Los_Angeles_California.html",
+    "sourceTitle": "THE NOOK, Los Angeles - 17316 Ventura Blvd, Encino - Restaurant Reviews - Order Online Food Delivery - Tripadvisor",
+    "note": "Encino is in the San Fernando Valley; other Nook (SLS Beverly Hills) is not in the Valley.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81ea-8f25-fce5499b4597",
+    "name": "Kogi Taqueria",
+    "status": "found",
+    "address": "3434 Overland Ave, Los Angeles, CA 90034, USA",
+    "sourceUrl": "https://www.yelp.com/biz/kogi-taqueria-los-angeles",
+    "sourceTitle": "KOGI BBQ - TEMP. CLOSED - Updated July 2026 - 928 Photos & 785 Reviews - 3434 Overland Ave, Los Angeles, California - Mexican - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Palms location per search results; Yelp title says TEMP. CLOSED, other sources say closed.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81eb-8e1c-e71efa1b39e3",
+    "name": "Seoul Tofu",
+    "status": "found",
+    "address": "2101 Sawtelle Blvd, Los Angeles, CA 90025, USA",
+    "sourceUrl": "https://www.corner.inc/place/pSg45WGJbF1f",
+    "sourceTitle": "Seoul Tofu - 2101 Sawtelle Blvd, Los Angeles | Corner",
+    "note": "Sawtelle Blvd address; also listed as Seoul House of Tofu.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81f2-b10b-fb55915a63fd",
+    "name": "Mapo Chicken",
+    "status": "found",
+    "address": "1008 S St Andrews Pl, Los Angeles, CA 90019, USA",
+    "sourceUrl": "https://www.yelp.com/biz/mapo-chicken-los-angeles",
+    "sourceTitle": "MAPO CHICKEN - Updated September 2026 - 542 Photos & 397 Reviews - 1008 S St Andrews Pl, Los Angeles, California - Korean - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Foursquare lists Mapo Chicken under Koreatown (Wilshire Center).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81f4-8c9a-f3ab3015ad7e",
+    "name": "Fishing with Dynamite",
+    "status": "found",
+    "address": "1148 Manhattan Ave, Manhattan Beach, CA 90266, USA",
+    "sourceUrl": "https://eatfwd.com/visit/",
+    "sourceTitle": "Visit Us | Fishing with Dynamite - Manhattan Beach",
+    "note": "Official visit page, Manhattan Beach.",
+    "closed": false
+  },
+  {
+    "id": "3c5f3cdd-67a4-817b-9e30-e406699d45cf",
+    "name": "Groupon",
+    "status": "not-a-place",
+    "note": "A deal/voucher service, not a venue.",
+    "closed": false
+  },
+  {
+    "id": "3c5f3cdd-67a4-81fb-be71-eab60bc5a355",
+    "name": "Sushi making",
+    "status": "not-a-place",
+    "note": "An activity, not a named venue.",
+    "closed": false
   }
 ]
