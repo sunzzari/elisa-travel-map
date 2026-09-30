@@ -205,14 +205,12 @@
   {
     "id": "3c8f3cdd-67a4-81aa-938b-e681842100f8",
     "name": "palisades mall",
-    "status": "needs-you",
+    "status": "found",
+    "address": "15225 Palisades Village Ln, Pacific Palisades, CA 90272, USA",
     "sourceUrl": "https://www.yelp.com/biz/palisades-village-pacific-palisades",
     "sourceTitle": "PALISADES VILLAGE - TEMP. CLOSED - Updated July 2026 - 177 Photos & 79 Reviews - 15225 Palisades Village Ln, Pacific Palisades, California - Shopping Centers - Phone Number - Yelp",
-    "note": "No 'Palisades Mall' in LA (that name is in West Nyack, NY); Palisades Village in Pacific Palisades is a likely match but not confirmed, and the source lists it as temporarily closed.",
-    "closed": false,
-    "alternatives": [
-      "15225 Palisades Village Ln, Pacific Palisades, CA 90272, USA"
-    ]
+    "note": "Confirmed by Elisa: Palisades Village, Pacific Palisades (source lists it as temporarily closed).",
+    "closed": false
   },
   {
     "id": "324f3cdd-67a4-811a-a50e-ddc6c04c8873",
@@ -336,14 +334,12 @@
   {
     "id": "312f3cdd-67a4-8108-97de-d130379946fb",
     "name": "Sichuan Tasty",
-    "status": "needs-you",
+    "status": "found",
+    "address": "1829 Clement St, San Francisco, CA 94121, USA",
     "sourceUrl": "https://sichuantastyrestaurant.com/location/",
     "sourceTitle": "Location & Hours | Sichuan Tasty Restaurant | 1829 Clement St",
-    "note": "Only location found is in the Richmond District (Clement St), not Chinatown; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "1829 Clement St, San Francisco, CA 94121, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-810f-84c2-e556ed34654a",
@@ -378,8 +374,8 @@
   {
     "id": "312f3cdd-67a4-8148-9209-de5e6f990b1a",
     "name": "Ans Ice Cream",
-    "status": "needs-you",
-    "note": "Likely An's Dry Cleaning gelato, 3017 Adams Ave, San Diego 92116, but name not confirmed as same",
+    "status": "not-a-place",
+    "note": "Removed by Elisa; do not pin.",
     "closed": false
   },
   {
@@ -485,12 +481,9 @@
   {
     "id": "312f3cdd-67a4-81da-abb7-ee652e0a098b",
     "name": "Jian Bing",
-    "status": "needs-you",
-    "note": "Jian Bing is a dish, not a named venue; several Rowland Heights shops serve it (e.g. Yu Ji Stone Mill Chinese Crepes, 1648 S Jellick Ave, 91748).",
-    "closed": false,
-    "alternatives": [
-      "Yu Ji Stone Mill Chinese Crepes, 1648 S Jellick Ave, Rowland Heights, CA 91748"
-    ]
+    "status": "not-a-place",
+    "note": "Removed by Elisa; do not pin.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81db-87ff-f1ecdb0a5754",
@@ -929,14 +922,12 @@
   {
     "id": "312f3cdd-67a4-8169-a74a-cbd79c97c1de",
     "name": "Rutherford Grill",
-    "status": "needs-you",
+    "status": "found",
+    "address": "1180 Rutherford Rd, Rutherford, CA 94573, USA",
     "sourceUrl": "https://rutherfordgrill.com/",
     "sourceTitle": "Rutherford Grill",
-    "note": "Only location is in Rutherford (Napa Valley), not Napa city; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "1180 Rutherford Rd, Rutherford, CA 94573, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-8193-9f99-cd2cc49013ef",
@@ -1057,14 +1048,12 @@
   {
     "id": "312f3cdd-67a4-81cd-8851-fa738ac76ac8",
     "name": "Charter Oak",
-    "status": "needs-you",
+    "status": "found",
+    "address": "1050 Charter Oak Ave, St. Helena, CA 94574, USA",
     "sourceUrl": "https://guide.michelin.com/us/en/california/saint-helena/restaurant/the-charter-oak",
     "sourceTitle": "The Charter Oak – Saint Helena - a MICHELIN Guide Restaurant",
-    "note": "Only location is in St. Helena (Napa Valley), not Napa city; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "1050 Charter Oak Ave, St. Helena, CA 94574, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81e1-934f-c4e7c757a527",
@@ -1364,14 +1353,12 @@
   {
     "id": "312f3cdd-67a4-8197-94c2-df99a16ff645",
     "name": "Loreto / Mariscos Za Za Za",
-    "status": "needs-you",
+    "status": "found",
+    "address": "1991 Blake Ave, Los Angeles, CA 90039, USA",
     "sourceUrl": "https://maps.apple.com/place?address=1991+Blake+Ave,+Los+Angeles,+CA++90039,+United+States&coordinate=34.1009667,-118.2439506&name=Loreto&place-id=I17C98F02FF5E28CB&_provider=9902",
     "sourceTitle": "Loreto in Los Angeles, CA United States - Apple Maps",
-    "note": "Located in Frogtown (Elysian Valley), not Downtown; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "1991 Blake Ave, Los Angeles, CA 90039, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-819f-9618-db5b307ba2d8",
@@ -1422,14 +1409,12 @@
   {
     "id": "312f3cdd-67a4-81c2-a7b1-e4231869cd75",
     "name": "Salazar",
-    "status": "needs-you",
+    "status": "found",
+    "address": "2490 Fletcher Dr, Los Angeles, CA 90039, USA",
     "sourceUrl": "https://www.yelp.com/biz/salazar-los-angeles-4?start=580",
     "sourceTitle": "SALAZAR - Updated June 2026 - 1589 Photos & 1321 Reviews - 2490 Fletcher Dr, Los Angeles, California - Mexican - Restaurant Reviews - Menu - Yelp",
-    "note": "Located in Frogtown (Elysian Valley), not Downtown; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "2490 Fletcher Dr, Los Angeles, CA 90039, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81ca-8bc3-c60b7db4822f",
@@ -1478,14 +1463,12 @@
   {
     "id": "312f3cdd-67a4-81ce-8fe8-cdf644fc99fc",
     "name": "Mae Ting's Coconut Cakes",
-    "status": "needs-you",
+    "status": "found",
+    "address": "1100 N Main St, Los Angeles, CA 90012, USA",
     "sourceUrl": "https://www.yelp.com/biz/mae-tings-coconut-cakes-los-angeles",
     "sourceTitle": "MAE TING'S COCONUT CAKES - Updated April 2026 - 483 Photos & 182 Reviews - 1100 N Main St, Los Angeles, California - Desserts - Restaurant Reviews - Phone Number - Yelp",
-    "note": "Located in Chinatown, not Hollywood; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "1100 N Main St, Los Angeles, CA 90012, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81dd-b8f4-d47356f2d9ae",
@@ -1500,14 +1483,12 @@
   {
     "id": "312f3cdd-67a4-81e4-a837-cb76bdba2da8",
     "name": "Ruby BBQ Food",
-    "status": "needs-you",
+    "status": "found",
+    "address": "9567 E Garvey Ave, Ste 1, El Monte, CA 91733, USA",
     "sourceUrl": "https://www.yelp.com/biz/ruby-bbq-food-el-monte",
     "sourceTitle": "RUBY BBQ FOOD - Updated September 2026 - 675 Photos & 281 Reviews - 9567 E Garvey Ave, El Monte, California - Barbeque - Restaurant Reviews - Phone Number - Yelp",
-    "note": "Located in El Monte, not San Gabriel; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "9567 E Garvey Ave, Ste 1, El Monte, CA 91733, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81e9-a440-d194d84aefd7",
@@ -1552,14 +1533,12 @@
   {
     "id": "312f3cdd-67a4-8139-a2b5-c0fca2e17ad7",
     "name": "La Pupusa Urban Eatery",
-    "status": "needs-you",
+    "status": "found",
+    "address": "1051 W Washington Blvd, Unit G, Los Angeles, CA 90015, USA",
     "sourceUrl": "https://www.yelp.com/biz/la-pupusa-urban-eatery-los-angeles",
     "sourceTitle": "LA PUPUSA URBAN EATERY - Updated September 2026 - 677 Photos & 497 Reviews - 1051 W Washington Blvd, Los Angeles, California - Salvadoran - Restaurant Reviews - Phone Number - Menu - Yelp",
-    "note": "Located on W Washington Blvd south of Downtown, not Koreatown; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "1051 W Washington Blvd, Unit G, Los Angeles, CA 90015, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-8144-a9d2-e0ede5a7b2f5",
@@ -1594,14 +1573,12 @@
   {
     "id": "312f3cdd-67a4-8162-8e94-f93732868462",
     "name": "Holbox",
-    "status": "needs-you",
+    "status": "found",
+    "address": "3655 S Grand Ave, Unit C9, Los Angeles, CA 90007, USA",
     "sourceUrl": "https://www.mercadolapaloma.com/holbox",
     "sourceTitle": "Holbox — Mercado la Paloma",
-    "note": "Located in Mercado La Paloma, South LA near USC, not Downtown; confirm this is the one.",
-    "closed": false,
-    "alternatives": [
-      "3655 S Grand Ave, Unit C9, Los Angeles, CA 90007, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-8163-bc8a-e81ad7b2cee8",
@@ -2027,14 +2004,9 @@
   {
     "id": "312f3cdd-67a4-819c-bcff-df0461d56daf",
     "name": "The Alley",
-    "status": "needs-you",
-    "sourceUrl": "https://www.yelp.com/biz/alley-lounge-culver-city-2",
-    "sourceTitle": "ALLEY LOUNGE - CLOSED - Updated August 2026 - 542 Photos & 361 Reviews - 12223 West Washington Blvd, Culver City, California - Cocktail Bars - Restaurant Reviews - Phone Number - Yelp",
-    "note": "Closest match is Alley Lounge (12223 W Washington Blvd, Culver City, listed closed); name differs, confirm it is the same place.",
-    "closed": true,
-    "alternatives": [
-      "12223 W Washington Blvd, Culver City, CA 90066, USA"
-    ]
+    "status": "not-a-place",
+    "note": "Removed by Elisa; do not pin.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81a4-afaa-c325ac267199",
@@ -2568,14 +2540,12 @@
   {
     "id": "312f3cdd-67a4-8130-91a7-f2154c9ab0c1",
     "name": "EP & LP",
-    "status": "needs-you",
+    "status": "found",
+    "address": "603 N La Cienega Blvd, West Hollywood, CA 90069, USA",
     "sourceUrl": "https://www.discoverlosangeles.com/eat-drink/ep-lp",
     "sourceTitle": "E.P. & L.P. | Discover Los Angeles",
-    "note": "Only location is in West Hollywood at Melrose and La Cienega, not Melrose in LA proper; please confirm.",
-    "closed": false,
-    "alternatives": [
-      "603 N La Cienega Blvd, West Hollywood, CA 90069, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-8135-bbd8-da103b17a70d",
@@ -2690,14 +2660,12 @@
   {
     "id": "312f3cdd-67a4-81a3-9038-c13c88f95be9",
     "name": "Cold Shoulder Bar",
-    "status": "needs-you",
+    "status": "found",
+    "address": "359 S Fairfax Ave, Los Angeles, CA 90036, USA",
     "sourceUrl": "https://www.yelp.com/biz/cold-shoulder-bar-los-angeles",
     "sourceTitle": "COLD SHOULDER BAR - Updated September 2026 - 151 Photos & 63 Reviews - 359 South Fairfax Ave, Los Angeles, California - Whiskey Bars - Phone Number - Yelp",
-    "note": "Only location found is on S Fairfax Ave in the Fairfax District, not La Brea.",
-    "closed": false,
-    "alternatives": [
-      "359 S Fairfax Ave, Los Angeles, CA 90036, USA"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81bc-b0f8-f2f7dc587e8e",
@@ -2861,26 +2829,22 @@
   {
     "id": "312f3cdd-67a4-8125-91a1-f0dd736b4b49",
     "name": "Mayura Indian Restaurant",
-    "status": "needs-you",
-    "note": "Found only in Culver City, not Venice; source lists it as Culver City.",
-    "closed": false,
+    "status": "found",
+    "address": "10406 Venice Blvd, Culver City, CA 90232",
     "sourceUrl": "https://www.yelp.com/biz/mayura-indian-restaurant-culver-city-2",
     "sourceTitle": "MAYURA INDIAN RESTAURANT - Updated August 2026 - 1602 Photos & 1993 Reviews - 10406 Venice Blvd, Culver City, California - Indian - Restaurant Reviews - Phone Number - Yelp",
-    "alternatives": [
-      "10406 Venice Blvd, Culver City, CA 90232"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-8125-a915-e73001eefd76",
     "name": "Coin & Candor",
-    "status": "needs-you",
-    "note": "Only location found is in Westlake Village (Four Seasons), not Thousand Oaks.",
-    "closed": false,
+    "status": "found",
+    "address": "2 Dole Dr, Westlake Village, CA 91362",
     "sourceUrl": "https://www.yelp.com/biz/coin-and-candor-westlake-village-2",
     "sourceTitle": "COIN & CANDOR - Updated August 2026 - 1102 Photos & 360 Reviews - 2 Dole Dr, Westlake Village, California - Brasseries - Restaurant Reviews - Phone Number - Yelp",
-    "alternatives": [
-      "2 Dole Dr, Westlake Village, CA 91362"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-8136-8d8c-cac0f64fd759",
@@ -3175,14 +3139,12 @@
   {
     "id": "312f3cdd-67a4-81b4-90b8-d632783a5a2f",
     "name": "The Edition Rooftop Bar",
-    "status": "needs-you",
-    "note": "The rooftop bar at the West Hollywood EDITION is called The Roof, a different name; confirm it is the intended place.",
-    "closed": false,
-    "alternatives": [
-      "9040 W Sunset Blvd, West Hollywood, CA 90069"
-    ],
+    "status": "found",
+    "address": "9040 W Sunset Blvd, West Hollywood, CA 90069",
     "sourceUrl": "https://www.yelp.com/biz/the-roof-at-edition-west-hollywood",
-    "sourceTitle": "THE ROOF AT EDITION - Updated September 2026 - 401 Photos & 177 Reviews - 9040 W Sunset Blvd, West Hollywood, California - Cocktail Bars - Phone Number - Yelp"
+    "sourceTitle": "THE ROOF AT EDITION - Updated September 2026 - 401 Photos & 177 Reviews - 9040 W Sunset Blvd, West Hollywood, California - Cocktail Bars - Phone Number - Yelp",
+    "note": "Confirmed by Elisa: The Roof at the West Hollywood EDITION.",
+    "closed": false
   },
   {
     "id": "312f3cdd-67a4-81be-ad93-d61bf3a9b1f3",
@@ -3636,14 +3598,12 @@
   {
     "id": "3cff3cdd-67a4-811e-b2a2-d1932ead3813",
     "name": "Banyan Tree Mount Emei",
-    "status": "needs-you",
-    "note": "Hotel is in Emeishan City, not the Qing Cheng Mountain area; source title shows the address.",
-    "closed": false,
+    "status": "found",
+    "address": "No. 55, Section 1, Jingqu Road, Emeishan, Sichuan, China",
     "sourceUrl": "https://www.vacations.com.au/property/125384610/banyan-tree-mount-emei",
     "sourceTitle": "Banyan Tree Mount Emei - No. 55, Section 1, Jingqu Road, Leshan - Vacations.com.au",
-    "alternatives": [
-      "No. 55, Section 1, Jingqu Road, Emeishan, Sichuan, China"
-    ]
+    "note": "Confirmed by Elisa: this is the place, though it sits outside the area on the list.",
+    "closed": false
   },
   {
     "id": "3cff3cdd-67a4-8149-88e4-cc6deee66e2d",
@@ -3967,8 +3927,8 @@
   {
     "id": "31af3cdd-67a4-81eb-8831-d283cd2de2d5",
     "name": "Hyatt Regency Sapporo",
-    "status": "needs-you",
-    "note": "No Hyatt Regency Sapporo found; search only showed Hyatt Centric Sapporo, a different name",
+    "status": "not-a-place",
+    "note": "Removed by Elisa; do not pin.",
     "closed": false
   },
   {

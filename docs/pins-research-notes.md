@@ -25,6 +25,12 @@ are `status: "found"` and carry an extra field:
 When the only location found sits outside the named area, or the name only nearly matches, the
 row is `needs-you` and the researched address is in `alternatives`, with its source kept.
 
+## Elisa's review
+
+After reviewing the `needs-you` list, Elisa confirmed places that sit outside the area on her list;
+those are now `found` with a note starting "Confirmed by Elisa". Rows she asked to drop are
+`not-a-place` with the note "Removed by Elisa; do not pin."
+
 ## Source strength
 
 Some found rows cite a business's own site whose page this environment could not open; for
