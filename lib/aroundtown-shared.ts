@@ -117,3 +117,33 @@ export function regionFromCoords(lat: number, lng: number): AroundTownRegion | n
   if (lat >= 36.8 && lat <= 38.9 && lng >= -123.3 && lng <= -121.4) return 'sfBay'
   return null
 }
+
+/**
+ * The area a FIT may span. Deliberately TIGHTER than `regionFromCoords`.
+ * Elisa, 2026-09-15: *"when im on LA in the sunzzari app it also zooms out to
+ * san diego. i only want LA proper. not even orange county."*
+ *
+ * `regionFromCoords` stays wide ON PURPOSE - it decides whether a place is kept
+ * at all, so narrowing it would strip every San Diego and Orange County place
+ * off the map instead of merely leaving it out of the frame. A place outside
+ * this box keeps its pin and stays clickable; it just never stretches the frame.
+ *
+ * LA proper is LA County, coast through the San Gabriel Valley: Long Beach,
+ * San Pedro, Torrance and the beach cities at the south edge; Malibu and
+ * Calabasas west; Santa Clarita at the north edge; Pasadena, Arcadia and
+ * Monterey Park east. Anaheim (-117.91) and Fullerton (-117.92) sit just outside
+ * the eastern edge; Irvine, Newport, Costa Mesa and Huntington Beach sit below
+ * the southern edge.
+ *
+ * Twin of `AroundTownItem.Region.containsForFit` in sunzzari-app. Same numbers.
+ */
+export function fitAreaContains(
+  region: AroundTownRegion,
+  lat: number,
+  lng: number
+): boolean {
+  if (region === 'la') {
+    return lat >= 33.7 && lat <= 34.45 && lng >= -118.95 && lng <= -117.95
+  }
+  return regionFromCoords(lat, lng) === 'sfBay'
+}
