@@ -153,12 +153,14 @@
   {
     "id": "3c8f3cdd-67a4-81aa-938b-e681842100f8",
     "name": "palisades mall",
-    "status": "found",
-    "address": "15225 Palisades Village Ln, Pacific Palisades, CA 90272, USA",
+    "status": "needs-you",
     "sourceUrl": "https://www.yelp.com/biz/palisades-village-pacific-palisades",
     "sourceTitle": "PALISADES VILLAGE - TEMP. CLOSED - Updated July 2026 - 177 Photos & 79 Reviews - 15225 Palisades Village Ln, Pacific Palisades, California - Shopping Centers - Phone Number - Yelp",
-    "note": "The well-known 'Palisades Mall' is actually in West Nyack, NY (not LA). In LA, the matching shopping center is Palisades Village in Pacific Palisades, developed by Rick Caruso; it was affected by the Jan 2025 Palisades Fire but has since reopened.",
-    "closed": false
+    "note": "No 'Palisades Mall' in LA (that name is in West Nyack, NY); Palisades Village in Pacific Palisades is a likely match but not confirmed, and the source lists it as temporarily closed.",
+    "closed": false,
+    "alternatives": [
+      "15225 Palisades Village Ln, Pacific Palisades, CA 90272, USA"
+    ]
   },
   {
     "id": "324f3cdd-67a4-811a-a50e-ddc6c04c8873",
@@ -282,12 +284,14 @@
   {
     "id": "312f3cdd-67a4-8108-97de-d130379946fb",
     "name": "Sichuan Tasty",
-    "status": "found",
-    "address": "1829 Clement St, San Francisco, CA 94121, USA",
+    "status": "needs-you",
     "sourceUrl": "https://sichuantastyrestaurant.com/location/",
     "sourceTitle": "Location & Hours | Sichuan Tasty Restaurant | 1829 Clement St",
-    "note": "In SF but Richmond District (Clement St), not Chinatown",
-    "closed": false
+    "note": "Only location found is in the Richmond District (Clement St), not Chinatown; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "1829 Clement St, San Francisco, CA 94121, USA"
+    ]
   },
   {
     "id": "312f3cdd-67a4-810f-84c2-e556ed34654a",
@@ -758,12 +762,14 @@
   {
     "id": "312f3cdd-67a4-8169-a74a-cbd79c97c1de",
     "name": "Rutherford Grill",
-    "status": "found",
-    "address": "1180 Rutherford Rd, Rutherford, CA 94573, USA",
+    "status": "needs-you",
     "sourceUrl": "https://rutherfordgrill.com/",
     "sourceTitle": "Rutherford Grill",
-    "note": "Single location; in Rutherford, Napa County (Napa Valley), not Napa city itself.",
-    "closed": false
+    "note": "Only location is in Rutherford (Napa Valley), not Napa city; confirm this is the one.",
+    "closed": false,
+    "alternatives": [
+      "1180 Rutherford Rd, Rutherford, CA 94573, USA"
+    ]
   },
   {
     "id": "312f3cdd-67a4-8193-9f99-cd2cc49013ef",
