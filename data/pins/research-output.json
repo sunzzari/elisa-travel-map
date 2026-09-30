@@ -2873,5 +2873,153 @@
     "status": "not-a-place",
     "note": "Transport leg, not a venue.",
     "closed": false
+  },
+  {
+    "id": "365f3cdd-67a4-81e3-8d95-f7291f9028ff",
+    "name": "Beaune → Lyon Part-Dieu (TGV)",
+    "status": "not-a-place",
+    "note": "Train leg, not a venue",
+    "closed": false
+  },
+  {
+    "id": "362f3cdd-67a4-8192-b431-d5d20107eff6",
+    "name": "Scuba Diving",
+    "status": "not-a-place",
+    "note": "Activity, no dive operator named",
+    "closed": false
+  },
+  {
+    "id": "354f3cdd-67a4-815f-9694-eb09e6cfad77",
+    "name": "Marais Walk + Casual Dinner",
+    "status": "not-a-place",
+    "note": "Walk and meal slot, not a venue",
+    "closed": false
+  },
+  {
+    "id": "354f3cdd-67a4-815f-b59e-cedf34cfb96a",
+    "name": "Lu Impostu / Baglioni Beach Day",
+    "status": "not-a-place",
+    "note": "Beach day outing covering two venues, not a single place",
+    "closed": false
+  },
+  {
+    "id": "33bf3cdd-67a4-8100-bcc0-cdbe8828ebb3",
+    "name": "Elisa Date",
+    "status": "not-a-place",
+    "note": "Date outing, not a venue",
+    "closed": false
+  },
+  {
+    "id": "33bf3cdd-67a4-81f8-a6fa-da98fcc2e3b5",
+    "name": "Buy Boots",
+    "status": "not-a-place",
+    "note": "Shopping errand, no shop named",
+    "closed": false
+  },
+  {
+    "id": "32af3cdd-67a4-81a5-a9cd-c3ecb6881c5d",
+    "name": "SS222 Black Rooster Wine Road",
+    "status": "not-a-place",
+    "note": "Self-drive route, not a venue",
+    "closed": false
+  },
+  {
+    "id": "32af3cdd-67a4-81ce-b5b0-c0120379eb3e",
+    "name": "Bagno Vignoni Thermal Plaza",
+    "status": "found",
+    "address": "Piazza delle Sorgenti, Bagno Vignoni, San Quirico d'Orcia, Siena, Tuscany, Italy",
+    "sourceUrl": "https://www.tripadvisor.com/ShowUserReviews-g668217-d6672026-r608096103-Piazza_delle_Sorgenti-San_Quirico_d_Orcia_Tuscany.html",
+    "sourceTitle": "Main square with a giant hot springs pool - Review of Piazza delle Sorgenti, San Quirico d'Orcia, Italy - Tripadvisor",
+    "note": "The thermal pool square of Bagno Vignoni (Val d'Orcia); a named landmark, no street number.",
+    "closed": false
+  },
+  {
+    "id": "329f3cdd-67a4-8124-945e-de110953665c",
+    "name": "Camogli — Town + Harbor",
+    "status": "not-a-place",
+    "note": "Self-guided town visit, not a single venue",
+    "closed": false
+  },
+  {
+    "id": "329f3cdd-67a4-817e-8e64-fa7be0f68eb3",
+    "name": "Santa Margherita Ligure",
+    "status": "not-a-place",
+    "note": "Self-guided town visit, not a single venue",
+    "closed": false
+  },
+  {
+    "id": "31df3cdd-67a4-81a3-974c-dff8d0764a7f",
+    "name": "Panorama",
+    "status": "needs-you",
+    "note": "Name too ambiguous to identify a single Paris venue",
+    "closed": false
+  },
+  {
+    "id": "31df3cdd-67a4-81e3-8ffc-deeb5c5aeaaa",
+    "name": "Breizh Café (3rd arr.)",
+    "status": "found",
+    "address": "109 Rue Vieille du Temple, 75003 Paris, France",
+    "sourceUrl": "https://www.oadguides.com/restaurant/breizh-cafe",
+    "sourceTitle": "Breizh Café - 109 Rue Vieille du Temple, 75003 Paris, France",
+    "note": "Marais (3rd arr.) branch as named",
+    "closed": false
+  },
+  {
+    "id": "31af3cdd-67a4-81dd-801d-f4090805db64",
+    "name": "Lutie's Garden Restaurant",
+    "status": "found",
+    "address": "4100 Red River St, Austin, TX, United States",
+    "sourceUrl": "https://www.yelp.com/biz/lutie-s-austin?start=60",
+    "sourceTitle": "LUTIE'S - Updated April 2026 - 1045 Photos & 270 Reviews - 4100 Red River St, Austin, Texas - Modern European - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Red River St address in Austin",
+    "closed": false
+  },
+  {
+    "id": "31af3cdd-67a4-81df-8e4a-d1a93e9d33d8",
+    "name": "Olamaie",
+    "status": "found",
+    "address": "1610 San Antonio St, Austin, TX 78701, United States",
+    "sourceUrl": "https://www.yelp.com/biz/olamaie-austin",
+    "sourceTitle": "OLAMAIE - CLOSED - Updated July 2026 - 927 Photos & 643 Reviews - 1610 San Antonio St, Austin, Texas - Southern - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "Yelp title marks it CLOSED",
+    "closed": true
+  },
+  {
+    "id": "31af3cdd-67a4-81b8-844c-d618a9b2c904",
+    "name": "Arlo Grey by Kristen Kish",
+    "status": "found",
+    "address": "111 E Cesar Chavez St, Austin, TX 78701, United States",
+    "sourceUrl": "https://www.yelp.com/biz/arlo-grey-by-kristen-kish-austin-2",
+    "sourceTitle": "ARLO GREY BY KRISTEN KISH - Updated September 2026 - 1512 Photos & 516 Reviews - 111 E Cesar Chavez St, Austin, Texas - New American - Restaurant Reviews - Phone Number - Yelp",
+    "note": "Downtown Austin address",
+    "closed": false
+  },
+  {
+    "id": "31af3cdd-67a4-812a-9e85-d43a5faa3de4",
+    "name": "Day Trip to Otaru",
+    "status": "not-a-place",
+    "note": "Day trip to a town, not a single venue",
+    "closed": false
+  },
+  {
+    "id": "31af3cdd-67a4-81eb-8831-d283cd2de2d5",
+    "name": "Hyatt Regency Sapporo",
+    "status": "needs-you",
+    "note": "No Hyatt Regency Sapporo found; search only showed Hyatt Centric Sapporo, a different name",
+    "closed": false
+  },
+  {
+    "id": "316f3cdd-67a4-815c-91f7-c2d3112b4677",
+    "name": "AF1567 FLR → CDG",
+    "status": "not-a-place",
+    "note": "Flight leg, not a venue",
+    "closed": false
+  },
+  {
+    "id": "315f3cdd-67a4-812f-acb1-d2765d107243",
+    "name": "Beaune → Lyon Part Dieu | TGV",
+    "status": "not-a-place",
+    "note": "Train leg, not a venue",
+    "closed": false
   }
 ]
