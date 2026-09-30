@@ -2423,27 +2423,55 @@
   {
     "id": "312f3cdd-67a4-81aa-9038-e9074f2d11c1",
     "name": "HiHo Cheeseburger",
-    "status": "needs-you",
-    "note": "Multiple branches across the listed areas; Studio City address not found.",
-    "sourceUrl": "https://www.hiho.la/hh-marina/",
-    "sourceTitle": "Marina del Rey - HiHo Cheeseburger",
+    "status": "found",
+    "address": "4625 Admiralty Way, Ste 109, Marina Del Rey, CA 90292, USA",
+    "sourceUrl": "https://www.yelp.com/biz/hiho-cheeseburger-marina-del-rey-marina-del-rey-4",
+    "sourceTitle": "HIHO CHEESEBURGER | MARINA DEL REY - Updated September 2026 - 496 Photos & 449 Reviews - 4625 Admiralty Way, Marina Del Rey, California - Burgers - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "3 branches in the named areas (Marina Del Rey, Santa Monica, Studio City)",
     "closed": false,
-    "alternatives": [
-      "4625 Admiralty Way, #109, Marina Del Rey, CA 90292",
-      "1320 2nd Street Ste. B, Santa Monica, CA 90401"
+    "branches": [
+      {
+        "address": "4625 Admiralty Way, Ste 109, Marina Del Rey, CA 90292, USA",
+        "sourceUrl": "https://www.yelp.com/biz/hiho-cheeseburger-marina-del-rey-marina-del-rey-4",
+        "sourceTitle": "HIHO CHEESEBURGER | MARINA DEL REY - Updated September 2026 - 496 Photos & 449 Reviews - 4625 Admiralty Way, Marina Del Rey, California - Burgers - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1320 2nd St, Ste B, Santa Monica, CA 90401, USA",
+        "sourceUrl": "https://www.yelp.com/biz/hiho-cheeseburger-santa-monica-santa-monica",
+        "sourceTitle": "HIHO CHEESEBURGER | SANTA MONICA - Updated September 2026 - 1288 Photos & 1352 Reviews - 1320 2nd St, Santa Monica, California - New American - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "4220 Coldwater Canyon Ave, Studio City, CA 91604, USA",
+        "sourceUrl": "https://www.yelp.com/biz/hiho-cheeseburger-studio-city-studio-city-4",
+        "sourceTitle": "HIHO CHEESEBURGER | STUDIO CITY - Updated September 2026 - 276 Photos & 341 Reviews - 4220 Coldwater Canyon Ave, Studio City, California - New American - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-81ae-8af4-cd09a4adc517",
     "name": "For the Win Burger",
-    "status": "needs-you",
-    "note": "Both Hollywood and Glendale branches fall in the area; choose one.",
-    "sourceUrl": "https://www.forthewinla.com/hollywood",
-    "sourceTitle": "For The Win Hollywood | Best Smash Burgers in Hollywood, Los Angeles, CA",
+    "status": "found",
+    "address": "6221 Franklin Ave, Los Angeles, CA 90028, USA",
+    "sourceUrl": "https://www.yelp.com/biz/for-the-win-los-angeles-20",
+    "sourceTitle": "FOR THE WIN - Updated September 2026 - 951 Photos & 1341 Reviews - 6221 Franklin Ave, Los Angeles, California - Burgers - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 branches in the named areas (Hollywood, Glendale); no titled Valley branch found",
     "closed": false,
-    "alternatives": [
-      "6221 Franklin Ave, Los Angeles, CA 90028",
-      "1200 S Brand Blvd #3, Glendale, CA 91204"
+    "branches": [
+      {
+        "address": "6221 Franklin Ave, Los Angeles, CA 90028, USA",
+        "sourceUrl": "https://www.yelp.com/biz/for-the-win-los-angeles-20",
+        "sourceTitle": "FOR THE WIN - Updated September 2026 - 951 Photos & 1341 Reviews - 6221 Franklin Ave, Los Angeles, California - Burgers - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "1200 S Brand Blvd #3, Glendale, CA 91204, USA",
+        "sourceUrl": "https://www.yelp.com/biz/for-the-win-glendale-3",
+        "sourceTitle": "FOR THE WIN - Updated August 2026 - 493 Photos & 583 Reviews - 1200 S Brand Blvd, Glendale, California - Burgers - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -2516,13 +2544,25 @@
   {
     "id": "312f3cdd-67a4-8119-b43a-e245978eae99",
     "name": "Lan Noodle",
-    "status": "needs-you",
+    "status": "found",
+    "address": "7100 Santa Monica Blvd, Suite 130, West Hollywood, CA 90046, USA",
     "sourceUrl": "https://www.yelp.com/biz/lan-noodle-west-hollywood",
     "sourceTitle": "Lan Noodle - Updated August 2026 - 571 Photos - 384 Reviews - 7100 Santa Monica Blvd, West Hollywood, California - Noodles - Restaurant Reviews - Phone Number - Official Yelp Page",
-    "note": "Area names both 626 and WeHo; only the West Hollywood branch was confirmed, so pick the branch you meant.",
+    "note": "2 branches in the named areas (WeHo, Arcadia in 626)",
     "closed": false,
-    "alternatives": [
-      "7100 Santa Monica Blvd, Suite 130, West Hollywood, CA 90046, USA"
+    "branches": [
+      {
+        "address": "7100 Santa Monica Blvd, Suite 130, West Hollywood, CA 90046, USA",
+        "sourceUrl": "https://www.yelp.com/biz/lan-noodle-west-hollywood",
+        "sourceTitle": "Lan Noodle - Updated August 2026 - 571 Photos - 384 Reviews - 7100 Santa Monica Blvd, West Hollywood, California - Noodles - Restaurant Reviews - Phone Number - Official Yelp Page",
+        "closed": false
+      },
+      {
+        "address": "411 E Huntington Dr, Ste 102, Arcadia, CA 91006, USA",
+        "sourceUrl": "https://www.yelp.com/biz/lan-noodle-arcadia-7",
+        "sourceTitle": "LAN NOODLE - Updated August 2026 - 1922 Photos & 934 Reviews - 411 E Huntington Dr, Arcadia, California - Chinese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -2610,13 +2650,31 @@
   {
     "id": "312f3cdd-67a4-8188-8eab-d9e8a6889e27",
     "name": "Cafe Vida",
-    "status": "needs-you",
-    "note": "Three branches match the area, so cannot pick one; Pacific Palisades one was fire-destroyed and reopening at the new address.",
+    "status": "found",
+    "address": "9755 Culver Blvd, Culver City, CA 90232, USA",
+    "sourceUrl": "https://www.yelp.com/biz/cafe-vida-culver-city-4?start=240",
+    "sourceTitle": "CAFE VIDA - Updated March 2026 - 2574 Photos & 2102 Reviews - 9755 Culver Blvd, Culver City, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Yelp",
+    "note": "3 branches in the named areas (Culver City, El Segundo, Pacific Palisades; Palisades listed temporarily closed at old address)",
     "closed": false,
-    "alternatives": [
-      "9755 Culver Blvd, Culver City, CA 90232, USA",
-      "2250 Park Pl, El Segundo, CA 90245, USA",
-      "548 Palisades Dr, Pacific Palisades, CA 90272, USA"
+    "branches": [
+      {
+        "address": "9755 Culver Blvd, Culver City, CA 90232, USA",
+        "sourceUrl": "https://www.yelp.com/biz/cafe-vida-culver-city-4?start=240",
+        "sourceTitle": "CAFE VIDA - Updated March 2026 - 2574 Photos & 2102 Reviews - 9755 Culver Blvd, Culver City, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2250 Park Pl, El Segundo, CA 90245, USA",
+        "sourceUrl": "https://www.yelp.com/biz/cafe-vida-el-segundo-el-segundo",
+        "sourceTitle": "CAFE VIDA - EL SEGUNDO - Updated May 2026 - 85 Photos & 104 Reviews - 2250 Park Pl, El Segundo, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "15317 Antioch St, Pacific Palisades, CA 90272, USA",
+        "sourceUrl": "https://www.yelp.com/biz/cafe-vida-pacific-palisades-2",
+        "sourceTitle": "CAFE VIDA - TEMP. CLOSED - Updated September 2026 - 565 Photos & 855 Reviews - 15317 Antioch St, Pacific Palisades, California - Breakfast & Brunch - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -2685,13 +2743,25 @@
   {
     "id": "312f3cdd-67a4-81dc-932a-e51fcda61ed5",
     "name": "AOC",
-    "status": "needs-you",
-    "sourceUrl": "https://www.yelp.com/biz/aoc-brentwood-los-angeles",
-    "sourceTitle": "AOC BRENTWOOD - CLOSED - Updated August 2026 - 1167 Photos & 1395 Reviews - 11648 San Vicente Blvd, Los Angeles, California - New American - Restaurant Reviews - Phone Number - Menu - Yelp",
-    "note": "Area names both Brentwood and WeHo; only the Brentwood branch (listed closed) was confirmed, so pick the branch you meant.",
-    "closed": true,
-    "alternatives": [
-      "11648 San Vicente Blvd, Los Angeles, CA 90049, USA"
+    "status": "found",
+    "address": "8700 W 3rd St, Los Angeles, CA 90048, USA",
+    "sourceUrl": "https://www.yelp.com/biz/aoc-los-angeles",
+    "sourceTitle": "AOC - Updated February 2026 - 3648 Photos & 2638 Reviews - 8700 W 3rd St, Los Angeles, California - Cocktail Bars - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 branches (WeHo area open on 3rd St; Brentwood closed)",
+    "closed": false,
+    "branches": [
+      {
+        "address": "8700 W 3rd St, Los Angeles, CA 90048, USA",
+        "sourceUrl": "https://www.yelp.com/biz/aoc-los-angeles",
+        "sourceTitle": "AOC - Updated February 2026 - 3648 Photos & 2638 Reviews - 8700 W 3rd St, Los Angeles, California - Cocktail Bars - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "11648 San Vicente Blvd, Los Angeles, CA 90049, USA",
+        "sourceUrl": "https://www.yelp.com/biz/aoc-brentwood-los-angeles",
+        "sourceTitle": "AOC BRENTWOOD - CLOSED - Updated August 2026 - 1167 Photos & 1395 Reviews - 11648 San Vicente Blvd, Los Angeles, California - New American - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -2757,12 +2827,25 @@
   {
     "id": "312f3cdd-67a4-8109-8c7a-e0845d0fca7d",
     "name": "Nha Trang",
-    "status": "needs-you",
-    "note": "Two Nha Trang restaurants in the 626: Monterey Park and San Gabriel; area does not pick one.",
+    "status": "found",
+    "address": "742 E Garvey Ave, Unit A, Monterey Park, CA 91755, USA",
+    "sourceUrl": "https://www.yelp.com/biz/nha-trang-monterey-park",
+    "sourceTitle": "NHA TRANG - Updated May 2026 - 952 Photos & 583 Reviews - 742 E Garvey Ave, Monterey Park, California - Vietnamese - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "2 branches in the 626 (Monterey Park, San Gabriel; San Gabriel is also listed as Quan Ngon Nha Trang)",
     "closed": false,
-    "alternatives": [
-      "742 E Garvey Ave, Unit A, Monterey Park, CA 91755",
-      "311 E Valley Blvd, San Gabriel, CA 91776"
+    "branches": [
+      {
+        "address": "742 E Garvey Ave, Unit A, Monterey Park, CA 91755, USA",
+        "sourceUrl": "https://www.yelp.com/biz/nha-trang-monterey-park",
+        "sourceTitle": "NHA TRANG - Updated May 2026 - 952 Photos & 583 Reviews - 742 E Garvey Ave, Monterey Park, California - Vietnamese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "311 E Valley Blvd, San Gabriel, CA 91776, USA",
+        "sourceUrl": "http://www.findglocal.com/US/San-Gabriel/135868073175442/Nha-Trang",
+        "sourceTitle": "Nha Trang, 311 E Valley Blvd, San Gabriel, CA (2020)",
+        "closed": false
+      }
     ]
   },
   {
@@ -2832,36 +2915,91 @@
   {
     "id": "312f3cdd-67a4-8157-ac1c-dcebe7692653",
     "name": "Golden Deli",
-    "status": "needs-you",
-    "note": "San Gabriel address found, but chain site suggests other branches in the 626; only this one confirmed, so area does not pick a branch.",
-    "closed": false,
+    "status": "found",
+    "address": "815 W Las Tunas Dr, San Gabriel, CA 91776, USA",
     "sourceUrl": "https://www.yelp.com/biz/golden-deli-san-gabriel-5",
     "sourceTitle": "GOLDEN DELI SAN GABRIEL - Updated August 2026 - 4315 Photos & 3726 Reviews - 815 W Las Tunas Dr, San Gabriel, California - Vietnamese - Restaurant Reviews - Phone Number - Menu - Yelp",
-    "alternatives": [
-      "815 W Las Tunas Dr, San Gabriel, CA 91776"
+    "note": "2 branches in the 626 (San Gabriel, Temple City)",
+    "closed": false,
+    "branches": [
+      {
+        "address": "815 W Las Tunas Dr, San Gabriel, CA 91776, USA",
+        "sourceUrl": "https://www.yelp.com/biz/golden-deli-san-gabriel-5",
+        "sourceTitle": "GOLDEN DELI SAN GABRIEL - Updated August 2026 - 4315 Photos & 3726 Reviews - 815 W Las Tunas Dr, San Gabriel, California - Vietnamese - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "9664 Las Tunas Dr, Temple City, CA 91780, USA",
+        "sourceUrl": "https://www.yelp.com/biz/golden-deli-temple-city-5",
+        "sourceTitle": "GOLDEN DELI TEMPLE CITY - Updated July 2026 - 1469 Photos & 1157 Reviews - 9664 Las Tunas Dr, Temple City, California - +16262852899 - Vietnamese - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-8169-b8d5-dc47f36f87a5",
     "name": "Simpang Asia",
-    "status": "needs-you",
-    "note": "Two branches, Palms and Venice, both in the listed area.",
+    "status": "found",
+    "address": "10433 National Blvd, Ste 2, Los Angeles, CA 90034, USA",
+    "sourceUrl": "https://www.yelp.com/biz/simpang-asia-los-angeles",
+    "sourceTitle": "SIMPANG ASIA - Updated September 2026 - 2471 Reviews - 5456 Photos - 10433 National Blvd, Los Angeles, California - Indonesian - Restaurant Reviews - Phone Number - Yelp",
+    "note": "2 branches in the named areas (Palms, Venice)",
     "closed": false,
-    "alternatives": [
-      "10433 National Blvd, Ste 2, Los Angeles, CA 90034",
-      "705 Lincoln Blvd, Venice, CA 90291"
+    "branches": [
+      {
+        "address": "10433 National Blvd, Ste 2, Los Angeles, CA 90034, USA",
+        "sourceUrl": "https://www.yelp.com/biz/simpang-asia-los-angeles",
+        "sourceTitle": "SIMPANG ASIA - Updated September 2026 - 2471 Reviews - 5456 Photos - 10433 National Blvd, Los Angeles, California - Indonesian - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "705 Lincoln Blvd, Venice, CA 90291, USA",
+        "sourceUrl": "https://www.yelp.com/biz/simpang-venice-venice",
+        "sourceTitle": "SIMPANG VENICE - Updated August 2026 - 1151 Photos & 271 Reviews - 705 Lincoln Blvd, Venice, California - Indonesian - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
     "id": "312f3cdd-67a4-816a-82af-e434ef64697d",
     "name": "Sidecar Doughnuts",
-    "status": "needs-you",
-    "note": "Multi-location chain and area is just 'Lots of Locations'; pick a branch.",
-    "closed": false,
+    "status": "found",
+    "address": "631 Wilshire Blvd, Santa Monica, CA 90401, USA",
     "sourceUrl": "https://www.yelp.com/biz/sidecar-doughnuts-and-coffee-santa-monica-3",
     "sourceTitle": "SIDECAR DOUGHNUTS & COFFEE - Updated September 2026 - 5008 Photos & 2881 Reviews - 631 Wilshire Blvd, Santa Monica, California - Donuts - Phone Number - Yelp",
-    "alternatives": [
-      "631 Wilshire Blvd, Santa Monica, CA 90401"
+    "note": "5 LA-metro branches (Santa Monica, Fairfax, Culver City, Manhattan Beach, Torrance)",
+    "closed": false,
+    "branches": [
+      {
+        "address": "631 Wilshire Blvd, Santa Monica, CA 90401, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sidecar-doughnuts-and-coffee-santa-monica-3",
+        "sourceTitle": "SIDECAR DOUGHNUTS & COFFEE - Updated September 2026 - 5008 Photos & 2881 Reviews - 631 Wilshire Blvd, Santa Monica, California - Donuts - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "175 S Fairfax Ave, Unit D, Los Angeles, CA 90036, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sidecar-doughnuts-and-coffee-los-angeles-2",
+        "sourceTitle": "SIDECAR DOUGHNUTS & COFFEE - Updated July 2026 - 884 Photos & 498 Reviews - 175 S Fairfax Ave, Los Angeles, California - Donuts - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "10705 Washington Blvd, Culver City, CA 90232, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sidecar-doughnuts-and-coffee-culver-city",
+        "sourceTitle": "SIDECAR DOUGHNUTS & COFFEE - Updated September 2026 - 532 Photos & 287 Reviews - 10705 Washington Blvd, Culver City, California - Donuts - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "3026 N Sepulveda Blvd, Suite G-110, Manhattan Beach, CA 90266, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sidecar-doughnuts-and-coffee-manhattan-beach-2",
+        "sourceTitle": "SIDECAR DOUGHNUTS & COFFEE - Updated September 2026 - 831 Photos & 342 Reviews - 3026 N Sepulveda Blvd, Manhattan Beach, California - Donuts - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2549 Pacific Coast Hwy, Unit B, Torrance, CA 90505, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sidecar-doughnuts-and-coffee-torrance",
+        "sourceTitle": "SIDECAR DOUGHNUTS & COFFEE - Updated September 2026 - 2159 Photos & 886 Reviews - 2549 Pacific Coast Hwy, Torrance, California - Donuts - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -2887,12 +3025,25 @@
   {
     "id": "312f3cdd-67a4-8178-ad82-c9b90ef6c7e6",
     "name": "Tsujita",
-    "status": "needs-you",
-    "note": "Two Tsujita spots on Sawtelle Blvd (Tsujita LA and Tsujita Annex); name/area do not pick one.",
+    "status": "found",
+    "address": "2057 Sawtelle Blvd, Los Angeles, CA 90025, USA",
+    "sourceUrl": "https://www.yelp.com/biz/tsujita-la-artisan-noodle-los-angeles-2",
+    "sourceTitle": "TSUJITA LA ARTISAN NOODLE - Updated September 2026 - 6998 Photos & 5207 Reviews - 2057 Sawtelle Blvd, Los Angeles, California - Ramen - Restaurant Reviews - Phone Number - Yelp",
+    "note": "2 branches in Sawtelle (main and Annex)",
     "closed": false,
-    "alternatives": [
-      "2057 Sawtelle Blvd, Los Angeles, CA 90025",
-      "2050 Sawtelle Blvd, Los Angeles, CA 90025"
+    "branches": [
+      {
+        "address": "2057 Sawtelle Blvd, Los Angeles, CA 90025, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tsujita-la-artisan-noodle-los-angeles-2",
+        "sourceTitle": "TSUJITA LA ARTISAN NOODLE - Updated September 2026 - 6998 Photos & 5207 Reviews - 2057 Sawtelle Blvd, Los Angeles, California - Ramen - Restaurant Reviews - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "2050 Sawtelle Blvd, Los Angeles, CA 90025, USA",
+        "sourceUrl": "https://www.yelp.com/biz/tsujita-la-artisan-noodle-annex-los-angeles-3",
+        "sourceTitle": "TSUJITA LA ARTISAN NOODLE ANNEX - Updated September 2026 - 3415 Photos & 2469 Reviews - 2050 Sawtelle Blvd, Los Angeles, California - Ramen - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -2968,13 +3119,37 @@
   {
     "id": "312f3cdd-67a4-819b-a331-e9a61ec14bfe",
     "name": "El Flamin Taco",
-    "status": "needs-you",
-    "note": "Several branches (Echo Park, Koreatown, Los Feliz) match the multi-neighborhood area; cannot pick one.",
+    "status": "found",
+    "address": "2028 W Sunset Blvd, Los Angeles, CA 90026, USA",
+    "sourceUrl": "https://www.yelp.com/biz/el-flamin-taco-los-angeles-14",
+    "sourceTitle": "EL FLAMIN TACO - ECHO PARK - Updated June 2026 - 251 Photos & 227 Reviews - 2028 W Sunset Blvd, Los Angeles, California - Food Trucks - Restaurant Reviews - Phone Number - Menu - Yelp",
+    "note": "4 branches (Echo Park, Koreatown, Los Feliz open; Hollywood Sunset Blvd closed)",
     "closed": false,
-    "alternatives": [
-      "2028 W Sunset Blvd, Los Angeles, CA (Echo Park)",
-      "505 Vermont Ave, Los Angeles, CA 90020 (Koreatown)",
-      "3050 Los Feliz Blvd, Los Angeles, CA (Los Feliz)"
+    "branches": [
+      {
+        "address": "2028 W Sunset Blvd, Los Angeles, CA 90026, USA",
+        "sourceUrl": "https://www.yelp.com/biz/el-flamin-taco-los-angeles-14",
+        "sourceTitle": "EL FLAMIN TACO - ECHO PARK - Updated June 2026 - 251 Photos & 227 Reviews - 2028 W Sunset Blvd, Los Angeles, California - Food Trucks - Restaurant Reviews - Phone Number - Menu - Yelp",
+        "closed": false
+      },
+      {
+        "address": "505 Vermont Ave, Los Angeles, CA 90020, USA",
+        "sourceUrl": "https://www.yelp.com/biz/el-flamin-taco-los-angeles-13",
+        "sourceTitle": "EL FLAMIN TACO - KOREATOWN - Updated July 2026 - 754 Photos & 821 Reviews - 505 Vermont Ave, Los Angeles, California - +12134149398 - Mexican - Yelp",
+        "closed": false
+      },
+      {
+        "address": "3050 Los Feliz Blvd, Los Angeles, CA 90039, USA",
+        "sourceUrl": "https://www.yelp.com/biz/el-flamin-taco-los-angeles-12",
+        "sourceTitle": "EL FLAMIN TACO - LOS FELIZ - Updated July 2026 - 84 Photos & 87 Reviews - 3050 Los Feliz Blvd, Los Angeles, California - +12134149392 - Food Trucks - Yelp",
+        "closed": false
+      },
+      {
+        "address": "6200 Sunset Blvd, Los Angeles, CA 90028, USA",
+        "sourceUrl": "https://www.yelp.com/biz/el-flamin-taco-los-angeles-los-angeles",
+        "sourceTitle": "EL FLAMIN' TACO - LOS ANGELES - CLOSED - Updated December 2025 - 43 Photos & 28 Reviews - 6200 Sunset Blvd, Los Angeles, California - Food Trucks - Restaurant Reviews - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -3012,13 +3187,67 @@
   {
     "id": "312f3cdd-67a4-81be-ad93-d61bf3a9b1f3",
     "name": "Caffe Luxxe",
-    "status": "needs-you",
-    "note": "Chain with many branches in the LA metro; area does not pick one.",
+    "status": "found",
+    "address": "11640 San Vicente Blvd, Ste 101, Los Angeles, CA 90049, USA",
+    "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-los-angeles-2",
+    "sourceTitle": "CAFFE LUXXE - Updated September 2026 - 320 Photos - 164 Reviews - 11640 San Vicente Blvd, Los Angeles, California - Coffee Roasteries - Phone Number - Yelp",
+    "note": "9 LA-metro branches (8 open or temp closed, 1 closed)",
     "closed": false,
-    "alternatives": [
-      "11640 San Vicente Blvd, Los Angeles, CA 90049",
-      "925 Montana Ave, Santa Monica, CA 90403",
-      "9718 Washington Blvd, Culver City, CA 90232"
+    "branches": [
+      {
+        "address": "11640 San Vicente Blvd, Ste 101, Los Angeles, CA 90049, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-los-angeles-2",
+        "sourceTitle": "CAFFE LUXXE - Updated September 2026 - 320 Photos - 164 Reviews - 11640 San Vicente Blvd, Los Angeles, California - Coffee Roasteries - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "925 Montana Ave, Santa Monica, CA 90403, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-santa-monica",
+        "sourceTitle": "CAFFE LUXXE - Updated July 2026 - 476 Photos & 551 Reviews - 925 Montana Ave, Santa Monica, California - Coffee & Tea - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "225 26th St, Santa Monica, CA 90402, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-santa-monica-2",
+        "sourceTitle": "CAFFE LUXXE - Updated July 2026 - 262 Photos & 201 Reviews - 225 26th St, Santa Monica, California - Coffee & Tea - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "9718 Washington Blvd, Culver City, CA 90232, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-culver-city",
+        "sourceTitle": "CAFFE LUXXE - Updated September 2026 - 84 Photos & 37 Reviews - 9718 Washington Blvd, Culver City, California - Coffee & Tea - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "22333 Pacific Coast Hwy, Malibu, CA 90265, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-malibu",
+        "sourceTitle": "CAFFE LUXXE - Updated May 2026 - 300 Photos & 218 Reviews - 22333 Pacific Coast Hwy, Malibu, California - Coffee & Tea - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "904 Manhattan Ave, Manhattan Beach, CA 90266, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-manhattan-beach",
+        "sourceTitle": "CAFFE LUXXE - Updated June 2026 - 322 Photos & 94 Reviews - 904 Manhattan Ave, Manhattan Beach, California - Coffee & Tea - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "6420 E Pacific Coast Hwy, Ste 145, Long Beach, CA 90803, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-long-beach",
+        "sourceTitle": "CAFFE LUXXE - Updated September 2026 - 306 Reviews - 678 Photos - 6420 E Pacific Coast Hwy, Long Beach, California - Coffee & Tea - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "15200 Sunset Blvd, Unit 105, Pacific Palisades, CA 90272, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-los-angeles-4",
+        "sourceTitle": "CAFFE LUXXE - TEMP. CLOSED - Updated April 2026 - 105 Photos & 55 Reviews - 15200 Sunset Blvd, Los Angeles, California - Coffee Roasteries - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "11975 San Vicente Blvd, Los Angeles, CA 90049, USA",
+        "sourceUrl": "https://www.yelp.com/biz/caffe-luxxe-los-angeles",
+        "sourceTitle": "CAFFE LUXXE - CLOSED - Updated April 2026 - 72 Photos & 143 Reviews - 11975 San Vicente Blvd, Los Angeles, California - Coffee & Tea - Phone Number - Yelp",
+        "closed": true
+      }
     ]
   },
   {
@@ -3259,14 +3488,25 @@
   {
     "id": "322f3cdd-67a4-8121-844c-f9499b5d2e27",
     "name": "Sandbox VR",
-    "status": "needs-you",
-    "note": "Chain with several LA-area locations; area does not pick one.",
-    "closed": false,
+    "status": "found",
+    "address": "3341 La Cienega Blvd, Los Angeles, CA 90016, USA",
     "sourceUrl": "https://www.yelp.com/biz/sandbox-vr-los-angeles-4",
     "sourceTitle": "SANDBOX VR - Updated September 2026 - 76 Photos & 88 Reviews - 3341 La Cienega Blvd, Los Angeles, California - Virtual Reality Centers - Phone Number - Schedule - Yelp",
-    "alternatives": [
-      "3341 La Cienega Blvd, Los Angeles, CA",
-      "6316 CA-27, Los Angeles, CA (Woodland Hills)"
+    "note": "2 LA-metro branches (La Cienega, Woodland Hills)",
+    "closed": false,
+    "branches": [
+      {
+        "address": "3341 La Cienega Blvd, Los Angeles, CA 90016, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sandbox-vr-los-angeles-4",
+        "sourceTitle": "SANDBOX VR - Updated September 2026 - 76 Photos & 88 Reviews - 3341 La Cienega Blvd, Los Angeles, California - Virtual Reality Centers - Phone Number - Schedule - Yelp",
+        "closed": false
+      },
+      {
+        "address": "6316 Topanga Canyon Blvd, Ste 1120, Woodland Hills, CA 91367, USA",
+        "sourceUrl": "https://www.yelp.com/biz/sandbox-vr-woodland-hills-4",
+        "sourceTitle": "SANDBOX VR - Updated July 2026 - 198 Photos & 129 Reviews - 6316 Topanga Canyon Blvd, Woodland Hills, California - Virtual Reality Centers - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
@@ -3416,7 +3656,7 @@
     "id": "3cff3cdd-67a4-814a-8cd7-c563a159f699",
     "name": "Xu's Cuisine",
     "status": "needs-you",
-    "note": "Search suggests a Wangjiang Road, Wuhou branch (chain has other branches) but no readable page stated the address.",
+    "note": "Chengdu branch (1 Wangjiang Rd, Wuhou, Michelin Guide page) found but no source title shows a street address; needs manual confirmation",
     "closed": false
   },
   {
@@ -3436,37 +3676,85 @@
   {
     "id": "3c7f3cdd-67a4-819d-b878-c1a1ec346156",
     "name": "Felzl",
-    "status": "needs-you",
-    "note": "Several Felzl bakery-cafe branches in Vienna; area does not pick one.",
+    "status": "found",
+    "address": "Lerchenfelder Strasse 99-101, 1070 Wien, Austria",
+    "sourceUrl": "https://www.felzl.at/filiale-lerchenfelder-strasse/",
+    "sourceTitle": "Bäckerei Felzl Lerchenfelder Straße 1070 Wien",
+    "note": "3 Vienna branches with the address shown on their source; more branches exist without a source that shows the number.",
     "closed": false,
-    "alternatives": [
-      "Lerchenfelder Str. 99-101, Wien, Austria",
-      "Kaiserstrasse 51-53, 1070 Wien",
-      "Pilgramgasse 24, 1050 Wien"
+    "branches": [
+      {
+        "address": "Lerchenfelder Strasse 99-101, 1070 Wien, Austria",
+        "sourceUrl": "https://www.felzl.at/filiale-lerchenfelder-strasse/",
+        "sourceTitle": "Bäckerei Felzl Lerchenfelder Straße 1070 Wien",
+        "closed": false
+      },
+      {
+        "address": "Pilgramgasse 24, 1050 Wien, Austria",
+        "sourceUrl": "https://www.yelp.com/biz/b%C3%A4ckerei-caf%C3%A9-felzl-wien",
+        "sourceTitle": "BÄCKEREI CAFÉ FELZL - Updated July 2026 - 41 Photos - Pilgramgasse 24, Wien, Austria - Bakeries - Yelp",
+        "closed": false
+      },
+      {
+        "address": "Leopoldsgasse 43, 1020 Wien, Austria",
+        "sourceUrl": "https://www.felzl.at/filiale-leopoldsgasse/",
+        "sourceTitle": "Bäckerei Felzl Leopoldsgasse 1020 Wien",
+        "closed": false
+      }
     ]
   },
   {
     "id": "3c7f3cdd-67a4-819b-afc9-f4f359443ae5",
     "name": "Öfferl",
-    "status": "needs-you",
-    "note": "Several Oefferl branches in Vienna; area does not pick one.",
+    "status": "found",
+    "address": "Wollzeile 31, 1010 Wien, Austria",
+    "sourceUrl": "https://www.yelp.com/biz/%C3%B6fferl-wien",
+    "sourceTitle": "ÖFFERL - Updated September 2026 - 79 Photos & 19 Reviews - Wollzeile 31, Wien, Austria - Bakeries - Phone Number - Yelp",
+    "note": "2 Vienna branches with titled sources (Schottengasse 3 and others exist but no titled source)",
     "closed": false,
-    "alternatives": [
-      "Wollzeile 31, 1010 Wien",
-      "Praterstrasse 26, Wien",
-      "Schottengasse 3, 1010 Wien"
+    "branches": [
+      {
+        "address": "Wollzeile 31, 1010 Wien, Austria",
+        "sourceUrl": "https://www.yelp.com/biz/%C3%B6fferl-wien",
+        "sourceTitle": "ÖFFERL - Updated September 2026 - 79 Photos & 19 Reviews - Wollzeile 31, Wien, Austria - Bakeries - Phone Number - Yelp",
+        "closed": false
+      },
+      {
+        "address": "Praterstrasse 26, 1020 Wien, Austria",
+        "sourceUrl": "https://lunchy.to/at/vienna/restaurant/offerl-praterstrasse-26-qhgt7u",
+        "sourceTitle": "Öfferl - Praterstrasse 26 — Bakery restaurant in Vienna | Menu ...",
+        "closed": false
+      }
     ]
   },
   {
     "id": "3c7f3cdd-67a4-811a-a01f-ed4fa9c0f7f8",
     "name": "Joseph Brot",
-    "status": "needs-you",
-    "note": "Several Joseph Brot branches in Vienna; area does not pick one.",
+    "status": "found",
+    "address": "Landstrasser Hauptstrasse 4, 1030 Wien, Austria",
+    "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g190454-d7389778-Reviews-Joseph_Backerei_Patisserie_Bistro-Vienna.html",
+    "sourceTitle": "JOSEPH BROT, Vienna - Landstrasser Hauptstrasse 4, Weißgerber - Restaurant Reviews & Phone Number - Tripadvisor",
+    "note": "3 Vienna branches with titled sources",
     "closed": false,
-    "alternatives": [
-      "Fuehrichgasse 6, 1010 Wien",
-      "Landstrasser Hauptstrasse 4, 1030 Wien",
-      "Naglergasse 9, 1010 Wien"
+    "branches": [
+      {
+        "address": "Landstrasser Hauptstrasse 4, 1030 Wien, Austria",
+        "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g190454-d7389778-Reviews-Joseph_Backerei_Patisserie_Bistro-Vienna.html",
+        "sourceTitle": "JOSEPH BROT, Vienna - Landstrasser Hauptstrasse 4, Weißgerber - Restaurant Reviews & Phone Number - Tripadvisor",
+        "closed": false
+      },
+      {
+        "address": "Fuhrichgasse 6, 1010 Wien, Austria",
+        "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g190454-d12954729-Reviews-or60-Joseph_Brot-Vienna.html",
+        "sourceTitle": "JOSEPH BROT, Vienna - Fuhrichgasse 6, Inner City - Menu & Prices - Tripadvisor",
+        "closed": false
+      },
+      {
+        "address": "Naglergasse 9, 1010 Wien, Austria",
+        "sourceUrl": "https://www.yelp.com/biz/joseph-wien-3",
+        "sourceTitle": "JOSEPH - Updated May 2026 - 25 Photos & 31 Reviews - Naglergasse 9, Wien, Austria - Bakeries - Phone Number - Yelp",
+        "closed": false
+      }
     ]
   },
   {
