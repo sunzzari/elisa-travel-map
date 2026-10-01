@@ -124,6 +124,17 @@ export function nameMatches(rowName: string, candName: string | undefined): bool
   return shared / Math.max(ta.length, tb.size) >= 0.8 && ta.some(t => t.length >= 4)
 }
 
+/** True when the two names share at least one distinctive word (not "the", "cafe", "bar"...). */
+function sharesNameWord(query: string, candName: string | undefined): boolean {
+  if (!candName) return false
+  const words = (s: string) => fold(s).split(' ').filter(t => t.length >= 3 && !GENERIC.has(t))
+  const asked = words(query)
+  // A query made only of generic words ("The Bar") cannot be judged this way.
+  if (asked.length === 0) return true
+  const have = new Set(words(candName))
+  return asked.some(t => have.has(t))
+}
+
 const AREA_TYPES = new Set(['city', 'district', 'locality', 'county', 'state', 'country', 'street'])
 const AREA_KEYS = new Set(['place', 'boundary', 'highway', 'landuse', 'route', 'waterway', 'railway:line'])
 const isAreaOnly = (p: any) => AREA_KEYS.has(p.osm_key) || AREA_TYPES.has(p.type)
@@ -263,6 +274,11 @@ export async function lookupPlace(query: string, area: PlaceArea): Promise<Candi
       const p = f.properties
       const pt = pointOf(f)
       if (isAreaOnly(p) || !fits(area.kind, p) || !pinInArea(area, pt)) continue
+      // The venue's NAME has to share a real word with what was asked for.
+      // OpenStreetMap also matches on street names: "The Alley" came back as
+      // two unrelated restaurants on streets called "Alley" (seen on the phone,
+      // 2026-10-01). Better no candidates and a typed address than wrong ones.
+      if (!sharesNameWord(q, p.name)) continue
       // The same place mapped twice (a node and its building) is one candidate.
       if (found.some(c => km(c, pt) < 0.05 && fold(c.name) === fold(p.name ?? ''))) continue
       const address = addressOf(p)

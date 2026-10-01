@@ -2,6 +2,10 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-10-01
+
+- `2:50pm` **The place lookup no longer offers venues that only share a street name** - seen on the phone: "Find it" for "The Alley" offered two unrelated restaurants on streets called "Alley". A candidate's own name now has to share a real word with the place asked for; otherwise the lookup says there are no matches and the street address can be typed. Changes the phone's Find it too, with no app release.
+
 ## 2026-09-30
 
 - `7:55pm` **One location system for the website and the phone: saved pins, a free lookup, no Google** - Elisa: "the overall goal is to make the locations on my app and web app functional (these two things should be synced in terms of function)" and "why are the travel map and sunzzari travel maps so diffuse? the same data is used for both and the same features should be used for both". Everything about where a place is now lives once, here on the server, and both apps draw the answer. This replaces the Google lookup a cloud session added earlier today (never merged), which billed per search and needed the switched-off Geocoding API to draw a single pin.
