@@ -30,6 +30,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     console.error('Around Town update failed:', err)
     return NextResponse.json({ error: 'Notion did not accept the change' }, { status: 502 })
   }
+  // Both the page and the JSON the phone reads, or the phone shows the old
+  // places for up to five minutes after its own save.
   revalidatePath('/around-town')
+  revalidatePath('/api/around-town')
   return NextResponse.json({ ok: true, location })
 }

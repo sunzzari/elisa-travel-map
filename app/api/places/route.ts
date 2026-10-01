@@ -18,7 +18,10 @@ export async function POST(request: Request) {
 
   try {
     const { id, location } = await createPlace(notionFor(auth.caller), place)
+    // Both the page and the JSON the phone reads, or the phone shows the
+    // old places for up to five minutes after its own save.
     revalidatePath('/around-town')
+    revalidatePath('/api/around-town')
     return NextResponse.json({ ok: true, id, location })
   } catch (err) {
     if (err instanceof PlaceInputError) return NextResponse.json({ error: err.message }, { status: 400 })

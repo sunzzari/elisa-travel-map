@@ -5,6 +5,7 @@ Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.m
 ## 2026-10-01
 
 - `2:50pm` **The place lookup no longer offers venues that only share a street name** - seen on the phone: "Find it" for "The Alley" offered two unrelated restaurants on streets called "Alley". A candidate's own name now has to share a real word with the place asked for; otherwise the lookup says there are no matches and the street address can be typed. Changes the phone's Find it too, with no app release.
+- `3:00pm` **A save now refreshes what the phone reads, not only the web page** - `/api/places` was refreshing `/around-town` but not `/api/around-town`, so after its own save the phone would have shown the old places for up to five minutes.
 
 ## 2026-09-30
 
