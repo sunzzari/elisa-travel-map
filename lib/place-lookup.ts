@@ -12,8 +12,10 @@
  *   - the search is fenced to the place's area (LA or the SF Bay box)
  *   - a city, district or street is never a place
  *   - a restaurant must be food, an activity a venue
- *   - `confident` also needs the name to match and the spot to sit in the
- *     named neighborhood (its city, or within a few km of it)
+ *   - for a NAME match, `confident` also needs the name to match and the spot
+ *     to sit in one of the neighborhoods she named (its city, or within a few
+ *     km of it). A street address is never gated by the neighborhood: it is her
+ *     loose label, not a boundary (her correction, 2026-10-01).
  * A person picking from the list is the final check; `confident` is what the
  * unattended sweep requires before it saves anything.
  */
@@ -51,7 +53,11 @@ export interface PlaceArea {
   /** The note as she wrote it: neighborhood then Location. */
   areaText: string
   boxes: Box[]
-  center: Coordinates | null
+  /**
+   * One centre per area her note names. "Fairfax / Pacific Palisades" is two
+   * places, not one; looked up as a single string it resolved to one wrong spot.
+   */
+  centers: Coordinates[]
 }
 
 // MARK: - HTTP
@@ -162,14 +168,19 @@ export async function areaFor(kind: AroundTownKind, neighborhood: string, locati
   if (regions.size === 0 && kind === 'activity' && !location) regions.add('la')
   if (regions.size === 0) return null
   const boxes = [...regions].map(r => BOX[r])
-  let center: Coordinates | null = null
   const first = (location.split('/')[0] ?? '').trim().toLowerCase()
-  if (kind === 'restaurant' && neighborhood && neighborhood !== location) {
-    center = await placeCenter(`${neighborhood}, ${CITY_BY_LOCATION[first] ?? 'Los Angeles, CA'}`, boxes[0])
-  } else if (kind === 'activity' && location && !CITY_BY_LOCATION[first]) {
-    center = await placeCenter(location, boxes[0])
+  const city = CITY_BY_LOCATION[first] ?? (regions.has('sfBay') && !regions.has('la') ? 'San Francisco, CA' : 'Los Angeles, CA')
+  const named = kind === 'restaurant'
+    ? (neighborhood && neighborhood !== location ? neighborhood.split(/[/,]/) : [])
+    : (location && !CITY_BY_LOCATION[first] ? [location] : [])
+  const centers: Coordinates[] = []
+  for (const part of named.map(s => s.trim()).filter(Boolean).slice(0, 4)) {
+    for (const box of boxes) {
+      const c = await placeCenter(kind === 'restaurant' ? `${part}, ${city}` : part, box)
+      if (c) { centers.push(c); break }
+    }
   }
-  return { kind, areaText: [neighborhood, location].filter(Boolean).join(', '), boxes, center }
+  return { kind, areaText: [neighborhood, location].filter(Boolean).join(', '), boxes, centers }
 }
 
 /** G9, the saved-pin backstop: a pin outside its place's area is never saved or drawn. */
@@ -177,22 +188,44 @@ export function pinInArea(area: PlaceArea, pin: Coordinates): boolean {
   return area.boxes.some(b => inBox(b, pin.lat, pin.lng)) && regionFromCoords(pin.lat, pin.lng) !== null
 }
 
+/**
+ * For a NAME match only: is this same-named venue the one in her neighborhood?
+ * That is the one job the neighborhood does, telling a chain's branches apart
+ * when nobody is there to pick. It is never applied to a street address.
+ *
+ * Elisa, 2026-10-01, on 18 correct addresses a distance-from-neighborhood check
+ * had held back: "i think you are interpreting neighborhoods wrong. all those
+ * addresses are correct". Her Neighborhood is a loose label - a street
+ * ("Melrose"), a mall ("The Grove"), several areas at once - not a boundary.
+ */
 function nearNamedArea(area: PlaceArea, address: string, pin: Coordinates): boolean {
   if (addressInNamedArea(area.areaText, address)) return true
-  if (!area.center) return false
-  return km(area.center, pin) <= (area.kind === 'restaurant' ? 3 : 8)
+  const radius = area.kind === 'restaurant' ? 3 : 8
+  return area.centers.some(c => km(c, pin) <= radius)
 }
+
+const nearestCenterKm = (area: PlaceArea, pin: Coordinates) =>
+  area.centers.length ? Math.min(...area.centers.map(c => km(c, pin))) : 0
+
+/** Whole words only: without the \b this would eat the "ste" in "Western Ave". */
+const withoutUnit = (a: string) =>
+  a.replace(/,?\s*(?:\b(?:suite|ste|unit|apt)\b\.?|#)\s*[\w-]+/gi, '').replace(/\s+,/g, ',')
 
 // MARK: - Lookups
 
 const looksLikeStreetAddress = (q: string) => /^\s*\d+[a-z]?\s+\S/i.test(q)
 
-/** A typed street address to a pin inside the area, or null. */
-export async function pinAddress(area: PlaceArea, address: string): Promise<Candidate | null> {
+/**
+ * A street address to a pin inside the area, or null. An address that lands in
+ * the place's LA or Bay box is `confident`: the neighborhood does not gate it.
+ */
+export async function pinAddress(area: PlaceArea, fullAddress: string): Promise<Candidate | null> {
+  // "Suite 130" defeats both geocoders; the building is what gets pinned.
+  const address = withoutUnit(fullAddress)
   const c = await census(address)
   if (c && pinInArea(area, c)) {
-    return { name: '', address: c.matched || address, lat: Number(c.lat.toFixed(6)), lng: Number(c.lng.toFixed(6)),
-      source: 'US Census', confident: nearNamedArea(area, address, c) }
+    return { name: '', address: fullAddress.trim(), lat: Number(c.lat.toFixed(6)), lng: Number(c.lng.toFixed(6)),
+      source: 'US Census', confident: true }
   }
   const hay = ` ${fold(address)} `
   for (const box of area.boxes) {
@@ -203,8 +236,8 @@ export async function pinAddress(area: PlaceArea, address: string): Promise<Cand
         fold(p.street).split(' ').some((w: string) => w.length >= 4 && hay.includes(` ${w} `))
       const pt = pointOf(f)
       if (!houseOk || !pinInArea(area, pt)) continue
-      return { name: '', address: addressOf(p), lat: Number(pt.lat.toFixed(6)), lng: Number(pt.lng.toFixed(6)),
-        source: 'OpenStreetMap', confident: nearNamedArea(area, address, pt) }
+      return { name: '', address: fullAddress.trim(), lat: Number(pt.lat.toFixed(6)), lng: Number(pt.lng.toFixed(6)),
+        source: 'OpenStreetMap', confident: true }
     }
   }
   return null
@@ -225,7 +258,7 @@ export async function lookupPlace(query: string, area: PlaceArea): Promise<Candi
   const found: (Candidate & { dist: number })[] = []
   for (const box of area.boxes) {
     const params: Record<string, string> = { q, bbox: bbox(box) }
-    if (area.center) { params.lat = String(area.center.lat); params.lon = String(area.center.lng) }
+    if (area.centers[0]) { params.lat = String(area.centers[0].lat); params.lon = String(area.centers[0].lng) }
     for (const f of (await photon(params)) ?? []) {
       const p = f.properties
       const pt = pointOf(f)
@@ -236,7 +269,7 @@ export async function lookupPlace(query: string, area: PlaceArea): Promise<Candi
       found.push({
         name: p.name ?? '', address, ...pt, source: 'OpenStreetMap',
         confident: nameMatches(q, p.name) && nearNamedArea(area, address, pt),
-        dist: area.center ? km(area.center, pt) : 0,
+        dist: nearestCenterKm(area, pt),
       })
     }
   }
