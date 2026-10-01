@@ -5,7 +5,7 @@ import { kindOfPage, parsePatch, updatePlace, PlaceInputError } from '@/lib/plac
 
 /** Edit an Around Town place. The website and the phone both save here. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const refused = refuseWithoutPasscode(request)
+  const refused = await refuseWithoutPasscode(request)
   if (refused) return refused
 
   const { id } = await params

@@ -5,7 +5,7 @@ import { createPlace, parseNewPlace, PlaceInputError } from '@/lib/places-write'
 
 /** Add an Around Town place. The website and the phone both save here. */
 export async function POST(request: Request) {
-  const refused = refuseWithoutPasscode(request)
+  const refused = await refuseWithoutPasscode(request)
   if (refused) return refused
 
   let place

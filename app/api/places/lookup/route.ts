@@ -10,7 +10,7 @@ import { areaFor, lookupPlace } from '@/lib/place-lookup'
  *   GET /api/places/lookup?q=Bestia&kind=restaurant&neighborhood=Arts%20District&location=LA
  */
 export async function GET(request: Request) {
-  const refused = refuseWithoutPasscode(request)
+  const refused = await refuseWithoutPasscode(request)
   if (refused) return refused
 
   const params = new URL(request.url).searchParams
