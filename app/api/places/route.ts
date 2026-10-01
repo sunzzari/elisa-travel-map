@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { refuseWithoutPasscode } from '@/lib/edit-auth'
-import { createPlace, parseNewPlace, PlaceInputError } from '@/lib/places-write'
+import { authorize } from '@/lib/edit-auth'
+import { createPlace, notionFor, parseNewPlace, PlaceInputError } from '@/lib/places-write'
 
 /** Add an Around Town place. The website and the phone both save here. */
 export async function POST(request: Request) {
-  const refused = await refuseWithoutPasscode(request)
-  if (refused) return refused
+  const auth = await authorize(request)
+  if ('refused' in auth) return auth.refused
 
   let place
   try {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { id, location } = await createPlace(place)
+    const { id, location } = await createPlace(notionFor(auth.caller), place)
     revalidatePath('/around-town')
     return NextResponse.json({ ok: true, id, location })
   } catch (err) {

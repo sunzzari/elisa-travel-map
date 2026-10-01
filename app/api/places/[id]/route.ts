@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
-import { refuseWithoutPasscode } from '@/lib/edit-auth'
-import { kindOfPage, parsePatch, updatePlace, PlaceInputError } from '@/lib/places-write'
+import { authorize } from '@/lib/edit-auth'
+import { kindOfPage, notionFor, parsePatch, updatePlace, PlaceInputError } from '@/lib/places-write'
 
 /** Edit an Around Town place. The website and the phone both save here. */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const refused = await refuseWithoutPasscode(request)
-  if (refused) return refused
+  const auth = await authorize(request)
+  if ('refused' in auth) return auth.refused
+  // The app's saves run as the app's own key; see lib/edit-auth.ts.
+  const notion = notionFor(auth.caller)
 
   const { id } = await params
   let patch
@@ -17,12 +19,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ error: message }, { status: 400 })
   }
 
-  const page = await kindOfPage(id)
+  const page = await kindOfPage(notion, id)
   if (!page) return NextResponse.json({ error: 'Not an Around Town place' }, { status: 404 })
 
   let location
   try {
-    location = await updatePlace(id, page, patch)
+    location = await updatePlace(notion, id, page, patch)
   } catch (err) {
     if (err instanceof PlaceInputError) return NextResponse.json({ error: err.message }, { status: 400 })
     console.error('Around Town update failed:', err)

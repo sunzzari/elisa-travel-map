@@ -4,6 +4,7 @@ import type { AroundTownKind } from './aroundtown-shared'
 import { areaFor, pinAddress, pinInArea } from './place-lookup'
 import { pinProperties } from './saved-pins'
 import type { Coordinates } from './types'
+import type { Caller } from './edit-auth'
 
 /**
  * Around Town writes. Server only. Every page id that comes in from the browser
@@ -11,7 +12,16 @@ import type { Coordinates } from './types'
  * passcode can never be used to edit an unrelated Notion page.
  */
 
-const notion = new Client({ auth: process.env.NOTION_TOKEN })
+const serverNotion = new Client({ auth: process.env.NOTION_TOKEN })
+
+/**
+ * The Notion client a save runs as. The website (passcode) uses the server's
+ * key. The Sunzzari app uses ITS OWN key, so a key that can only read is
+ * refused by Notion itself and can never write through this server.
+ */
+export function notionFor(caller: Caller): Client {
+  return caller.via === 'notion' ? new Client({ auth: caller.token }) : serverNotion
+}
 
 const RESTAURANT_GUIDE_DB = '9078462d-842a-4233-82d9-dbd07014782b'
 const ACTIVITIES_DB = 'ca04eea9-94f9-4be5-a075-5e509d236ccb'
@@ -125,7 +135,7 @@ const plain = (prop: any): string =>
     : ''
 
 /** Which Around Town database a page lives in (and where it is), or null if it is not one of ours. */
-export async function kindOfPage(pageId: string): Promise<OurPage | null> {
+export async function kindOfPage(notion: Client, pageId: string): Promise<OurPage | null> {
   if (!/^[0-9a-f]{32}$/.test(bare(pageId))) return null
   let page: any
   try {
@@ -194,7 +204,7 @@ function properties(kind: AroundTownKind, p: PlacePatch): Record<string, any> {
   return props
 }
 
-export async function updatePlace(pageId: string, page: OurPage, patch: PlacePatch): Promise<LocationResult | null> {
+export async function updatePlace(notion: Client, pageId: string, page: OurPage, patch: PlacePatch): Promise<LocationResult | null> {
   const location = await locationProperties(page, patch)
   const props = { ...properties(page.kind, patch), ...(location?.props ?? {}) }
   if (Object.keys(props).length === 0) return null
@@ -202,7 +212,7 @@ export async function updatePlace(pageId: string, page: OurPage, patch: PlacePat
   return location?.result ?? null
 }
 
-export async function createPlace(place: NewPlace): Promise<{ id: string; location: LocationResult | null }> {
+export async function createPlace(notion: Client, place: NewPlace): Promise<{ id: string; location: LocationResult | null }> {
   const location = await locationProperties(
     { kind: place.kind, neighborhood: place.neighborhood ?? '', location: place.location ?? '' }, place)
   const props = { ...properties(place.kind, place), ...(location?.props ?? {}) }

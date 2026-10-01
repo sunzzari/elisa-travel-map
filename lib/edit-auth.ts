@@ -11,14 +11,22 @@ import { NextResponse } from 'next/server'
  *     per browser;
  *   - the Sunzzari app sends `x-notion-token`, the Notion key it already
  *     carries. It is accepted only if Notion itself says that key can open the
- *     Restaurant Guide. Anyone holding such a key can already edit that table
- *     directly, so this opens nothing new, and it needs no extra secret set up
- *     anywhere. Approved by Elisa, 2026-10-01: "use the notion key".
+ *     Restaurant Guide, and it needs no extra secret set up anywhere. Approved
+ *     by Elisa, 2026-10-01: "use the notion key".
  *
- * The phone's key is checked and forgotten: never logged, never stored, never
- * used for the write (the server's own key does that). Only a hash of it is
- * remembered, for ten minutes, so each save is not two Notion calls.
+ * A key that can READ the table must not gain the power to WRITE it by coming
+ * through here. So a save from the app is performed with the APP'S OWN key
+ * (`Caller.token`, see lib/places-write.ts `notionFor`), never the server's:
+ * Notion then enforces exactly what that key may do, on every save, and a
+ * read-only key gets Notion's own refusal. The readable-table check below only
+ * gates the free lookup and saves a doomed request.
+ *
+ * The app's key lives for one request: never logged, never stored. Only a hash
+ * of it is remembered, for ten minutes, so each lookup is not two Notion calls.
  */
+
+/** Who is asking, once they have proved it. */
+export type Caller = { via: 'passcode' } | { via: 'notion'; token: string }
 
 const RESTAURANT_GUIDE_DB = '9078462d-842a-4233-82d9-dbd07014782b'
 const REMEMBER_MS = 10 * 60 * 1000
@@ -56,22 +64,29 @@ async function notionKeyOpensOurTable(token: string): Promise<boolean> {
   return ok
 }
 
-/**
- * Returns a response to send back when the request is refused, or null when
- * the caller proved itself either way.
- */
-export async function refuseWithoutPasscode(request: Request): Promise<NextResponse | null> {
+/** The caller, or the response to send back when the request is refused. */
+export async function authorize(request: Request): Promise<{ caller: Caller } | { refused: NextResponse }> {
   const passcode = process.env.AROUND_TOWN_PASSCODE
-  if (sameSecret(request.headers.get('x-edit-passcode'), passcode)) return null
+  if (sameSecret(request.headers.get('x-edit-passcode'), passcode)) return { caller: { via: 'passcode' } }
 
   const notionToken = request.headers.get('x-notion-token')
-  if (notionToken && (await notionKeyOpensOurTable(notionToken))) return null
+  if (notionToken && (await notionKeyOpensOurTable(notionToken))) {
+    return { caller: { via: 'notion', token: notionToken } }
+  }
 
   if (!passcode && !notionToken) {
-    return NextResponse.json(
-      { error: 'Editing is not set up: AROUND_TOWN_PASSCODE is missing on this deployment.' },
-      { status: 503 }
-    )
+    return {
+      refused: NextResponse.json(
+        { error: 'Editing is not set up: AROUND_TOWN_PASSCODE is missing on this deployment.' },
+        { status: 503 }
+      ),
+    }
   }
-  return NextResponse.json({ error: 'Wrong passcode.' }, { status: 401 })
+  return { refused: NextResponse.json({ error: 'Wrong passcode.' }, { status: 401 }) }
+}
+
+/** For routes that write nothing (lookup, passcode check): refused response, or null. */
+export async function refuseWithoutPasscode(request: Request): Promise<NextResponse | null> {
+  const result = await authorize(request)
+  return 'refused' in result ? result.refused : null
 }
