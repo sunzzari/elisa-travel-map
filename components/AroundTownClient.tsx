@@ -1,11 +1,13 @@
 'use client'
 
-import { useMemo, useState, useRef, useCallback } from 'react'
+import { useMemo, useState, useRef, useCallback, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import TripMap from './TripMap'
 import UnmappedList from './UnmappedList'
 import { AddPlaceForm, PlaceEditor, UnlockForm, usePasscode } from './PlaceEditing'
 import type { TripItem } from '@/lib/types'
+import { placeIdOf } from '@/lib/saved-pins'
 // From the shared module, never from `lib/aroundtown` - that one imports the
 // geocoder, which reads the coordinate table off disk, and a client component
 // importing it drags node:fs into the browser bundle.
@@ -80,9 +82,17 @@ export default function AroundTownClient({
   const [adding, setAdding] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
 
-  const onSaved = useCallback((id: string, next: AroundTownMeta) => {
+  const router = useRouter()
+  const panelRef = useRef<HTMLDivElement | null>(null)
+
+  // Fresh places from the server (after a pin changed) replace the local copy.
+  useEffect(() => setMeta(initialMeta), [initialMeta])
+
+  const onSaved = useCallback((id: string, next: AroundTownMeta, locationChanged: boolean) => {
     setMeta(prev => ({ ...prev, [id]: { ...next, color: colorFor(next) } }))
-  }, [])
+    // The pin lives in the server's copy of the places; pull it so the map moves.
+    if (locationChanged) router.refresh()
+  }, [router])
 
   const [region, setRegion] = useState<AroundTownRegion | null>(null)
   const [kind, setKind] = useState<AroundTownKind | null>(null)
@@ -90,6 +100,12 @@ export default function AroundTownClient({
   const [hideBeenThere, setHideBeenThere] = useState(false)
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<TripItem | null>(null)
+
+  // After a refresh the open place must be the fresh copy, or its pin and
+  // callout stay where they were before the save.
+  useEffect(() => {
+    setSelected(sel => (sel ? items.find(i => i.id === placeIdOf(sel.id)) ?? sel : sel))
+  }, [items])
 
   const recenterRef = useRef<(() => void) | null>(null)
   const onRecenterReady = useCallback((fn: () => void) => {
@@ -99,7 +115,7 @@ export default function AroundTownClient({
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase()
     return items.filter(item => {
-      const m = meta[item.id]
+      const m = meta[placeIdOf(item.id)]
       if (!m) return false
       if (region && m.region !== region) return false
       if (kind && m.kind !== kind) return false
@@ -160,7 +176,7 @@ export default function AroundTownClient({
 
   const styleFor = useCallback(
     (item: TripItem) => {
-      const m = meta[item.id]
+      const m = meta[placeIdOf(item.id)]
       const bg = m?.color ?? NOT_RATED_COLOR
       return { bg, border: bg, glyph: m?.kind === 'activity' ? '⚡' : '🍽️' }
     },
@@ -295,6 +311,15 @@ export default function AroundTownClient({
             </svg>
           </button>
 
+          <a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noreferrer"
+            className="absolute bottom-1 right-24 z-10 text-[10px] text-white/50 hover:text-white/80"
+          >
+            Pins: © OpenStreetMap contributors, US Census
+          </a>
+
           <div className="absolute bottom-4 left-4 z-10 rounded-xl border border-white/10 bg-gray-950/75 px-3 py-2.5 backdrop-blur-md">
             {LEGEND.map(row => (
               <div key={row.label} className="flex items-center gap-2 py-[2px]">
@@ -305,7 +330,7 @@ export default function AroundTownClient({
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
+        <div ref={panelRef} className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
           {notice && (
             <p className="border-b border-white/10 px-4 py-2 text-xs text-green-300">{notice}</p>
           )}
@@ -318,7 +343,7 @@ export default function AroundTownClient({
                 <div className="mb-3">
                   <h2 className="text-sm font-semibold text-white">{selected!.name}</h2>
                   <p className="text-xs text-white/40">
-                    {[meta[selected!.id]?.address || meta[selected!.id]?.neighborhood || meta[selected!.id]?.locationText]
+                    {[meta[placeIdOf(selected!.id)]?.address || meta[placeIdOf(selected!.id)]?.neighborhood || meta[placeIdOf(selected!.id)]?.locationText]
                       .filter(Boolean)
                       .join(' · ')}
                   </p>
@@ -335,12 +360,12 @@ export default function AroundTownClient({
                     setNotice(message)
                   }}
                 />
-              ) : selected && meta[selected.id] ? (
+              ) : selected && meta[placeIdOf(selected.id)] ? (
                 <PlaceEditor
                   item={selected}
-                  meta={meta[selected.id]}
+                  meta={meta[placeIdOf(selected.id)]}
                   passcode={passcode}
-                  onSaved={next => onSaved(selected.id, next)}
+                  onSaved={(next, locationChanged) => onSaved(placeIdOf(selected.id), next, locationChanged)}
                 />
               ) : null}
 
@@ -357,7 +382,7 @@ export default function AroundTownClient({
               {mapped.length} place{mapped.length === 1 ? '' : 's'} on the map
             </p>
             {mapped.map(item => {
-              const m = meta[item.id]
+              const m = meta[placeIdOf(item.id)]
               return (
                 <button
                   key={item.id}
@@ -386,16 +411,21 @@ export default function AroundTownClient({
           <UnmappedList
             items={unmapped}
             onSelect={setSelected}
-            dotColor={item => meta[item.id]?.color ?? NOT_RATED_COLOR}
+            dotColor={item => meta[placeIdOf(item.id)]?.color ?? NOT_RATED_COLOR}
             subtitle={item => {
-              const m = meta[item.id]
+              const m = meta[placeIdOf(item.id)]
               return [m?.kind === 'activity' ? 'Activity' : 'Restaurant', m?.locationText]
                 .filter(Boolean)
                 .join(' - ')
             }}
-            note="No address Google could place. Search it in Maps, or open its Notion row."
+            note="No pin yet. Find it gives it one; or search it in Maps, or open its Notion row."
+            onFind={item => {
+              setAdding(false)
+              setSelected(item)
+              panelRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+            }}
             searchContext={item => {
-              const m = meta[item.id]
+              const m = meta[placeIdOf(item.id)]
               return [m?.neighborhood, m?.locationText].filter(Boolean).join(', ')
             }}
           />

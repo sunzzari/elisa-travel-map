@@ -12,6 +12,7 @@ import {
 import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
 import { mapsUrl, haversineKm, formatDistance } from '@/lib/geo'
 import type { TripItem } from '@/lib/types'
+import { branchId } from '@/lib/saved-pins'
 import type { UserLocation } from '@/lib/geo'
 
 const TYPE_GLYPHS: Record<string, string> = {
@@ -200,7 +201,22 @@ function MapContent({
   useEffect(() => {
     if (!map || !markerLib || !clustererRef.current) return
 
-    const withCoords = items.filter(i => i.coordinates)
+    // A chain's other branches are drawn as pins of their own (Elisa,
+    // 2026-09-30: every branch in the area gets a pin). Each is a copy of the
+    // place at the branch's spot, so a tap opens the same place there. This is
+    // the one map, so trips and Around Town both get it.
+    const withCoords = items
+      .filter(i => i.coordinates)
+      .flatMap(i => [
+        i,
+        ...(i.branches ?? []).map((b, n) => ({
+          ...i,
+          id: branchId(i.id, n),
+          coordinates: { lat: b.lat, lng: b.lng },
+          address: b.address,
+          branches: undefined,
+        })),
+      ])
     const currentIds = new Set(withCoords.map(i => i.id))
     const prev = imperativeMarkersRef.current
 
@@ -216,7 +232,12 @@ function MapContent({
     // Add new markers
     const newMarkers: google.maps.marker.AdvancedMarkerElement[] = []
     for (const item of withCoords) {
-      if (prev.has(item.id)) continue
+      const existing = prev.get(item.id)
+      if (existing) {
+        // A saved edit can move a pin; the marker follows it.
+        existing.position = item.coordinates!
+        continue
+      }
       const style = styleFor(item)
       const pin = document.createElement('div')
       pin.style.cssText = `

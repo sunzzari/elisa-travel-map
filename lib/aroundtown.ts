@@ -1,5 +1,7 @@
 import { Client } from '@notionhq/client'
 import { geocodeVenue } from './geocode'
+import { readSavedPin } from './saved-pins'
+import type { SavedPin } from './saved-pins'
 import type { TripItem } from './types'
 import {
   regionFromText,
@@ -114,6 +116,7 @@ interface Raw {
   thinkingAbout: boolean
   done: boolean
   address: string
+  saved: SavedPin
 }
 
 function rawRestaurants(pages: any[]): Raw[] {
@@ -149,6 +152,7 @@ function rawRestaurants(pages: any[]): Raw[] {
       thinkingAbout: getCheckbox(p['Thinking About']),
       done: getCheckbox(p['Been There?']),
       address: getText(p['Address']),
+      saved: readSavedPin(p),
     })
   }
   return out
@@ -181,6 +185,7 @@ function rawActivities(pages: any[]): Raw[] {
       thinkingAbout: getCheckbox(p['Thinking About']),
       done: getCheckbox(p['Done?']),
       address: getText(p['Address']),
+      saved: readSavedPin(p),
     })
   }
   return out
@@ -218,12 +223,12 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
     // The fallback drops the neighborhood. For most activities that produces
     // the SAME string as the first attempt, so asking twice is one wasted
     // request per row and no new information.
-    // A confirmed street address is the most exact input there is, so it goes
-    // first; the name lookups remain for rows that have none.
+    // The pin saved in Notion wins (free sources, area-checked when saved).
+    // The saved table is only a fallback for rows that have none; neither is
+    // a network call.
     const primary = geoCity(raw)
     const fallback = geoCityFallback(raw)
-    let coords = raw.address ? await geocodeVenue(raw.address, '', metroHint(raw.locationText)) : null
-    if (!coords) coords = await geocodeVenue(raw.name, primary)
+    let coords = raw.saved.coordinates ?? await geocodeVenue(raw.name, primary)
     if (!coords && fallback !== primary) {
       coords = await geocodeVenue(raw.name, fallback)
     }
@@ -273,6 +278,11 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
       reservationRequired: false,
       reservationMade: false,
       coordinates: usable ?? undefined,
+      // Every branch of a chain gets a pin (Elisa, 2026-09-30), with the same
+      // reject as the main pin.
+      ...(usable && raw.saved.branches.length
+        ? { branches: raw.saved.branches.filter(b => regionFromCoords(b.lat, b.lng) !== null) }
+        : {}),
     })
   }
 

@@ -1,3 +1,5 @@
+import type { BranchPin } from './saved-pins'
+
 export type TripStatus = 'Planning' | 'Booked' | 'In Progress' | 'Completed' | 'Cancelled'
 
 export type ItemType =
@@ -55,6 +57,8 @@ export interface TripItem {
   reservationRequired: boolean
   reservationMade: boolean
   coordinates?: Coordinates
+  /** A chain's other branches, each drawn as its own pin that opens this item. */
+  branches?: BranchPin[]
 }
 
 export interface DayBundle {

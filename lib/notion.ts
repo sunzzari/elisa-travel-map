@@ -1,5 +1,6 @@
 import { Client } from '@notionhq/client'
 import type { Trip, TripItem, ItemType, ItemPriority, ItemStatus, TripStatus } from './types'
+import { readSavedPin } from './saved-pins'
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 
@@ -68,6 +69,7 @@ export async function fetchTripItems(tripId: string): Promise<TripItem[]> {
       if (!linkedTripId) continue
       if (linkedTripId.replace(/-/g, '') !== normalizedTripId) continue
 
+      const saved = readSavedPin(page.properties)
       allItems.push({
         id: page.id,
         url: page.url,
@@ -89,6 +91,9 @@ export async function fetchTripItems(tripId: string): Promise<TripItem[]> {
         bookedVia: getText(page.properties['Booked Via']),
         reservationRequired: getCheckbox(page.properties['Reservation Required']),
         reservationMade: getCheckbox(page.properties['Reservation Made']),
+        // A saved pin is the item's location; geocodeItem only fills the rest.
+        ...(saved.coordinates ? { coordinates: saved.coordinates } : {}),
+        ...(saved.branches.length ? { branches: saved.branches } : {}),
       })
     }
 
@@ -124,6 +129,7 @@ export async function fetchAllTripItems(): Promise<TripItem[]> {
       const tripRelation: any[] = page.properties['Trip']?.relation ?? []
       if (tripRelation.length === 0) continue
 
+      const saved = readSavedPin(page.properties)
       allItems.push({
         id: page.id,
         url: page.url,
@@ -145,6 +151,8 @@ export async function fetchAllTripItems(): Promise<TripItem[]> {
         bookedVia: getText(page.properties['Booked Via']),
         reservationRequired: getCheckbox(page.properties['Reservation Required']),
         reservationMade: getCheckbox(page.properties['Reservation Made']),
+        ...(saved.coordinates ? { coordinates: saved.coordinates } : {}),
+        ...(saved.branches.length ? { branches: saved.branches } : {}),
       })
     }
 

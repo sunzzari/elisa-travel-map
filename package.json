@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "geocache:fill": "GEOCODE_WRITE_CACHE=1 next build"
+    "lint": "next lint"
   },
   "dependencies": {
     "@googlemaps/markerclusterer": "^2.6.2",

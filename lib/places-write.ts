@@ -1,6 +1,9 @@
 import { Client } from '@notionhq/client'
 import { PREFERENCES, RESTAURANT_LOCATIONS } from './aroundtown-shared'
 import type { AroundTownKind } from './aroundtown-shared'
+import { areaFor, pinAddress, pinInArea } from './place-lookup'
+import { pinProperties } from './saved-pins'
+import type { Coordinates } from './types'
 
 /**
  * Around Town writes. Server only. Every page id that comes in from the browser
@@ -23,6 +26,18 @@ export interface PlacePatch {
   comments?: string
   topDishes?: string
   address?: string
+  /**
+   * The pin for `address`, from a lookup candidate she tapped. Checked against
+   * the place's area before it is saved. Absent: the server pins the address
+   * itself, or saves it unpinned and it shows under "not on the map".
+   */
+  pin?: Coordinates
+}
+
+/** What a save did about the location, so both apps can say so. */
+export interface LocationResult {
+  placed: boolean
+  pin: Coordinates | null
 }
 
 export interface NewPlace extends PlacePatch {
@@ -61,6 +76,15 @@ export function parsePatch(body: any): PlacePatch {
   if ('comments' in body) out.comments = str(body.comments, 'comments')
   if ('topDishes' in body) out.topDishes = str(body.topDishes, 'topDishes')
   if ('address' in body) out.address = str(body.address, 'address')
+  if ('lat' in body || 'lng' in body) {
+    const lat = body.lat, lng = body.lng
+    if (typeof lat !== 'number' || typeof lng !== 'number' || !Number.isFinite(lat) || !Number.isFinite(lng) ||
+      Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+      throw new PlaceInputError('lat and lng must be numbers, sent together')
+    }
+    if (out.address === undefined) throw new PlaceInputError('a pin is only saved with its address')
+    out.pin = { lat, lng }
+  }
   if ('preference' in body) {
     const p = body.preference
     if (p !== null && !(PREFERENCES as readonly string[]).includes(p)) {
@@ -89,8 +113,19 @@ export function parseNewPlace(body: any): NewPlace {
   return place
 }
 
-/** Which Around Town database a page lives in, or null if it is not one of ours. */
-export async function kindOfPage(pageId: string): Promise<AroundTownKind | null> {
+export interface OurPage {
+  kind: AroundTownKind
+  neighborhood: string
+  location: string
+}
+
+const plain = (prop: any): string =>
+  prop?.type === 'select' ? prop.select?.name ?? ''
+    : prop?.type === 'rich_text' ? (prop.rich_text ?? []).map((t: any) => t.plain_text).join('')
+    : ''
+
+/** Which Around Town database a page lives in (and where it is), or null if it is not one of ours. */
+export async function kindOfPage(pageId: string): Promise<OurPage | null> {
   if (!/^[0-9a-f]{32}$/.test(bare(pageId))) return null
   let page: any
   try {
@@ -99,9 +134,43 @@ export async function kindOfPage(pageId: string): Promise<AroundTownKind | null>
     return null
   }
   const parent = page?.parent?.database_id ? bare(page.parent.database_id) : ''
-  if (parent === bare(RESTAURANT_GUIDE_DB)) return 'restaurant'
-  if (parent === bare(ACTIVITIES_DB)) return 'activity'
-  return null
+  const kind: AroundTownKind | null =
+    parent === bare(RESTAURANT_GUIDE_DB) ? 'restaurant' : parent === bare(ACTIVITIES_DB) ? 'activity' : null
+  if (!kind) return null
+  return {
+    kind,
+    neighborhood: kind === 'restaurant' ? plain(page.properties?.['Neighborhood']) : '',
+    location: plain(page.properties?.['Location']),
+  }
+}
+
+/**
+ * The Address, Latitude and Longitude values for a save. One rule for both
+ * apps: a tapped candidate's pin is kept only inside the place's area; a typed
+ * address is pinned by the free geocoders or saved unpinned; a place outside
+ * LA and the Bay keeps its address and gets no pin.
+ */
+async function locationProperties(
+  where: { kind: AroundTownKind; neighborhood: string; location: string },
+  patch: PlacePatch
+): Promise<{ props: Record<string, any>; result: LocationResult } | null> {
+  if (patch.address === undefined) return null
+  const address = patch.address.trim()
+  if (!address) {
+    return { props: { Address: text(''), ...pinProperties(null) }, result: { placed: false, pin: null } }
+  }
+  const area = await areaFor(where.kind, where.neighborhood, where.location)
+  let pin: Coordinates | null = null
+  if (area && patch.pin) {
+    if (!pinInArea(area, patch.pin)) {
+      throw new PlaceInputError('That spot is outside the area this place is filed under. Check its Location.')
+    }
+    pin = patch.pin
+  } else if (area) {
+    const found = await pinAddress(area, address)
+    pin = found ? { lat: found.lat, lng: found.lng } : null
+  }
+  return { props: { Address: text(address), ...pinProperties(pin) }, result: { placed: pin !== null, pin } }
 }
 
 function properties(kind: AroundTownKind, p: PlacePatch): Record<string, any> {
@@ -115,7 +184,6 @@ function properties(kind: AroundTownKind, p: PlacePatch): Record<string, any> {
   if (p.thinkingAbout !== undefined && !(p.beenThere === true)) {
     props['Thinking About'] = { checkbox: p.thinkingAbout }
   }
-  if (p.address !== undefined) props['Address'] = text(p.address)
   if (kind === 'restaurant') {
     if (p.comments !== undefined) props['Comments'] = text(p.comments)
     if (p.topDishes !== undefined) props['Top Dishes'] = text(p.topDishes)
@@ -126,14 +194,18 @@ function properties(kind: AroundTownKind, p: PlacePatch): Record<string, any> {
   return props
 }
 
-export async function updatePlace(pageId: string, kind: AroundTownKind, patch: PlacePatch): Promise<void> {
-  const props = properties(kind, patch)
-  if (Object.keys(props).length === 0) return
+export async function updatePlace(pageId: string, page: OurPage, patch: PlacePatch): Promise<LocationResult | null> {
+  const location = await locationProperties(page, patch)
+  const props = { ...properties(page.kind, patch), ...(location?.props ?? {}) }
+  if (Object.keys(props).length === 0) return null
   await notion.pages.update({ page_id: pageId, properties: props })
+  return location?.result ?? null
 }
 
-export async function createPlace(place: NewPlace): Promise<string> {
-  const props = properties(place.kind, place)
+export async function createPlace(place: NewPlace): Promise<{ id: string; location: LocationResult | null }> {
+  const location = await locationProperties(
+    { kind: place.kind, neighborhood: place.neighborhood ?? '', location: place.location ?? '' }, place)
+  const props = { ...properties(place.kind, place), ...(location?.props ?? {}) }
   props['Name'] = { title: [{ type: 'text', text: { content: place.name } }] }
   if (place.kind === 'restaurant') {
     if (place.neighborhood !== undefined) props['Neighborhood'] = text(place.neighborhood)
@@ -147,5 +219,5 @@ export async function createPlace(place: NewPlace): Promise<string> {
     parent: { database_id: place.kind === 'restaurant' ? RESTAURANT_GUIDE_DB : ACTIVITIES_DB },
     properties: props,
   })
-  return page.id
+  return { id: page.id, location: location?.result ?? null }
 }

@@ -4,10 +4,11 @@ import { useCallback, useEffect, useState } from 'react'
 import type { TripItem } from '@/lib/types'
 import type { AroundTownKind, AroundTownMeta } from '@/lib/aroundtown-shared'
 import { PREFERENCES, PREFERENCE_COLORS, RESTAURANT_LOCATIONS } from '@/lib/aroundtown-shared'
+import { placeIdOf } from '@/lib/saved-pins'
 
 /**
- * Around Town editing: been there, preference, review, dishes, address, and
- * adding new places. Viewing needs nothing; editing needs the passcode, which
+ * Around Town editing: been there, preference, review, dishes, address and its
+ * pin, and adding new places. Viewing needs nothing; editing needs the passcode, which
  * is checked by the server on every request and remembered in this browser.
  */
 
@@ -95,28 +96,56 @@ export function UnlockForm({ onUnlock }: { onUnlock: (code: string) => Promise<s
   )
 }
 
+export interface PickedPin {
+  lat: number
+  lng: number
+}
+
+interface LookupMatch extends PickedPin {
+  name: string
+  address: string
+  source: string
+}
+
+/**
+ * Address entry with the free lookup (OpenStreetMap and the US Census, on the
+ * server). Picking a match sets the address AND its pin; typing clears the pin,
+ * and the server pins the typed address itself when the form is saved.
+ */
 function AddressLookup({
   value,
   onChange,
-  query,
+  name,
+  kind,
+  neighborhood,
+  location,
   passcode,
 }: {
   value: string
-  onChange: (v: string) => void
-  query: string
+  onChange: (address: string, pin: PickedPin | null) => void
+  name: string
+  kind: AroundTownKind
+  neighborhood: string
+  location: string
   passcode: string
 }) {
-  const [matches, setMatches] = useState<Array<{ name: string; address: string }>>([])
+  const [matches, setMatches] = useState<LookupMatch[]>([])
   const [note, setNote] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+
+  // A typed street address ("123 Main St") is looked up as an address;
+  // otherwise the place's name is searched inside its area.
+  const typedAddress = /^\s*\d+[a-z]?\s+\S/i.test(value)
+  const q = typedAddress ? value : name
 
   async function search() {
     setBusy(true)
     setNote(null)
     try {
-      const { matches } = await send(`/api/places/lookup?q=${encodeURIComponent(query)}`, 'GET', passcode)
-      setMatches(matches)
-      setNote(matches.length ? 'Pick the right one:' : 'No matches. Type the address, or leave it blank.')
+      const params = new URLSearchParams({ q, kind, neighborhood, location })
+      const res = await send(`/api/places/lookup?${params}`, 'GET', passcode)
+      setMatches(res.matches)
+      setNote(res.matches.length ? 'Pick the right one:' : res.note ?? 'No matches. Type the street address and press Find, or leave it blank.')
     } catch (err) {
       setMatches([])
       setNote((err as Error).message)
@@ -127,11 +156,11 @@ function AddressLookup({
   return (
     <div>
       <div className="flex gap-2">
-        <input value={value} onChange={e => onChange(e.target.value)} placeholder="Street address" className={field} />
+        <input value={value} onChange={e => onChange(e.target.value, null)} placeholder="Street address" className={field} />
         <button
           type="button"
           onClick={search}
-          disabled={!query.trim() || busy}
+          disabled={!q.trim() || busy}
           className="flex-shrink-0 rounded-lg border border-amber-400/40 px-3 text-xs font-medium text-amber-300 disabled:opacity-40"
         >
           {busy ? '...' : 'Find'}
@@ -143,11 +172,11 @@ function AddressLookup({
           {matches.map(m => (
             <button
               type="button"
-              key={m.address}
+              key={`${m.lat},${m.lng}`}
               onClick={() => {
-                onChange(m.address)
+                onChange(m.address, { lat: m.lat, lng: m.lng })
                 setMatches([])
-                setNote('Address set. Save to keep it.')
+                setNote('Address and pin set. Save to keep them.')
               }}
               className="block w-full rounded-lg bg-white/5 px-3 py-2 text-left hover:bg-white/10"
             >
@@ -162,6 +191,15 @@ function AddressLookup({
       )}
     </div>
   )
+}
+
+/** What the server did about the location on a save, in her words. */
+function locationNote(location: { placed: boolean } | null | undefined, hadAddress: boolean): string {
+  if (!location) return ''
+  if (location.placed) return 'Pinned on the map.'
+  return hadAddress
+    ? 'That address could not be pinned, so it is under "Not on the map".'
+    : 'No address yet, so it is under "Not on the map".'
 }
 
 function Toggle({ on, onChange, children }: { on: boolean; onChange: (v: boolean) => void; children: React.ReactNode }) {
@@ -210,15 +248,18 @@ export function PlaceEditor({
   item: TripItem
   meta: AroundTownMeta
   passcode: string
-  onSaved: (next: AroundTownMeta) => void
+  /** `locationChanged`: the pin may have moved, so the page should reload its places. */
+  onSaved: (next: AroundTownMeta, locationChanged: boolean) => void
 }) {
   const [draft, setDraft] = useState(meta)
+  const [pin, setPin] = useState<PickedPin | null>(null)
   const [status, setStatus] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   // Reset only when a different place is picked, so a save's own update does
   // not wipe the "Saved" message.
   useEffect(() => {
     setDraft(meta)
+    setPin(null)
     setStatus(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.id])
@@ -232,7 +273,14 @@ export function PlaceEditor({
     const body: Record<string, unknown> = {
       beenThere: draft.done,
       thinkingAbout: draft.done ? false : draft.thinkingAbout,
-      address: draft.address,
+    }
+    // The address goes up only when it changed or a match was picked. Sending
+    // an unchanged address would make the server re-pin it, and could drop a
+    // good pin for no reason.
+    const locationChanged = pin !== null || draft.address.trim() !== meta.address.trim()
+    if (locationChanged) {
+      body.address = draft.address
+      if (pin) Object.assign(body, pin)
     }
     if (isRestaurant) {
       body.preference = draft.preference
@@ -240,9 +288,10 @@ export function PlaceEditor({
       body.topDishes = draft.topDishes
     }
     try {
-      await send(`/api/places/${item.id}`, 'PATCH', passcode, body)
-      onSaved({ ...draft, thinkingAbout: draft.done ? false : draft.thinkingAbout })
-      setStatus('Saved to Notion.')
+      const res = await send(`/api/places/${placeIdOf(item.id)}`, 'PATCH', passcode, body)
+      onSaved({ ...draft, thinkingAbout: draft.done ? false : draft.thinkingAbout }, locationChanged)
+      setPin(null)
+      setStatus(`Saved to Notion. ${locationNote(res.location, draft.address.trim() !== '')}`.trim())
     } catch (err) {
       setStatus((err as Error).message)
     }
@@ -283,8 +332,14 @@ export function PlaceEditor({
         <span className={label}>Address</span>
         <AddressLookup
           value={draft.address}
-          onChange={v => set({ address: v })}
-          query={[item.name, meta.neighborhood, meta.locationText].filter(Boolean).join(', ')}
+          onChange={(address, picked) => {
+            set({ address })
+            setPin(picked)
+          }}
+          name={item.name}
+          kind={meta.kind}
+          neighborhood={meta.neighborhood}
+          location={meta.locationText}
           passcode={passcode}
         />
       </div>
@@ -305,6 +360,7 @@ export function AddPlaceForm({ passcode, onDone }: { passcode: string; onDone: (
   const [neighborhood, setNeighborhood] = useState('')
   const [location, setLocation] = useState('')
   const [address, setAddress] = useState('')
+  const [pin, setPin] = useState<PickedPin | null>(null)
   const [beenThere, setBeenThere] = useState(false)
   const [thinkingAbout, setThinkingAbout] = useState(true)
   const [preference, setPreference] = useState<string | null>(null)
@@ -323,10 +379,11 @@ export function AddPlaceForm({ passcode, onDone }: { passcode: string; onDone: (
       beenThere,
       thinkingAbout: beenThere ? false : thinkingAbout,
     }
+    if (pin) Object.assign(body, pin)
     if (kind === 'restaurant') Object.assign(body, { neighborhood, preference, comments })
     try {
-      await send('/api/places', 'POST', passcode, body)
-      onDone(`${name} added. It shows here within a few minutes.`)
+      const res = await send('/api/places', 'POST', passcode, body)
+      onDone(`${name} added. ${locationNote(res.location, address.trim() !== '')}`.trim())
     } catch (err) {
       setError((err as Error).message)
     }
@@ -374,8 +431,14 @@ export function AddPlaceForm({ passcode, onDone }: { passcode: string; onDone: (
         <span className={label}>Address</span>
         <AddressLookup
           value={address}
-          onChange={setAddress}
-          query={[name, kind === 'restaurant' ? neighborhood : '', location].filter(Boolean).join(', ')}
+          onChange={(next, picked) => {
+            setAddress(next)
+            setPin(picked)
+          }}
+          name={name}
+          kind={kind}
+          neighborhood={kind === 'restaurant' ? neighborhood : ''}
+          location={location}
           passcode={passcode}
         />
       </div>

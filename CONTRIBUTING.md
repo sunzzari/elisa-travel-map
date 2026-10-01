@@ -112,19 +112,18 @@ git push
 
 ---
 
-## Part 3 - The Geocode Cache
+## Part 3 - Where Pins Come From
 
-Coordinates live in a committed lookup table, `data/geocache.json`, so the site does
-not pay Google for the same place twice. If you add places and they do not appear on
-the map, refill the cache:
+Every place's pin is saved in Notion (`Address`, `Latitude`, `Longitude`, and
+`Other Branches` for a chain) and comes from free sources only: OpenStreetMap and the
+US Census geocoder. Nothing in this repo calls Google Geocoding or Google Places; that
+code was deleted on 2026-09-30 after a $97 bill, and it must not come back.
 
-```bash
-npm run geocache:fill
-```
-
-Then commit the updated `data/geocache.json` along with your change. Read the
-2026-09-08 entries in [CHANGELOG.md](CHANGELOG.md) before changing how this works -
-this cache replaced a service that had been deleted, and the bill it prevents is real.
+- Adding or editing a place on the website or in the Sunzzari app saves its pin
+  through `/api/places` (see `lib/place-lookup.ts` and `lib/places-write.ts`).
+- A place added straight in Notion shows under "Not on the map". Use "Find it" there,
+  or wait for the weekly sweep, which pins it when every check passes.
+- `data/geocache.json` still holds older trip pins. It is read, never written.
 
 ---
 

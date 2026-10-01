@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { refuseWithoutPasscode } from '@/lib/edit-auth'
 import { createPlace, parseNewPlace, PlaceInputError } from '@/lib/places-write'
 
+/** Add an Around Town place. The website and the phone both save here. */
 export async function POST(request: Request) {
   const refused = refuseWithoutPasscode(request)
   if (refused) return refused
@@ -16,10 +17,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    const id = await createPlace(place)
+    const { id, location } = await createPlace(place)
     revalidatePath('/around-town')
-    return NextResponse.json({ ok: true, id })
+    return NextResponse.json({ ok: true, id, location })
   } catch (err) {
+    if (err instanceof PlaceInputError) return NextResponse.json({ error: err.message }, { status: 400 })
     console.error('Around Town create failed:', err)
     return NextResponse.json({ error: 'Notion did not accept the new place' }, { status: 502 })
   }

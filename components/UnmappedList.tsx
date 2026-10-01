@@ -23,6 +23,7 @@ export default function UnmappedList({
   note,
   /** Extra context for the Maps search, e.g. the city or neighborhood. */
   searchContext,
+  onFind,
 }: {
   items: TripItem[]
   onSelect: (item: TripItem) => void
@@ -31,6 +32,8 @@ export default function UnmappedList({
   subtitle: (item: TripItem) => string
   note?: string
   searchContext?: (item: TripItem) => string
+  /** When given, each row gets a "Find it" button that opens the pin lookup for it. */
+  onFind?: (item: TripItem) => void
 }) {
   if (items.length === 0) return null
 
@@ -60,6 +63,15 @@ export default function UnmappedList({
             <span className="block text-xs text-white/40">{subtitle(item)}</span>
           </button>
           <span className="flex flex-shrink-0 items-center gap-2 pt-0.5">
+            {onFind && (
+              <button
+                onClick={() => onFind(item)}
+                className="text-[11px] font-semibold text-amber-300 transition-colors hover:text-amber-200"
+                title="Look this place up and give it a pin"
+              >
+                Find it
+              </button>
+            )}
             <a
               href={mapsHref(item)}
               target="_blank"
