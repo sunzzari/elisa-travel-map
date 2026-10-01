@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useImperativeHandle, forwardRef, useRef } from 'react'
+import { useEffect, useMemo, useState, useCallback, useImperativeHandle, forwardRef, useRef } from 'react'
 import {
   APIProvider,
   Map,
@@ -106,7 +106,27 @@ function MapContent({
 }) {
   const map = useMap()
   const markerLib = useMapsLibrary('marker')
-  const mapped = items.filter(i => i.coordinates)
+  // Every pin on the map: each placed item, plus one per chain branch (Elisa,
+  // 2026-09-30: every branch in the area gets a pin). A branch is a copy of the
+  // place at the branch's spot, so a tap opens the same place there. Built once
+  // and used by BOTH the fit and the markers, so a branch is framed as well as
+  // drawn. This is the one map, so trips and Around Town both get it.
+  const mapped = useMemo(
+    () =>
+      items
+        .filter(i => i.coordinates)
+        .flatMap(i => [
+          i,
+          ...(i.branches ?? []).map((b, n) => ({
+            ...i,
+            id: branchId(i.id, n),
+            coordinates: { lat: b.lat, lng: b.lng },
+            address: b.address,
+            branches: undefined,
+          })),
+        ]),
+    [items]
+  )
   const clustererRef = useRef<MarkerClusterer | null>(null)
   const imperativeMarkersRef = useRef<globalThis.Map<string, google.maps.marker.AdvancedMarkerElement>>(new globalThis.Map())
   const onSelectRef = useRef(onSelect)
@@ -201,22 +221,7 @@ function MapContent({
   useEffect(() => {
     if (!map || !markerLib || !clustererRef.current) return
 
-    // A chain's other branches are drawn as pins of their own (Elisa,
-    // 2026-09-30: every branch in the area gets a pin). Each is a copy of the
-    // place at the branch's spot, so a tap opens the same place there. This is
-    // the one map, so trips and Around Town both get it.
-    const withCoords = items
-      .filter(i => i.coordinates)
-      .flatMap(i => [
-        i,
-        ...(i.branches ?? []).map((b, n) => ({
-          ...i,
-          id: branchId(i.id, n),
-          coordinates: { lat: b.lat, lng: b.lng },
-          address: b.address,
-          branches: undefined,
-        })),
-      ])
+    const withCoords = mapped
     const currentIds = new Set(withCoords.map(i => i.id))
     const prev = imperativeMarkersRef.current
 
@@ -260,7 +265,7 @@ function MapContent({
     if (newMarkers.length > 0) {
       clustererRef.current.addMarkers(newMarkers)
     }
-  }, [map, markerLib, items])
+  }, [map, markerLib, mapped])
 
   // Highlight selected marker in clusterer
   useEffect(() => {

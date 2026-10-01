@@ -13,6 +13,11 @@ import { colorFor, fitAreaContains } from '@/lib/aroundtown-shared'
  */
 export const revalidate = 300
 
+// Which area's "fit all" frame a pin belongs to (LA proper or the Bay), or null
+// for a pin that stays on the map but never stretches the frame (San Diego).
+const fitArea = (c: { lat: number; lng: number }) =>
+  fitAreaContains('la', c.lat, c.lng) ? 'la' : fitAreaContains('sfBay', c.lat, c.lng) ? 'sfBay' : null
+
 export async function GET() {
   const { items, meta } = await fetchAroundTown()
   const places = items.map(item => {
@@ -39,9 +44,8 @@ export async function GET() {
       baseColor: colorFor({ ...m, done: false }),
       lat: c?.lat ?? null,
       lng: c?.lng ?? null,
-      // Which area's "fit all" frame this pin belongs to (LA proper or the Bay).
-      fitArea: c ? (fitAreaContains('la', c.lat, c.lng) ? 'la' : fitAreaContains('sfBay', c.lat, c.lng) ? 'sfBay' : null) : null,
-      branches: (item.branches ?? []).map(b => ({ address: b.address, lat: b.lat, lng: b.lng })),
+      fitArea: c ? fitArea(c) : null,
+      branches: (item.branches ?? []).map(b => ({ address: b.address, lat: b.lat, lng: b.lng, fitArea: fitArea(b) })),
     }
   })
   return NextResponse.json({ generatedAt: new Date().toISOString(), places })

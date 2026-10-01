@@ -7,7 +7,7 @@ import TripMap from './TripMap'
 import UnmappedList from './UnmappedList'
 import { AddPlaceForm, PlaceEditor, UnlockForm, usePasscode } from './PlaceEditing'
 import type { TripItem } from '@/lib/types'
-import { placeIdOf } from '@/lib/saved-pins'
+import { branchId, placeIdOf } from '@/lib/saved-pins'
 // From the shared module, never from `lib/aroundtown` - that one imports the
 // geocoder, which reads the coordinate table off disk, and a client component
 // importing it drags node:fs into the browser bundle.
@@ -155,15 +155,19 @@ export default function AroundTownClient({
     return sf > la ? 'sfBay' : 'la'
   }, [region, mapped])
 
-  const fitScopeIds = useMemo(
-    () =>
-      new Set(
-        mapped
-          .filter(i => fitAreaContains(fitRegion, i.coordinates!.lat, i.coordinates!.lng))
-          .map(i => i.id)
-      ),
-    [mapped, fitRegion]
-  )
+  // A chain's branches are framed by the same rule as any pin: inside the fit
+  // area they count, outside it (a San Diego branch) they stay on the map and
+  // never stretch the frame.
+  const fitScopeIds = useMemo(() => {
+    const ids = new Set<string>()
+    for (const i of mapped) {
+      if (fitAreaContains(fitRegion, i.coordinates!.lat, i.coordinates!.lng)) ids.add(i.id)
+      ;(i.branches ?? []).forEach((b, n) => {
+        if (fitAreaContains(fitRegion, b.lat, b.lng)) ids.add(branchId(i.id, n))
+      })
+    }
+    return ids
+  }, [mapped, fitRegion])
 
   const fitKey = [
     region ?? 'allregions',
@@ -315,7 +319,7 @@ export default function AroundTownClient({
             href="https://www.openstreetmap.org/copyright"
             target="_blank"
             rel="noreferrer"
-            className="absolute bottom-1 right-24 z-10 text-[10px] text-white/50 hover:text-white/80"
+            className="absolute left-2 top-2 z-10 rounded bg-gray-950/70 px-1.5 py-0.5 text-[10px] text-white/70 backdrop-blur-sm hover:text-white"
           >
             Pins: © OpenStreetMap contributors, US Census
           </a>
