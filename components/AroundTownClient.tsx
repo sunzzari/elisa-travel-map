@@ -7,6 +7,8 @@ import TripMap from './TripMap'
 import UnmappedList from './UnmappedList'
 import { AddPlaceForm, PlaceEditor, UnlockForm, usePasscode } from './PlaceEditing'
 import type { TripItem } from '@/lib/types'
+import { haversineKm, type UserLocation } from '@/lib/geo'
+import { searchPlaces, nearest, type SearchablePlace } from '@/lib/place-search'
 import { branchId, placeIdOf } from '@/lib/saved-pins'
 // From the shared module, never from `lib/aroundtown` - that one imports the
 // geocoder, which reads the coordinate table off disk, and a client component
@@ -112,24 +114,82 @@ export default function AroundTownClient({
     recenterRef.current = fn
   }, [])
 
-  const shown = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return items.filter(item => {
+  // Near me: the chip, or the words "near me" typed into the search box.
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
+  const [nearMe, setNearMe] = useState<'off' | 'locating' | 'on' | 'denied'>('off')
+
+  const locate = useCallback(() => {
+    setNearMe('locating')
+    navigator.geolocation.getCurrentPosition(
+      pos => { setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setNearMe('on') },
+      () => setNearMe('denied'),
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }, [])
+
+  // The search box: a name, or a question such as "jian bing in rowland heights".
+  // The rule is lib/place-search.ts, the same one the Sunzzari app is answered by.
+  const search = useMemo(() => {
+    const q = query.trim()
+    if (!q) return null
+    const searchable: SearchablePlace[] = items.flatMap(item => {
+      const m = meta[placeIdOf(item.id)]
+      if (!m) return []
+      return [{
+        id: item.id,
+        name: item.name,
+        kind: m.kind,
+        region: m.region,
+        neighborhood: m.neighborhood,
+        location: m.locationText,
+        goodFor: m.goodFor,
+        topDishes: m.topDishes,
+        comments: m.comments,
+        address: m.address,
+        branchAddresses: (item.branches ?? []).map(b => b.address),
+        preference: m.preference,
+        wantToTry: m.thinkingAbout,
+        beenThere: m.done,
+      }]
+    })
+    return searchPlaces(q, searchable)
+  }, [items, meta, query])
+
+  const askedNearMe = search?.nearMe ?? false
+  useEffect(() => {
+    if (askedNearMe && !userLocation && nearMe === 'off') locate()
+  }, [askedNearMe, userLocation, nearMe, locate])
+
+  const nearMeOn = !!userLocation && (nearMe === 'on' || askedNearMe)
+
+  /** To the place, or to its nearest branch when it is a chain. */
+  const distanceKm = useCallback(
+    (item: TripItem): number | null => {
+      if (!userLocation || !item.coordinates) return null
+      const points = [item.coordinates, ...(item.branches ?? [])]
+      return Math.min(...points.map(p => haversineKm(userLocation.lat, userLocation.lng, p.lat, p.lng)))
+    },
+    [userLocation]
+  )
+
+  const { shown, nearMeWidened } = useMemo(() => {
+    const rank = search ? new Map(search.ids.map((id, n) => [id, n])) : null
+    let list = items.filter(item => {
       const m = meta[placeIdOf(item.id)]
       if (!m) return false
       if (region && m.region !== region) return false
       if (kind && m.kind !== kind) return false
       if (wantToTryOnly && !m.thinkingAbout) return false
       if (hideBeenThere && m.done) return false
-      if (q) {
-        const haystack = [item.name, m.neighborhood, m.locationText, m.goodFor.join(' '), m.topDishes, m.comments]
-          .join(' ')
-          .toLowerCase()
-        if (!haystack.includes(q)) return false
-      }
+      if (rank && !rank.has(item.id)) return false
       return true
     })
-  }, [items, meta, region, kind, wantToTryOnly, hideBeenThere, query])
+    // Best match first: a match on the name outranks one in the notes.
+    if (rank) list = [...list].sort((a, b) => rank.get(a.id)! - rank.get(b.id)!)
+    if (!nearMeOn) return { shown: list, nearMeWidened: false }
+    const near = nearest(list, distanceKm)
+    return { shown: near.items, nearMeWidened: near.widened }
+  }, [items, meta, region, kind, wantToTryOnly, hideBeenThere, search, nearMeOn, distanceKm])
 
   const mapped = shown.filter(i => i.coordinates)
   const unmapped = shown.filter(i => !i.coordinates)
@@ -175,6 +235,7 @@ export default function AroundTownClient({
     wantToTryOnly ? 'want' : 'any',
     hideBeenThere ? 'nottried' : 'all',
     query.trim().toLowerCase(),
+    nearMeOn ? 'nearme' : 'anywhere',
     `fit:${fitRegion}`,
   ].join('|')
 
@@ -187,7 +248,8 @@ export default function AroundTownClient({
     [meta]
   )
 
-  const hasFilters = region !== null || kind !== null || wantToTryOnly || hideBeenThere || query !== ''
+  const hasFilters =
+    region !== null || kind !== null || wantToTryOnly || hideBeenThere || query !== '' || nearMe !== 'off'
 
   function clearAll() {
     setRegion(null)
@@ -195,6 +257,8 @@ export default function AroundTownClient({
     setWantToTryOnly(false)
     setHideBeenThere(false)
     setQuery('')
+    setNearMe('off')
+    setUserLocation(null)
     setSelected(null)
   }
 
@@ -256,11 +320,31 @@ export default function AroundTownClient({
           onClick={() => setHideBeenThere(!hideBeenThere)}
         />
 
+        <button
+          onClick={() => {
+            if (nearMe === 'off' || nearMe === 'denied') locate()
+            else { setNearMe('off'); setUserLocation(null) }
+            setSelected(null)
+          }}
+          className={`flex-shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
+            nearMeOn ? 'border-blue-400 bg-blue-500 text-white'
+              : nearMe === 'denied' ? 'border-red-400/40 text-red-300'
+              : 'border-blue-400/30 text-blue-300 hover:bg-white/5'
+          }`}
+        >
+          {nearMe === 'locating' ? 'Locating...' : nearMe === 'denied' ? 'Location off' : 'Near me'}
+        </button>
+
         <input
+          type="search"
           value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Search"
-          className="ml-1 w-28 flex-shrink-0 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white placeholder:text-white/25 focus:border-amber-400/40 focus:outline-none"
+          onChange={e => {
+            setQuery(e.target.value)
+            setSelected(null)
+          }}
+          placeholder="Search: a name, or chinese food near me"
+          aria-label="Search places"
+          className="ml-1 w-72 max-w-full flex-shrink-0 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white placeholder:text-white/25 focus:border-amber-400/40 focus:outline-none"
         />
 
         {hasFilters && (
@@ -286,6 +370,17 @@ export default function AroundTownClient({
         </span>
       </div>
 
+      {(search?.understood || nearMeOn || (askedNearMe && nearMe === 'denied')) && (
+        <p className="flex-shrink-0 px-4 pb-2 text-xs text-white/45">
+          {search?.understood && <>Searching for: <span className="text-amber-200">{search.understood}</span></>}
+          {search?.understood && (nearMeOn || nearMe === 'denied') ? ' - ' : ''}
+          {nearMeOn && (nearMeWidened
+            ? 'Nothing within 5 miles, so these are the nearest.'
+            : shown.length === 0 ? 'Nothing within 5 miles.' : 'Within 5 miles, nearest first.')}
+          {!nearMeOn && askedNearMe && nearMe === 'denied' && 'Location is off for this site, so this is every match.'}
+        </p>
+      )}
+
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
         <div className="relative h-[45vh] flex-shrink-0 lg:h-auto lg:flex-1">
           <TripMap
@@ -293,7 +388,7 @@ export default function AroundTownClient({
             apiKey={apiKey}
             selected={selected}
             onSelect={setSelected}
-            userLocation={null}
+            userLocation={nearMeOn ? userLocation : null}
             onRecenterReady={onRecenterReady}
             fitKey={fitKey}
             styleFor={styleFor}
@@ -402,7 +497,12 @@ export default function AroundTownClient({
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-medium text-white">{item.name}</span>
                     <span className="block text-xs text-white/40">
-                      {[m?.preference, m?.neighborhood || m?.locationText, m?.done ? 'Been there' : null]
+                      {[
+                        nearMeOn && distanceKm(item) !== null ? `${(distanceKm(item)! / 1.609).toFixed(1)} mi` : null,
+                        m?.preference,
+                        m?.neighborhood || m?.locationText,
+                        m?.done ? 'Been there' : null,
+                      ]
                         .filter(Boolean)
                         .join(' · ')}
                     </span>

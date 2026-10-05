@@ -27,6 +27,51 @@ const SAN_FERNANDO_VALLEY = [
   'valley village', 'van nuys', 'west hills', 'winnetka', 'woodland hills',
 ]
 
+// The lists below are the areas the way she labels them (her Neighborhood
+// values, 2026-10-05) plus the cities an address in that area can name. They
+// exist for the search ("cafe in the south bay"); a note naming one of them is
+// also read by the lookup, which only ever says yes.
+
+const WESTSIDE = [
+  'santa monica', 'venice', 'culver city', 'sawtelle', 'westwood', 'brentwood', 'palms',
+  'mar vista', 'marina del rey', 'playa vista', 'playa del rey', 'century city',
+  'pacific palisades', 'beverly hills', 'west los angeles', 'west la',
+]
+
+const SOUTH_BAY = [
+  'manhattan beach', 'hermosa beach', 'redondo beach', 'torrance', 'gardena', 'el segundo',
+  'hawthorne', 'lawndale', 'lomita', 'san pedro', 'palos verdes estates', 'rancho palos verdes',
+]
+
+const EASTSIDE = [
+  'silverlake', 'silver lake', 'echo park', 'los feliz', 'highland park', 'eagle rock',
+  'atwater village', 'glassell park',
+]
+
+const DOWNTOWN_LA = ['downtown', 'arts district', 'little tokyo', 'dtla']
+
+const ORANGE_COUNTY = [
+  'anaheim', 'irvine', 'costa mesa', 'tustin', 'huntington beach', 'newport beach', 'fullerton',
+  'laguna beach', 'santa ana', 'orange', 'garden grove', 'westminster', 'buena park',
+]
+
+const EAST_BAY = [
+  'east bay', 'oakland', 'berkeley', 'emeryville', 'alameda', 'albany', 'walnut creek',
+  'el cerrito', 'san leandro',
+]
+
+const MARIN = [
+  'marin', 'mill valley', 'san rafael', 'larkspur', 'sausalito', 'tiburon', 'novato',
+  'corte madera', 'san anselmo', 'kentfield', 'point reyes', 'point reyes station',
+]
+
+const WINE_COUNTRY = ['napa', 'sonoma', 'healdsburg', 'yountville', 'st helena', 'calistoga', 'sebastopol']
+
+const PENINSULA = [
+  'palo alto', 'menlo park', 'burlingame', 'san mateo', 'redwood city', 'mountain view',
+  'half moon bay', 'daly city',
+]
+
 /** Area words from her notes, mapped to the city names an address can carry. */
 const ALIASES: Record<string, string[]> = {
   'weho': ['west hollywood'],
@@ -37,6 +82,43 @@ const ALIASES: Record<string, string[]> = {
   'valley': SAN_FERNANDO_VALLEY,
   'sfv': SAN_FERNANDO_VALLEY,
   'san fernando valley': SAN_FERNANDO_VALLEY,
+  'westside': WESTSIDE,
+  'west side': WESTSIDE,
+  'south bay': SOUTH_BAY,
+  'eastside': EASTSIDE,
+  'east side': EASTSIDE,
+  'dtla': DOWNTOWN_LA,
+  'downtown la': DOWNTOWN_LA,
+  'east bay': EAST_BAY,
+  'marin': MARIN,
+  'marin county': MARIN,
+  'wine country': WINE_COUNTRY,
+  'peninsula': PENINSULA,
+}
+
+/**
+ * Areas only the search may ask for. Kept out of `ALIASES` because the lookup
+ * treats "OC" in a note as too broad to prove anything, and that stays true.
+ */
+const SEARCH_ONLY_ALIASES: Record<string, string[]> = {
+  'oc': ORANGE_COUNTY,
+  'orange county': ORANGE_COUNTY,
+}
+
+/** Every area word the search understands, with the cities it covers. */
+export const SEARCH_AREAS: Record<string, string[]> = { ...ALIASES, ...SEARCH_ONLY_ALIASES }
+
+const BAY_LISTS = new Set<string[]>([EAST_BAY, MARIN, WINE_COUNTRY, PENINSULA])
+
+/**
+ * Which side of the state an area word is on. Her labels repeat across the two
+ * ("Downtown", "Chinatown" and "Richmond" exist in both), so an area match also
+ * has to be in the right half.
+ */
+export function searchAreaRegion(word: string): 'la' | 'sfBay' | null {
+  const list = SEARCH_AREAS[word]
+  if (!list) return null
+  return BAY_LISTS.has(list) ? 'sfBay' : 'la'
 }
 
 /**
