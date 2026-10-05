@@ -88,6 +88,7 @@ function MapContent({
   fitKey,
   styleFor = markerStyle,
   fitScopeIds,
+  pinFilter,
 }: {
   items: TripItem[]
   selected: TripItem | null
@@ -103,6 +104,10 @@ function MapContent({
       not one place -- Elisa, 2026-09-14: "id never want to fit all between sf
       and la. id fit all within one area but not all areas." */
   fitScopeIds?: Set<string>
+  /** Leaves out pins this says no to, a chain's branches included. Around Town's
+      "near me" uses it so a chain with one branch nearby does not also draw its
+      branch across town. Undefined draws every pin, as a trip wants. */
+  pinFilter?: (pin: { lat: number; lng: number }) => boolean
 }) {
   const map = useMap()
   const markerLib = useMapsLibrary('marker')
@@ -124,8 +129,9 @@ function MapContent({
             address: b.address,
             branches: undefined,
           })),
-        ]),
-    [items]
+        ])
+        .filter(i => !pinFilter || pinFilter(i.coordinates!)),
+    [items, pinFilter]
   )
   const clustererRef = useRef<MarkerClusterer | null>(null)
   const imperativeMarkersRef = useRef<globalThis.Map<string, google.maps.marker.AdvancedMarkerElement>>(new globalThis.Map())
@@ -435,9 +441,10 @@ interface Props {
       Town is always LA or the Bay. */
   defaultCenter?: { lat: number; lng: number }
   fitScopeIds?: Set<string>
+  pinFilter?: (pin: { lat: number; lng: number }) => boolean
 }
 
-export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds }: Props) {
+export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter }: Props) {
   const mapped = items.filter(i => i.coordinates)
 
   const center = userLocation ?? (mapped.length > 0
@@ -464,7 +471,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         clickableIcons={false}
         onClick={() => onSelect(null)}
       >
-        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} />
+        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} />
       </Map>
     </APIProvider>
   )

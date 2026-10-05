@@ -8,7 +8,7 @@ import UnmappedList from './UnmappedList'
 import { AddPlaceForm, PlaceEditor, UnlockForm, usePasscode } from './PlaceEditing'
 import type { TripItem } from '@/lib/types'
 import { haversineKm, type UserLocation } from '@/lib/geo'
-import { searchPlaces, nearest, type SearchablePlace } from '@/lib/place-search'
+import { searchPlaces, nearest, NEAR_ME_KM, type SearchablePlace } from '@/lib/place-search'
 import { branchId, placeIdOf } from '@/lib/saved-pins'
 // From the shared module, never from `lib/aroundtown` - that one imports the
 // geocoder, which reads the coordinate table off disk, and a client component
@@ -192,6 +192,18 @@ export default function AroundTownClient({
   }, [items, meta, region, kind, wantToTryOnly, hideBeenThere, search, nearMeOn, distanceKm])
 
   const mapped = shown.filter(i => i.coordinates)
+
+  // With near me on, only the pins that are actually near are drawn: a chain
+  // with one branch close by does not also show its branch across town. When
+  // nothing is within 5 miles the radius grows to reach the nearest few.
+  const pinFilter = useMemo(() => {
+    if (!nearMeOn || !userLocation) return undefined
+    const reach = nearMeWidened
+      ? Math.max(0, ...shown.map(i => distanceKm(i) ?? 0))
+      : NEAR_ME_KM
+    return (pin: { lat: number; lng: number }) =>
+      haversineKm(userLocation.lat, userLocation.lng, pin.lat, pin.lng) <= reach + 0.01
+  }, [nearMeOn, userLocation, nearMeWidened, shown, distanceKm])
   const unmapped = shown.filter(i => !i.coordinates)
 
   // The ONE area a fit may span. Elisa, 2026-09-14: "id never want to fit all
@@ -220,14 +232,15 @@ export default function AroundTownClient({
   // never stretch the frame.
   const fitScopeIds = useMemo(() => {
     const ids = new Set<string>()
+    const drawn = (pin: { lat: number; lng: number }) => !pinFilter || pinFilter(pin)
     for (const i of mapped) {
-      if (fitAreaContains(fitRegion, i.coordinates!.lat, i.coordinates!.lng)) ids.add(i.id)
+      if (drawn(i.coordinates!) && fitAreaContains(fitRegion, i.coordinates!.lat, i.coordinates!.lng)) ids.add(i.id)
       ;(i.branches ?? []).forEach((b, n) => {
-        if (fitAreaContains(fitRegion, b.lat, b.lng)) ids.add(branchId(i.id, n))
+        if (drawn(b) && fitAreaContains(fitRegion, b.lat, b.lng)) ids.add(branchId(i.id, n))
       })
     }
     return ids
-  }, [mapped, fitRegion])
+  }, [mapped, fitRegion, pinFilter])
 
   const fitKey = [
     region ?? 'allregions',
@@ -394,6 +407,7 @@ export default function AroundTownClient({
             styleFor={styleFor}
             defaultCenter={{ lat: 34.05, lng: -118.24 }}
             fitScopeIds={fitScopeIds}
+            pinFilter={pinFilter}
           />
           <button
             onClick={() => {
