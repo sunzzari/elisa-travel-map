@@ -2,6 +2,15 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-10-06
+
+- `8:01am` **Search matches you can see, single pins instead of bubbles, and a map that never opens on the whole world** - Elisa: "i searched jian bing and nothing acame up. also, the bubbles are over-clustering. i want to see individual entries where I can ... Bubble should only be used in the case where there are too many bubbles to display. Also, if there are multiple hits for a search term, all of the items should be highlighted on the map, and a list should be shown ... This should be the case for travel map as well."
+  - **"Jian bing" was found but hidden.** The place has no pin, so nothing was drawn and it sat under "Not on the map" below everything else. While a search is active the panel now opens with "N matches for ...", and a match with no pin is listed first, with Find it.
+  - **Spacing does not matter in a name**: "jianbing" and "jian-bing" find Jian Bing (`lib/place-search.ts`). Changes the phone's search too, with no app release.
+  - **Bubbles only when crowded** (`components/TripMap.tsx`, the one map, so trips AND Around Town): with 60 pins or fewer in view every pin is drawn on its own; past that, nearby pins merge, within a smaller radius than before (50, was 80). `MAX_SINGLE_PINS` and `BUBBLE_RADIUS_PX` at the top of the file are the two numbers.
+  - **The map no longer opens on the whole world.** The first fit ran before the map had a size, and nothing fitted it again until a filter changed, so a search with no pins was left looking at the globe. It now fits once more when the map has drawn. Trips get this too.
+  - Checked locally: "jianbing" lists Jian Bing with the map still on LA; "restaurant cafe in san gabriel valley" shows 11 matches as single pins; Vienna 2026 shows two bubbles at country zoom (97 pins) and single pins once zoomed into Vienna.
+
 ## 2026-10-05
 
 - `7:10am` **Near me draws only the pins that are near** - a chain with one branch close by was also drawing its branch across town, which stretched the map away from her. `TripMap`, the one map, gained an opt-in `pinFilter`; Around Town's near me passes it, trips do not, so trips are unchanged. Seen on the phone, which has the same fix in its next build.

@@ -12,6 +12,8 @@ const QUESTIONS = [
   ['jian bing in rowland heights', 1],
   ['chinese food near me', 40],
   ['restaurant cafe in san gabriel valley', 1],
+  ['jianbing', 1],
+  ['jian-bing', 1],
   ['bestia', 1],
   ['best', 1],
   ['tacos in la', 5],

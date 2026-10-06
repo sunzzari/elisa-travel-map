@@ -275,6 +275,69 @@ export default function AroundTownClient({
     setSelected(null)
   }
 
+  const mappedList = (
+    <section className="px-4 py-4">
+      <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">
+        {mapped.length} place{mapped.length === 1 ? '' : 's'} on the map
+      </p>
+      {mapped.map(item => {
+        const m = meta[placeIdOf(item.id)]
+        return (
+          <button
+            key={item.id}
+            onClick={() => setSelected(item)}
+            className={`flex w-full gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-white/5 ${
+              selected?.id === item.id ? 'bg-white/5' : ''
+            }`}
+          >
+            <span
+              className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
+              style={{ background: m?.color ?? NOT_RATED_COLOR }}
+            />
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-medium text-white">{item.name}</span>
+              <span className="block text-xs text-white/40">
+                {[
+                  nearMeOn && distanceKm(item) !== null ? `${(distanceKm(item)! / 1.609).toFixed(1)} mi` : null,
+                  m?.preference,
+                  m?.neighborhood || m?.locationText,
+                  m?.done ? 'Been there' : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </span>
+            </span>
+          </button>
+        )
+      })}
+    </section>
+  )
+
+  const unmappedList = (
+    <UnmappedList
+      items={unmapped}
+      onSelect={setSelected}
+      dotColor={item => meta[placeIdOf(item.id)]?.color ?? NOT_RATED_COLOR}
+      subtitle={item => {
+        const m = meta[placeIdOf(item.id)]
+        return [m?.kind === 'activity' ? 'Activity' : 'Restaurant', m?.locationText]
+          .filter(Boolean)
+          .join(' - ')
+      }}
+      title={search ? `${unmapped.length} with no pin yet` : undefined}
+      note="No pin yet. Find it gives it one; or search it in Maps, or open its Notion row."
+      onFind={item => {
+        setAdding(false)
+        setSelected(item)
+        panelRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+      }}
+      searchContext={item => {
+        const m = meta[placeIdOf(item.id)]
+        return [m?.neighborhood, m?.locationText].filter(Boolean).join(', ')
+      }}
+    />
+  )
+
   return (
     <main className="flex h-screen flex-col bg-gray-950">
       <div
@@ -490,63 +553,22 @@ export default function AroundTownClient({
             </section>
           )}
 
-          <section className="px-4 py-4">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">
-              {mapped.length} place{mapped.length === 1 ? '' : 's'} on the map
+          {search && (
+            <p className="border-b border-white/10 px-4 py-3 text-sm text-white">
+              {shown.length === 0
+                ? 'No saved place matches.'
+                : `${shown.length} match${shown.length === 1 ? '' : 'es'}`}
+              <span className="text-white/40"> for "{query.trim()}"</span>
             </p>
-            {mapped.map(item => {
-              const m = meta[placeIdOf(item.id)]
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setSelected(item)}
-                  className={`flex w-full gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-white/5 ${
-                    selected?.id === item.id ? 'bg-white/5' : ''
-                  }`}
-                >
-                  <span
-                    className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
-                    style={{ background: m?.color ?? NOT_RATED_COLOR }}
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-medium text-white">{item.name}</span>
-                    <span className="block text-xs text-white/40">
-                      {[
-                        nearMeOn && distanceKm(item) !== null ? `${(distanceKm(item)! / 1.609).toFixed(1)} mi` : null,
-                        m?.preference,
-                        m?.neighborhood || m?.locationText,
-                        m?.done ? 'Been there' : null,
-                      ]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </span>
-                  </span>
-                </button>
-              )
-            })}
-          </section>
+          )}
 
-          <UnmappedList
-            items={unmapped}
-            onSelect={setSelected}
-            dotColor={item => meta[placeIdOf(item.id)]?.color ?? NOT_RATED_COLOR}
-            subtitle={item => {
-              const m = meta[placeIdOf(item.id)]
-              return [m?.kind === 'activity' ? 'Activity' : 'Restaurant', m?.locationText]
-                .filter(Boolean)
-                .join(' - ')
-            }}
-            note="No pin yet. Find it gives it one; or search it in Maps, or open its Notion row."
-            onFind={item => {
-              setAdding(false)
-              setSelected(item)
-              panelRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
-            }}
-            searchContext={item => {
-              const m = meta[placeIdOf(item.id)]
-              return [m?.neighborhood, m?.locationText].filter(Boolean).join(', ')
-            }}
-          />
+          {/* While searching, a match with no pin is listed first: it is not on
+              the map, so the list is the only place she can see it. */}
+          {search && unmappedList}
+
+          {(!search || mapped.length > 0) && mappedList}
+
+          {!search && unmappedList}
         </div>
       </div>
     </main>

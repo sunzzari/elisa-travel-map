@@ -9,7 +9,8 @@ import {
   useMap,
   useMapsLibrary,
 } from '@vis.gl/react-google-maps'
-import { MarkerClusterer, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
+import { MarkerClusterer, MarkerUtils, SuperClusterAlgorithm } from '@googlemaps/markerclusterer'
+import type { AlgorithmInput, AlgorithmOutput } from '@googlemaps/markerclusterer'
 import { mapsUrl, haversineKm, formatDistance } from '@/lib/geo'
 import type { TripItem } from '@/lib/types'
 import { branchId } from '@/lib/saved-pins'
@@ -77,6 +78,42 @@ function CopyButton({ text }: { text: string }) {
       {copied ? '✓' : 'Copy'}
     </button>
   )
+}
+
+/**
+ * Elisa, 2026-10-05: "the bubbles are over-clustering. i want to see individual
+ * entries where I can ... Bubble should only be used in the case where there are
+ * too many bubbles to display."
+ *
+ * So a numbered bubble is the exception. With this many pins or fewer in view,
+ * every pin is drawn on its own, even if two touch. Only past it do nearby pins
+ * merge, and then within a smaller radius than before (it was 80).
+ *
+ * This is the one map, so trips and Around Town both get it.
+ */
+const MAX_SINGLE_PINS = 60
+const BUBBLE_RADIUS_PX = 50
+
+class BubblesWhenCrowded extends SuperClusterAlgorithm {
+  private crowded: boolean | null = null
+
+  calculate(input: AlgorithmInput): AlgorithmOutput {
+    const bounds = input.map.getBounds()
+    const inView = bounds
+      ? input.markers.filter(m => bounds.contains(MarkerUtils.getPosition(m))).length
+      : input.markers.length
+    const crowded = inView > MAX_SINGLE_PINS
+    const switched = crowded !== this.crowded
+    this.crowded = crowded
+
+    // Always let the parent see the markers, so its index is current the moment
+    // the map gets crowded again.
+    const merged = super.calculate(input)
+    if (crowded) return { clusters: merged.clusters, changed: merged.changed || switched }
+    // The same pins drawn singly do not need redrawing on every pan, only when
+    // the set of pins changed or bubbles were just switched off.
+    return { clusters: this.noop({ markers: input.markers }), changed: merged.changed || switched }
+  }
 }
 
 function MapContent({
@@ -169,9 +206,17 @@ function MapContent({
   }, [map, mapped, userLocation, fitScopeIds])
 
   // Fit map to all pins on initial load
+  const fitBoundsRef = useRef(fitBounds)
+  fitBoundsRef.current = fitBounds
   useEffect(() => {
-    fitBounds(false)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!map) return
+    fitBoundsRef.current(false)
+    // A map that has not been laid out yet has no size, and a fit on it frames
+    // the whole world. Nothing fits it again until a filter changes, so a
+    // search with no pins was left looking at the globe. Fit once more when
+    // the map has actually drawn.
+    const drawn = google.maps.event.addListenerOnce(map, 'idle', () => fitBoundsRef.current(false))
+    return () => drawn.remove()
   }, [map])
 
   // Expose recenter function to parent (fits pins only, no user location bias)
@@ -203,7 +248,7 @@ function MapContent({
 
     clustererRef.current = new MarkerClusterer({
       map,
-      algorithm: new SuperClusterAlgorithm({ radius: 80 }),
+      algorithm: new BubblesWhenCrowded({ radius: BUBBLE_RADIUS_PX }),
       renderer: {
         render({ count, position }) {
           const size = Math.min(24 + Math.log2(count) * 8, 56)

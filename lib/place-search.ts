@@ -305,8 +305,14 @@ export function searchPlaces(
   // still typing ("best" on the way to "Bestia") counts when it starts a word in
   // the NAME; and when no place has all her words whole, starts-with is used
   // everywhere, so a half-typed question still finds something.
-  const whole = candidates.filter(p => q.words.every(w => wholeWordMatches(p.words, w)))
-  const starts = candidates.filter(p => q.words.every(w => wordMatches(p.words, w)))
+  //
+  // Spacing does not matter in a name: "jianbing" is "Jian Bing" and "din tai
+  // fung" is "DinTaiFung". Her words run together are looked for in the name
+  // run together, and that counts as a whole match on the name.
+  const run = q.words.join('')
+  const nameRun = (p: Indexed) => run.length >= 4 && p.nameWords.join('').includes(run)
+  const whole = candidates.filter(p => nameRun(p) || q.words.every(w => wholeWordMatches(p.words, w)))
+  const starts = candidates.filter(p => nameRun(p) || q.words.every(w => wordMatches(p.words, w)))
   const kept =
     whole.length === 0
       ? starts
@@ -317,7 +323,7 @@ export function searchPlaces(
       id: p.place.id,
       order,
       // How many of her words are in the NAME: a name match is what she meant.
-      inName: q.words.filter(w => wordMatches(p.nameWords, w)).length,
+      inName: nameRun(p) ? q.words.length : q.words.filter(w => wordMatches(p.nameWords, w)).length,
     }))
     .sort((a, b) => b.inName - a.inName || a.order - b.order)
   return { ids: hits.map(h => h.id), nearMe: q.nearMe, filters: q.filters, understood: understoodLine(q) }

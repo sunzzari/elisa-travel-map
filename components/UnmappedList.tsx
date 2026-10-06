@@ -21,6 +21,7 @@ export default function UnmappedList({
   dotColor,
   subtitle,
   note,
+  title = 'Not on the map',
   /** Extra context for the Maps search, e.g. the city or neighborhood. */
   searchContext,
   onFind,
@@ -31,6 +32,8 @@ export default function UnmappedList({
   dotColor: (item: TripItem) => string
   subtitle: (item: TripItem) => string
   note?: string
+  /** The heading. Around Town's search calls these "No pin yet" among its matches. */
+  title?: string
   searchContext?: (item: TripItem) => string
   /** When given, each row gets a "Find it" button that opens the pin lookup for it. */
   onFind?: (item: TripItem) => void
@@ -46,7 +49,7 @@ export default function UnmappedList({
   return (
     <section className="border-t border-white/10 px-4 py-4">
       <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">
-        Not on the map
+        {title}
       </p>
       {note && <p className="mb-2 text-xs text-white/30">{note}</p>}
       {items.map(item => (
