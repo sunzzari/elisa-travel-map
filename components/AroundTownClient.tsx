@@ -37,7 +37,7 @@ const LEGEND: Array<{ color: string; label: string }> = [
   { color: '#FF6B6B', label: 'Bad' },
   { color: NOT_RATED_COLOR, label: 'Not rated' },
   { color: ACTIVITY_COLOR, label: 'Activity' },
-  { color: BEEN_THERE_COLOR, label: 'Been there' },
+  { color: BEEN_THERE_COLOR, label: 'Been there, not rated' },
 ]
 
 const REGION_LABEL: Record<AroundTownRegion, string> = { la: 'LA', sfBay: 'SF Bay' }
@@ -196,14 +196,22 @@ export default function AroundTownClient({
   // With near me on, only the pins that are actually near are drawn: a chain
   // with one branch close by does not also show its branch across town. When
   // nothing is within 5 miles the radius grows to reach the nearest few.
+  //
+  // And with an area asked for ("cafe in san gabriel valley"), a matching
+  // chain's branches outside that area are left off: the search names them.
   const pinFilter = useMemo(() => {
-    if (!nearMeOn || !userLocation) return undefined
-    const reach = nearMeWidened
-      ? Math.max(0, ...shown.map(i => distanceKm(i) ?? 0))
-      : NEAR_ME_KM
-    return (pin: { lat: number; lng: number }) =>
-      haversineKm(userLocation.lat, userLocation.lng, pin.lat, pin.lng) <= reach + 0.01
-  }, [nearMeOn, userLocation, nearMeWidened, shown, distanceKm])
+    const hidden = new Set(search?.hiddenPins ?? [])
+    const near = nearMeOn && userLocation
+      ? {
+          from: userLocation,
+          reach: nearMeWidened ? Math.max(0, ...shown.map(i => distanceKm(i) ?? 0)) : NEAR_ME_KM,
+        }
+      : null
+    if (!near && hidden.size === 0) return undefined
+    return (pin: { id: string; lat: number; lng: number }) =>
+      !hidden.has(pin.id) &&
+      (!near || haversineKm(near.from.lat, near.from.lng, pin.lat, pin.lng) <= near.reach + 0.01)
+  }, [search, nearMeOn, userLocation, nearMeWidened, shown, distanceKm])
   const unmapped = shown.filter(i => !i.coordinates)
 
   // The ONE area a fit may span. Elisa, 2026-09-14: "id never want to fit all
@@ -232,15 +240,22 @@ export default function AroundTownClient({
   // never stretch the frame.
   const fitScopeIds = useMemo(() => {
     const ids = new Set<string>()
-    const drawn = (pin: { lat: number; lng: number }) => !pinFilter || pinFilter(pin)
+    //
+    // A search frames wider: every match in the region, Orange County and San
+    // Diego included, so a chain's branches are all in view (Mian's main branch
+    // is in Costa Mesa). Her LA-proper frame is for browsing, not for answers.
+    const searching = search !== null
+    const inFrame = (lat: number, lng: number) =>
+      searching ? regionFromCoords(lat, lng) === fitRegion : fitAreaContains(fitRegion, lat, lng)
+    const drawn = (id: string, pin: { lat: number; lng: number }) => !pinFilter || pinFilter({ id, ...pin })
     for (const i of mapped) {
-      if (drawn(i.coordinates!) && fitAreaContains(fitRegion, i.coordinates!.lat, i.coordinates!.lng)) ids.add(i.id)
+      if (drawn(i.id, i.coordinates!) && inFrame(i.coordinates!.lat, i.coordinates!.lng)) ids.add(i.id)
       ;(i.branches ?? []).forEach((b, n) => {
-        if (drawn(b) && fitAreaContains(fitRegion, b.lat, b.lng)) ids.add(branchId(i.id, n))
+        if (drawn(branchId(i.id, n), b) && inFrame(b.lat, b.lng)) ids.add(branchId(i.id, n))
       })
     }
     return ids
-  }, [mapped, fitRegion, pinFilter])
+  }, [mapped, fitRegion, pinFilter, search])
 
   const fitKey = [
     region ?? 'allregions',
@@ -471,6 +486,7 @@ export default function AroundTownClient({
             defaultCenter={{ lat: 34.05, lng: -118.24 }}
             fitScopeIds={fitScopeIds}
             pinFilter={pinFilter}
+            bubblesTakePinColour
           />
           <button
             onClick={() => {

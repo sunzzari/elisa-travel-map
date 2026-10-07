@@ -1,6 +1,8 @@
 import { Client } from '@notionhq/client'
 import { geocodeVenue } from './geocode'
-import { readSavedPin } from './saved-pins'
+import { readSavedPin, pinProperties } from './saved-pins'
+import { regionFromRowText } from './place-areas'
+import { areaFor, areaForRegion, pinAddress } from './place-lookup'
 import type { SavedPin } from './saved-pins'
 import type { TripItem } from './types'
 import {
@@ -135,7 +137,14 @@ function rawRestaurants(pages: any[]): Raw[] {
     // Location and a Chengdu or Shanghai neighborhood, and admitting those put
     // eleven Chinese restaurants in the LA not-on-the-map list. Same rule as the
     // phone.
-    const neighborhoodRegion = locationText === '' ? regionFromText(neighborhood) : null
+    //
+    // A blank Location whose row names a California city or ZIP is ours too
+    // (`regionFromRowText`): "Yu Ji Stone Mill Chinese Crepes", neighborhood
+    // "Rowland Heights, CA", was being dropped here and so could not be found.
+    const address = getText(p['Address'])
+    const neighborhoodRegion = locationText === ''
+      ? regionFromText(neighborhood) ?? regionFromRowText(neighborhood, address)
+      : null
     if (region === null && neighborhoodRegion === null) continue
     const preference = getText(p['Preference']) || null
     out.push({
@@ -152,7 +161,7 @@ function rawRestaurants(pages: any[]): Raw[] {
       comments: getText(p['Comments']),
       thinkingAbout: getCheckbox(p['Thinking About']),
       done: getCheckbox(p['Been There?']),
-      address: getText(p['Address']),
+      address,
       saved: readSavedPin(p),
     })
   }
@@ -209,6 +218,55 @@ function geoCityFallback(raw: Raw): string {
     : metroHint(raw.locationText)
 }
 
+// MARK: - Pins for rows added outside the apps
+
+/** Addresses that could not be pinned, so they are not looked up on every read. */
+const unpinnable = new Map<string, number>()
+const RETRY_AFTER_MS = 24 * 60 * 60 * 1000
+/** A read never waits on more than this many lookups; the rest wait for the next read. */
+const MAX_PINS_PER_READ = 5
+
+/**
+ * Gives a pin to rows that have a street address and no pin, and saves it.
+ *
+ * Elisa, 2026-09-30: "how are we making sure all places have locations for the
+ * future". A place added through the apps is pinned when it is saved. A row
+ * typed into Notion, or added by a skill, has an address and nothing else, and
+ * stayed off the map until someone tapped Find it.
+ *
+ * Her own address, the free geocoders (`pinAddress`), and the same area check a
+ * save uses: a pin outside the row's LA or Bay box is not saved. A row with no
+ * address is never guessed. Once saved the row has a pin and is not looked up
+ * again, so a second read does nothing.
+ */
+async function pinAddressedRows(raws: Raw[]): Promise<void> {
+  const now = Date.now()
+  const waiting = raws.filter(r =>
+    r.address.trim() !== '' && !r.saved.coordinates && r.region !== null &&
+    now - (unpinnable.get(r.id + '|' + r.address) ?? 0) > RETRY_AFTER_MS
+  ).slice(0, MAX_PINS_PER_READ)
+
+  for (const raw of waiting) {
+    try {
+      const area = await areaFor(raw.kind, raw.neighborhood, raw.locationText)
+        ?? areaForRegion(raw.kind, raw.region!, raw.neighborhood)
+      const found = await pinAddress(area, raw.address)
+      if (!found) {
+        unpinnable.set(raw.id + '|' + raw.address, now)
+        continue
+      }
+      const pin = { lat: found.lat, lng: found.lng }
+      await notion.pages.update({ page_id: raw.id, properties: pinProperties(pin) })
+      raw.saved = { ...raw.saved, coordinates: pin }
+      console.log(`Around Town: pinned "${raw.name}" from its address (${found.source})`)
+    } catch (err) {
+      // A failed lookup or save leaves the row as it was: listed, with no pin.
+      unpinnable.set(raw.id + '|' + raw.address, now)
+      console.error(`Around Town: could not pin "${raw.name}":`, err)
+    }
+  }
+}
+
 export async function fetchAroundTown(): Promise<AroundTownData> {
   const [restaurantPages, activityPages] = await Promise.all([
     queryAll(RESTAURANT_GUIDE_DB),
@@ -216,6 +274,7 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
   ])
 
   const raws = [...rawRestaurants(restaurantPages), ...rawActivities(activityPages)]
+  await pinAddressedRows(raws)
 
   const items: TripItem[] = []
   const meta: Record<string, AroundTownMeta> = {}
@@ -327,7 +386,11 @@ export async function aroundTownPlaces() {
       lat: c?.lat ?? null,
       lng: c?.lng ?? null,
       fitArea: c ? fitArea(c) : null,
-      branches: (item.branches ?? []).map(b => ({ address: b.address, lat: b.lat, lng: b.lng, fitArea: fitArea(b) })),
+      // `region` is the wide area (LA includes Orange County and San Diego),
+      // which is what a search frames; `fitArea` is LA proper.
+      branches: (item.branches ?? []).map(b => ({
+        address: b.address, lat: b.lat, lng: b.lng, fitArea: fitArea(b), region: regionFromCoords(b.lat, b.lng),
+      })),
     }
   })
   return { generatedAt: new Date().toISOString(), places }

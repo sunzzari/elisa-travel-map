@@ -56,10 +56,17 @@ export const RESTAURANT_LOCATIONS = [
   'Liguria', 'Park City',
 ]
 
+/**
+ * A rating wins. Elisa, 2026-10-07: "there is a color legend that's always on
+ * the map, but the colors don't actually show ... so it's completely pointless".
+ * She was right: a place is only rated once we have been, and "been there" grey
+ * was applied first, so 239 of 414 pins were grey and the four rating colours
+ * showed on one. Grey now means been there and NOT rated.
+ */
 export function colorFor(m: Pick<AroundTownMeta, 'kind' | 'done' | 'preference'>): string {
-  if (m.done) return BEEN_THERE_COLOR
-  if (m.kind === 'activity') return ACTIVITY_COLOR
-  return (m.preference && PREFERENCE_COLORS[m.preference]) ?? NOT_RATED_COLOR
+  if (m.kind === 'activity') return m.done ? BEEN_THERE_COLOR : ACTIVITY_COLOR
+  if (m.preference && PREFERENCE_COLORS[m.preference]) return PREFERENCE_COLORS[m.preference]
+  return m.done ? BEEN_THERE_COLOR : NOT_RATED_COLOR
 }
 
 // MARK: - Region classification

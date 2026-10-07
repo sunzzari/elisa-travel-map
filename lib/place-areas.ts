@@ -160,3 +160,29 @@ export function addressInNamedArea(areaText: string, address: string): boolean {
   if (allowed.size === 0) return false
   return addressCities(address).some(c => allowed.has(c))
 }
+
+/**
+ * Which half of the state a place with NO Location is in, from what else its
+ * row says: a city this file knows ("Rowland Heights, CA"), or the ZIP code in
+ * its address. Null when neither says, which keeps a Chengdu or Shanghai row
+ * out of Around Town.
+ *
+ * Elisa, 2026-10-07: "jian bing ... should show Yu Ji Stone Mill Chinese Crepes
+ * but it doesnt". That row had a blank Location, a Rowland Heights neighborhood
+ * and a full street address, and was dropped before any search ran.
+ */
+export function regionFromRowText(neighborhood: string, address: string): 'la' | 'sfBay' | null {
+  const named = new Set([...citiesForArea(neighborhood), ...addressCities(address)])
+  for (const [word, cities] of Object.entries(SEARCH_AREAS)) {
+    if (cities.some(c => named.has(c))) return searchAreaRegion(word)
+  }
+  // California ZIPs: 900-935 is the south (LA, Orange County, San Diego, the
+  // valleys), 940-954 the Bay Area. Only a ZIP that follows "CA" counts.
+  const zip = address.match(/\bCA\s+(9\d{2})\d{2}\b/)
+  if (zip) {
+    const prefix = Number(zip[1])
+    if (prefix >= 900 && prefix <= 935) return 'la'
+    if (prefix >= 940 && prefix <= 954) return 'sfBay'
+  }
+  return null
+}

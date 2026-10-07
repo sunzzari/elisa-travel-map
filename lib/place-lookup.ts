@@ -22,7 +22,7 @@
 
 import { regionFromText, regionFromCoords } from './aroundtown-shared'
 import type { AroundTownKind, AroundTownRegion } from './aroundtown-shared'
-import { addressInNamedArea } from './place-areas'
+import { addressInNamedArea, regionFromRowText } from './place-areas'
 import type { Coordinates } from './types'
 
 const USER_AGENT = 'sunzzari-pins/1.0 (+https://github.com/sunzzari/elisa-travel-map)'
@@ -177,6 +177,12 @@ export async function areaFor(kind: AroundTownKind, neighborhood: string, locati
   const source = location || neighborhood
   const regions = new Set(source.split('/').map(s => regionFromText(s.trim())).filter((r): r is AroundTownRegion => r !== null))
   if (regions.size === 0 && kind === 'activity' && !location) regions.add('la')
+  // A blank Location with a California city in the neighborhood ("Rowland
+  // Heights, CA"): the same rule that lets the row into Around Town at all.
+  if (regions.size === 0 && !location) {
+    const named = regionFromRowText(neighborhood, '')
+    if (named) regions.add(named)
+  }
   if (regions.size === 0) return null
   const boxes = [...regions].map(r => BOX[r])
   const first = (location.split('/')[0] ?? '').trim().toLowerCase()
@@ -192,6 +198,15 @@ export async function areaFor(kind: AroundTownKind, neighborhood: string, locati
     }
   }
   return { kind, areaText: [neighborhood, location].filter(Boolean).join(', '), boxes, centers }
+}
+
+/**
+ * The area for a place whose region is already known but whose Location is
+ * blank, so `areaFor` has nothing to read. The whole LA or Bay box, no centres:
+ * enough to check a street address, which is all it is used for.
+ */
+export function areaForRegion(kind: AroundTownKind, region: AroundTownRegion, areaText: string): PlaceArea {
+  return { kind, areaText, boxes: [BOX[region]], centers: [] }
 }
 
 /** G9, the saved-pin backstop: a pin outside its place's area is never saved or drawn. */

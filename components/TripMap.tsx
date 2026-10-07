@@ -94,6 +94,17 @@ function CopyButton({ text }: { text: string }) {
 const MAX_SINGLE_PINS = 60
 const BUBBLE_RADIUS_PX = 50
 
+/** Each pin's fill, so a bubble can take the colour most of its pins have. */
+const pinColours = new WeakMap<object, string>()
+
+/** Whether dark text reads better than white on this hex colour. */
+function isLight(hex: string): boolean {
+  const n = parseInt(hex.replace('#', ''), 16)
+  if (Number.isNaN(n)) return false
+  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+  return 0.299 * r + 0.587 * g + 0.114 * b > 160
+}
+
 class BubblesWhenCrowded extends SuperClusterAlgorithm {
   private crowded: boolean | null = null
 
@@ -126,6 +137,7 @@ function MapContent({
   styleFor = markerStyle,
   fitScopeIds,
   pinFilter,
+  bubblesTakePinColour = false,
 }: {
   items: TripItem[]
   selected: TripItem | null
@@ -144,7 +156,10 @@ function MapContent({
   /** Leaves out pins this says no to, a chain's branches included. Around Town's
       "near me" uses it so a chain with one branch nearby does not also draw its
       branch across town. Undefined draws every pin, as a trip wants. */
-  pinFilter?: (pin: { lat: number; lng: number }) => boolean
+  pinFilter?: (pin: { id: string; lat: number; lng: number }) => boolean
+  /** A bubble takes the colour most of its pins have, instead of the one blue.
+      Around Town asks for it, so its legend means something on a bubble too. */
+  bubblesTakePinColour?: boolean
 }) {
   const map = useMap()
   const markerLib = useMapsLibrary('marker')
@@ -167,10 +182,12 @@ function MapContent({
             branches: undefined,
           })),
         ])
-        .filter(i => !pinFilter || pinFilter(i.coordinates!)),
+        .filter(i => !pinFilter || pinFilter({ id: i.id, ...i.coordinates! })),
     [items, pinFilter]
   )
   const clustererRef = useRef<MarkerClusterer | null>(null)
+  const bubbleColourRef = useRef(bubblesTakePinColour)
+  bubbleColourRef.current = bubblesTakePinColour
   const imperativeMarkersRef = useRef<globalThis.Map<string, google.maps.marker.AdvancedMarkerElement>>(new globalThis.Map())
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
@@ -224,12 +241,24 @@ function MapContent({
     onRecenterReady?.(() => fitBounds(false))
   }, [fitBounds, onRecenterReady])
 
-  // Pan to selected item
+  // Pan to selected item. A chain picked from a list is framed with ALL its
+  // branches (Elisa, 2026-10-07: "when something has multiple locations, it's
+  // not showing all the locations on the map. It's just showing one of them").
+  // A pin tapped on the map arrives without `branches`, so it zooms to itself.
   useEffect(() => {
-    if (selected?.coordinates && map) {
+    if (!selected?.coordinates || !map) return
+    const pins = [selected.coordinates, ...(selected.branches ?? [])]
+    if (pins.length === 1) {
       map.panTo(selected.coordinates)
       map.setZoom(15)
+      return
     }
+    const lats = pins.map(p => p.lat)
+    const lngs = pins.map(p => p.lng)
+    map.fitBounds(
+      { north: Math.max(...lats), south: Math.min(...lats), east: Math.max(...lngs), west: Math.min(...lngs) },
+      80
+    )
   }, [selected, map])
 
   // Refit bounds when fitKey changes (leg/city/date/nearme filter)
@@ -250,15 +279,30 @@ function MapContent({
       map,
       algorithm: new BubblesWhenCrowded({ radius: BUBBLE_RADIUS_PX }),
       renderer: {
-        render({ count, position }) {
+        render({ count, position, markers }) {
           const size = Math.min(24 + Math.log2(count) * 8, 56)
           const div = document.createElement('div')
+          // The colour most of its pins have, when the caller asked for that.
+          let background = 'rgba(59,130,246,0.75)'
+          let ink = '#fff'
+          if (bubbleColourRef.current) {
+            const tally = new globalThis.Map<string, number>()
+            for (const m of markers ?? []) {
+              const colour = pinColours.get(m)
+              if (colour) tally.set(colour, (tally.get(colour) ?? 0) + 1)
+            }
+            const most = [...tally].sort((a, b) => b[1] - a[1])[0]?.[0]
+            if (most) {
+              background = most
+              ink = isLight(most) ? '#111827' : '#fff'
+            }
+          }
           div.style.cssText = `
             width: ${size}px; height: ${size}px; border-radius: 50%;
-            background: rgba(59,130,246,0.75); border: 2px solid rgba(255,255,255,0.9);
+            background: ${background}; border: 2px solid rgba(255,255,255,0.9);
             display: flex; align-items: center; justify-content: center;
             font: 600 ${Math.max(11, size * 0.35)}px system-ui, sans-serif;
-            color: #fff; cursor: pointer;
+            color: ${ink}; cursor: pointer;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
           `
           div.textContent = String(count)
@@ -309,7 +353,9 @@ function MapContent({
         content: pin,
         title: item.name,
       })
-      marker.addListener('gmp-click', () => onSelectRef.current(item))
+      // Without `branches`: a tapped pin is one spot, and zooms to itself.
+      marker.addListener('gmp-click', () => onSelectRef.current({ ...item, branches: undefined }))
+      pinColours.set(marker, style.bg)
       prev.set(item.id, marker)
       newMarkers.push(marker)
     }
@@ -486,10 +532,11 @@ interface Props {
       Town is always LA or the Bay. */
   defaultCenter?: { lat: number; lng: number }
   fitScopeIds?: Set<string>
-  pinFilter?: (pin: { lat: number; lng: number }) => boolean
+  pinFilter?: (pin: { id: string; lat: number; lng: number }) => boolean
+  bubblesTakePinColour?: boolean
 }
 
-export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter }: Props) {
+export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour }: Props) {
   const mapped = items.filter(i => i.coordinates)
 
   const center = userLocation ?? (mapped.length > 0
@@ -516,7 +563,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         clickableIcons={false}
         onClick={() => onSelect(null)}
       >
-        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} />
+        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} />
       </Map>
     </APIProvider>
   )

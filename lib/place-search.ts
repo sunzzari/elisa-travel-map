@@ -49,6 +49,12 @@ export interface PlaceSearchResult {
   filters: StatusFilters
   /** How the question was read, to show under the box. Empty for a plain name. */
   understood: string
+  /**
+   * Pins not to draw: she asked for an area, and these branches of a matching
+   * chain are somewhere else. A pin's id is the place's id, or `id~n` for its
+   * nth other branch (the scheme in lib/saved-pins.ts).
+   */
+  hiddenPins: string[]
 }
 
 // MARK: - Word lists
@@ -90,7 +96,9 @@ const TYPES: Record<string, string[]> = {
   cafe: ['Coffee', 'Bakery', 'Pastries', 'HK Café'],
   cafes: ['Coffee', 'Bakery', 'Pastries', 'HK Café'],
   'coffee shop': ['Coffee'],
-  chinese: ['Chinese', 'Szechuan', 'Dim Sum', 'HK BBQ', 'HK Café'],
+  // Elisa's "Chinese food in San Gabriel Valley" left out every place tagged
+  // only Taiwanese or Dumplings, 11 of her 52 there.
+  chinese: ['Chinese', 'Taiwanese', 'Szechuan', 'Dim Sum', 'Dumplings', 'HK BBQ', 'HK Café'],
   japanese: ['Japanese', 'Sushi', 'Ramen', 'Izakaya'],
   mexican: ['Mexican', 'Tacos'],
   noodle: ['Noodles', 'Ramen'],
@@ -110,6 +118,29 @@ const TYPES: Record<string, string[]> = {
   outdoor: ['Outdoor Dining'],
   outside: ['Outdoor Dining'],
 }
+
+/**
+ * The same dish under two names. Typing one finds a place that only says the
+ * other: "jian bing" finds "Chinese Crepes". General food words, not facts
+ * about any place; this is as far as a keyword search can go.
+ */
+const SAME_DISH: string[][] = [
+  ['jian bing', 'jianbing', 'chinese crepe', 'chinese crepes'],
+  ['xiao long bao', 'xiaolongbao', 'xlb', 'soup dumpling', 'soup dumplings'],
+  ['hot pot', 'hotpot', 'shabu shabu'],
+  ['dim sum', 'dimsum', 'yum cha'],
+  ['banh mi', 'vietnamese sandwich'],
+  ['beef noodle soup', 'niu rou mian'],
+  ['dan dan noodles', 'dan dan mian', 'dandan'],
+  ['potstickers', 'pot stickers', 'gyoza', 'guo tie'],
+  ['scallion pancake', 'green onion pancake', 'cong you bing'],
+  ['shaved ice', 'bingsu', 'bao bing'],
+  ['egg tart', 'dan tat'],
+  ['congee', 'jook', 'porridge'],
+]
+
+const RATING_ORDER: Record<string, number> = { 'Top Choice': 0, Great: 1, Good: 2, Bad: 4 }
+const UNRATED_ORDER = 3
 
 const REGION_WORDS: Array<[string, 'la' | 'sfBay']> = [
   ['los angeles', 'la'], ['san francisco', 'sfBay'], ['bay area', 'sfBay'], ['sf bay', 'sfBay'],
@@ -161,7 +192,10 @@ function wholeWordMatches(words: string[], token: string): boolean {
 interface AreaAsk { word: string; cities: Set<string>; region: 'la' | 'sfBay' | null }
 interface TypeAsk { word: string; tags: Set<string> }
 
+interface DishAsk { word: string; names: string[] }
+
 interface Parsed {
+  dishes: DishAsk[]
   nearMe: boolean
   filters: StatusFilters
   region: 'la' | 'sfBay' | null
@@ -204,6 +238,19 @@ function parse(query: string): Parsed {
     region = short[1] === 'la' ? 'la' : 'sfBay'
     rest = rest.slice(0, short.index).trim()
   }
+  // Dishes before types: "chinese crepes" is one dish, not the type "chinese"
+  // plus the word "crepes".
+  const dishes: DishAsk[] = []
+  for (const group of SAME_DISH) {
+    for (const name of [...group].sort(longestFirst)) {
+      const next = take(rest, name)
+      if (next === null) continue
+      rest = next
+      dishes.push({ word: name, names: group })
+      break
+    }
+  }
+
   for (const word of Object.keys(TYPES).sort(longestFirst)) {
     const next = take(rest, word)
     if (next !== null) {
@@ -215,12 +262,13 @@ function parse(query: string): Parsed {
   const all = rest.split(' ').filter(Boolean)
   let words = all.filter(w => !FILLER.has(w))
   const understoodSomething =
-    nearMe || region !== null || areas.length > 0 || types.length > 0 || Object.values(filters).some(Boolean)
+    nearMe || region !== null || areas.length > 0 || types.length > 0 || dishes.length > 0 ||
+    Object.values(filters).some(Boolean)
   // "The Best" is a fair thing to type when it is a name: with nothing else to
   // go on, the small words are the search.
   if (words.length === 0 && !understoodSomething) words = all
 
-  return { nearMe, filters, region, areas, types, words }
+  return { dishes, nearMe, filters, region, areas, types, words }
 }
 
 // MARK: - Matching
@@ -231,6 +279,8 @@ interface Indexed {
   words: string[]
   tags: Set<string>
   cities: Set<string>
+  /** Each field on its own, cleaned and padded with a space each side. Name first. */
+  fields: string[]
 }
 
 function index(place: SearchablePlace): Indexed {
@@ -243,7 +293,8 @@ function index(place: SearchablePlace): Indexed {
   for (const address of [place.address, ...(place.branchAddresses ?? [])]) {
     for (const city of addressCities(address)) cities.add(city)
   }
-  return { place, nameWords, words, tags: new Set(place.goodFor.map(cleanText)), cities }
+  const fields = [place.name, place.topDishes, place.comments, ...place.goodFor].map(f => ` ${cleanText(f)} `)
+  return { place, nameWords, words, tags: new Set(place.goodFor.map(cleanText)), cities, fields }
 }
 
 function matches(p: Indexed, q: Parsed, applyStatus: boolean): boolean {
@@ -260,6 +311,11 @@ function matches(p: Indexed, q: Parsed, applyStatus: boolean): boolean {
     if (!has) for (const tag of p.tags) if (type.tags.has(tag)) { has = true; break }
     if (!has) return false
   }
+  // A dish: any of its names, as a phrase inside one field. Not word by word
+  // across fields, or a crepe shop tagged "Chinese" would be "chinese crepes".
+  for (const dish of q.dishes) {
+    if (!dish.names.some(name => p.fields.some(f => f.includes(` ${name} `)))) return false
+  }
   if (applyStatus) {
     if (q.filters.wantToTry && !place.wantToTry) return false
     if (q.filters.haventBeen && place.beenThere) return false
@@ -272,6 +328,7 @@ function matches(p: Indexed, q: Parsed, applyStatus: boolean): boolean {
 function understoodLine(q: Parsed): string {
   const parts: string[] = [
     ...q.types.map(t => titled(t.word)),
+    ...q.dishes.map(d => titled(d.word)),
     ...(q.words.length ? [`"${q.words.join(' ')}"`] : []),
     ...q.areas.map(a => titled(a.word)),
   ]
@@ -309,8 +366,10 @@ export function searchPlaces(
   // Spacing does not matter in a name: "jianbing" is "Jian Bing" and "din tai
   // fung" is "DinTaiFung". Her words run together are looked for in the name
   // run together, and that counts as a whole match on the name.
+  // The run has to start where a word starts: "mian" is Mian, not Damian.
   const run = q.words.join('')
-  const nameRun = (p: Indexed) => run.length >= 4 && p.nameWords.join('').includes(run)
+  const nameRun = (p: Indexed) =>
+    run.length >= 4 && p.nameWords.some((_, i) => p.nameWords.slice(i).join('').startsWith(run))
   const whole = candidates.filter(p => nameRun(p) || q.words.every(w => wholeWordMatches(p.words, w)))
   const starts = candidates.filter(p => nameRun(p) || q.words.every(w => wordMatches(p.words, w)))
   const kept =
@@ -323,10 +382,44 @@ export function searchPlaces(
       id: p.place.id,
       order,
       // How many of her words are in the NAME: a name match is what she meant.
-      inName: nameRun(p) ? q.words.length : q.words.filter(w => wordMatches(p.nameWords, w)).length,
+      inName:
+        (nameRun(p) ? q.words.length : q.words.filter(w => wordMatches(p.nameWords, w)).length) +
+        q.dishes.filter(d => d.names.some(name => p.fields[0].includes(` ${name} `))).length,
+      // Then her own rating: for "chinese food in san gabriel valley" the
+      // places she rates highest are the good answers. Bad goes last.
+      rating: (p.place.preference ? RATING_ORDER[p.place.preference] : undefined) ?? UNRATED_ORDER,
     }))
-    .sort((a, b) => b.inName - a.inName || a.order - b.order)
-  return { ids: hits.map(h => h.id), nearMe: q.nearMe, filters: q.filters, understood: understoodLine(q) }
+    .sort((a, b) => b.inName - a.inName || a.rating - b.rating || a.order - b.order)
+
+  return {
+    ids: hits.map(h => h.id),
+    nearMe: q.nearMe,
+    filters: q.filters,
+    understood: understoodLine(q),
+    hiddenPins: kept.flatMap(p => pinsOutside(p.place, q.areas)),
+  }
+}
+
+/**
+ * The pins of a matching chain that are outside every area she asked for.
+ * "cafe in san gabriel valley" matches Tartine through its Pasadena branch, and
+ * should not also draw Tartine in Santa Monica. Judged by each pin's address;
+ * a place with no address inside the area (it matched on her label alone) keeps
+ * all its pins, because nothing says which one she meant.
+ */
+function pinsOutside(place: SearchablePlace, areas: AreaAsk[]): string[] {
+  if (areas.length === 0) return []
+  const pins = [
+    { id: place.id, address: place.address },
+    ...(place.branchAddresses ?? []).map((address, n) => ({ id: `${place.id}~${n + 1}`, address })),
+  ]
+  const inside = pins.filter(pin => {
+    const cities = addressCities(pin.address)
+    return areas.every(area => cities.some(c => area.cities.has(c)))
+  })
+  if (inside.length === 0) return []
+  const keep = new Set(inside.map(pin => pin.id))
+  return pins.filter(pin => !keep.has(pin.id)).map(pin => pin.id)
 }
 
 // MARK: - Near me
