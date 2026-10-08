@@ -186,3 +186,46 @@ export function regionFromRowText(neighborhood: string, address: string): 'la' |
   }
   return null
 }
+
+/**
+ * Where a restaurant filed under a travel Location is allowed to be: a rough
+ * centre and a radius wide enough for the whole city or region. A guard, not a
+ * pin. It exists so an address in Paris or Chengdu can be pinned and checked
+ * the same way an LA one is, instead of being refused outright.
+ *
+ * Elisa, 2026-10-07: "anytime a restaurnt is added to the guide location,
+ * address, lattitude should ALWAYS be added". Until then `areaFor` returned
+ * null for every Location outside LA and the Bay, and 122 rows had no pin.
+ *
+ * A Location not listed here and not LA or the Bay has no area: add it here
+ * when a new Location option is added in Notion.
+ */
+export interface AwayArea { city: string; lat: number; lng: number; radiusKm: number }
+
+export const AWAY_AREAS: Record<string, AwayArea> = {
+  'paris': { city: 'Paris, France', lat: 48.857, lng: 2.352, radiusKm: 15 },
+  'hong kong': { city: 'Hong Kong', lat: 22.32, lng: 114.17, radiusKm: 30 },
+  'singapore': { city: 'Singapore', lat: 1.35, lng: 103.82, radiusKm: 30 },
+  'koh samui': { city: 'Ko Samui, Thailand', lat: 9.5, lng: 100.0, radiusKm: 30 },
+  'maui': { city: 'Maui, HI', lat: 20.8, lng: -156.33, radiusKm: 60 },
+  'vancouver': { city: 'Vancouver, BC, Canada', lat: 49.25, lng: -123.1, radiusKm: 40 },
+  'sardinia': { city: 'Sardinia, Italy', lat: 40.1, lng: 9.0, radiusKm: 200 },
+  'liguria': { city: 'Liguria, Italy', lat: 44.3, lng: 8.9, radiusKm: 130 },
+  'tuscany': { city: 'Tuscany, Italy', lat: 43.4, lng: 11.2, radiusKm: 140 },
+  'burgundy': { city: 'Burgundy, France', lat: 47.0, lng: 4.8, radiusKm: 130 },
+  'park city': { city: 'Park City, UT', lat: 40.65, lng: -111.5, radiusKm: 25 },
+  'nyc': { city: 'New York, NY', lat: 40.73, lng: -73.99, radiusKm: 30 },
+  'denver': { city: 'Denver, CO', lat: 39.74, lng: -104.99, radiusKm: 30 },
+  'joshua tree': { city: 'Joshua Tree, CA', lat: 34.13, lng: -116.31, radiusKm: 45 },
+  'chengdu': { city: 'Chengdu, China', lat: 30.66, lng: 104.07, radiusKm: 90 },
+  'shanghai': { city: 'Shanghai, China', lat: 31.23, lng: 121.47, radiusKm: 40 },
+}
+
+/** The travel area a Location names, or null (LA and Bay Locations are not travel areas). */
+export function awayAreaFor(location: string): AwayArea | null {
+  for (const part of location.split('/')) {
+    const hit = AWAY_AREAS[part.trim().toLowerCase()]
+    if (hit) return hit
+  }
+  return null
+}

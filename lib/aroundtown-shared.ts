@@ -53,7 +53,7 @@ export const RESTAURANT_LOCATIONS = [
   'Denver', 'East Bay', 'Hong Kong', 'Joshua Tree', 'Koh Samui', 'LA', 'LA / OC', 'LA / SF',
   'Marin', 'Maui', 'Napa', 'NYC', 'OC', 'OC / San Diego', 'Paris', 'San Diego', 'SF', 'SF / LA',
   'SF / Marin', 'SF / Napa', 'Singapore', 'Vancouver', 'Tuscany', 'Burgundy', 'Sardinia',
-  'Liguria', 'Park City',
+  'Liguria', 'Park City', 'Chengdu', 'Shanghai',
 ]
 
 /**

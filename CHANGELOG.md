@@ -2,6 +2,16 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-10-08
+
+- `8:55am` **A restaurant cannot be added without a Location and an address, and travel cities can be pinned** - Elisa: "anytime a restaurnt is added to the guide location, address, lattitude should ALWAYS be added". 122 of 495 Restaurant Guide rows had no pin, nearly all of them outside Los Angeles and the Bay Area, because this server refused to look anything up there. This changes the phone too, with no app release: its address lookup and address save now work for every Location.
+  - **The add is blocked** (`createPlace`). A new restaurant with no Location or no address is refused with a plain message naming what is missing (her choice, "Block the add"). The website's Add form says so before the tap and keeps the button off until both are filled. Activities are unchanged. The phone's own Add screen still writes to Notion directly and is not blocked yet; that is the next change, in `sunzzari-app`.
+  - **Every Location has an area** (`lib/place-areas.ts` `AWAY_AREAS`, `areaFor`). Paris, Hong Kong, Chengdu and the rest each get a city or region wide guard area, so Find and a typed address are looked up and checked there the way LA ones are. Around Town itself still lists and draws only LA and the Bay.
+  - **Paste a map link when the free maps cannot find it** (`lib/map-link.ts`, `mapLink` on add and edit). Her answer to what should happen then: "figure out a way to ask me to help". She pastes the place's Google or Apple Maps share link; the pin is read out of the link and checked against the place's area. Nothing is paid for and no geocoder is called. Only map hosts are ever fetched. Not yet tried with a real short share link from her phone.
+  - **One list of incomplete rows** (`GET /api/places/incomplete`). Rows with no Location, no address or no pin, plus rows carrying a `To Verify` note. The weekly check, the fix skill and the phone will all read this one answer. It returns 59 rows today.
+  - **Two wrong-address matches fixed** (`pinAddress`). A mapped street now has to match on every distinctive word: the word "Street" alone had matched 11-15 Bridges Street to 11 Man Kwong Street. A house-number range ("11-15") now matches a number inside it, and a Hong Kong style address ("Shop B, G/F, Jade Centre, 98 Wellington Street") is tried by its street line.
+  - `RESTAURANT_LOCATIONS` gains Chengdu and Shanghai, added in Notion today.
+
 ## 2026-10-07
 
 - `4:36pm` **The search finds what she expects: her examples are now the test** - Elisa, third report: "The search feature is still not working ... when something has multiple locations, it's not showing all the locations ... for example mian ... jian bing, that should show Yu Ji Stone Mill Chinese Crepes but it doesnt. I also want to be able to search for Chinese food near me or Chinese food in San Gabriel Valley ... the colors don't actually show on the bubble, so it's completely pointless." Each had its own cause, and none was in the search box.

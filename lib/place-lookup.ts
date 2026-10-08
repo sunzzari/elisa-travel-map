@@ -9,7 +9,8 @@
  * so a place added today is judged exactly the way the first 390 were. The
  * checks (Elisa 2026-09-28, "make sure that wronga ddresses arent added? such
  * as ones in wrong countries"):
- *   - the search is fenced to the place's area (LA or the SF Bay box)
+ *   - the search is fenced to the place's area (the LA or SF Bay box, or the
+ *     travel area its Location names, lib/place-areas.ts AWAY_AREAS)
  *   - a city, district or street is never a place
  *   - a restaurant must be food, an activity a venue
  *   - for a NAME match, `confident` also needs the name to match and the spot
@@ -22,7 +23,7 @@
 
 import { regionFromText, regionFromCoords } from './aroundtown-shared'
 import type { AroundTownKind, AroundTownRegion } from './aroundtown-shared'
-import { addressInNamedArea, regionFromRowText } from './place-areas'
+import { addressInNamedArea, awayAreaFor, regionFromRowText } from './place-areas'
 import type { Coordinates } from './types'
 
 const USER_AGENT = 'sunzzari-pins/1.0 (+https://github.com/sunzzari/elisa-travel-map)'
@@ -58,6 +59,12 @@ export interface PlaceArea {
    * places, not one; looked up as a single string it resolved to one wrong spot.
    */
   centers: Coordinates[]
+  /**
+   * Set for a travel Location (Paris, Chengdu): the box is that city or region,
+   * not LA or the Bay, so the LA/Bay backstop in `pinInArea` does not apply.
+   * Around Town still only draws LA and the Bay; this is about what may be SAVED.
+   */
+  away?: boolean
 }
 
 // MARK: - HTTP
@@ -88,6 +95,13 @@ async function census(address: string): Promise<(Coordinates & { matched: string
 }
 
 // MARK: - Checks (same as pins-lib.mjs)
+
+/** The square that holds a circle of `radiusKm` around a point. */
+function boxAround(c: Coordinates, radiusKm: number): Box {
+  const dLat = radiusKm / 111
+  const dLng = radiusKm / (111 * Math.cos((c.lat * Math.PI) / 180))
+  return { minLat: c.lat - dLat, maxLat: c.lat + dLat, minLng: c.lng - dLng, maxLng: c.lng + dLng }
+}
 
 const bbox = (b: Box) => `${b.minLng},${b.minLat},${b.maxLng},${b.maxLat}`
 const inBox = (b: Box, lat: number, lng: number) => lat >= b.minLat && lat <= b.maxLat && lng >= b.minLng && lng <= b.maxLng
@@ -171,7 +185,8 @@ async function placeCenter(query: string, box: Box): Promise<Coordinates | null>
 /**
  * Where a place is allowed to be, worked out before any search: the LA or Bay
  * box its Location names, and the neighborhood or named city inside it.
- * Null when the place is not an Around Town place (Paris, NYC): those get no pin.
+ * A travel Location (Paris, NYC) gets the area lib/place-areas.ts gives it.
+ * Null only when nothing says where the place is: a blank or unknown Location.
  */
 export async function areaFor(kind: AroundTownKind, neighborhood: string, location: string): Promise<PlaceArea | null> {
   const source = location || neighborhood
@@ -183,10 +198,11 @@ export async function areaFor(kind: AroundTownKind, neighborhood: string, locati
     const named = regionFromRowText(neighborhood, '')
     if (named) regions.add(named)
   }
-  if (regions.size === 0) return null
-  const boxes = [...regions].map(r => BOX[r])
+  const away = regions.size === 0 && kind === 'restaurant' ? awayAreaFor(location) : null
+  if (regions.size === 0 && !away) return null
+  const boxes = away ? [boxAround(away, away.radiusKm)] : [...regions].map(r => BOX[r])
   const first = (location.split('/')[0] ?? '').trim().toLowerCase()
-  const city = CITY_BY_LOCATION[first] ?? (regions.has('sfBay') && !regions.has('la') ? 'San Francisco, CA' : 'Los Angeles, CA')
+  const city = away?.city ?? CITY_BY_LOCATION[first] ?? (regions.has('sfBay') && !regions.has('la') ? 'San Francisco, CA' : 'Los Angeles, CA')
   const named = kind === 'restaurant'
     ? (neighborhood && neighborhood !== location ? neighborhood.split(/[/,]/) : [])
     : (location && !CITY_BY_LOCATION[first] ? [location] : [])
@@ -197,7 +213,7 @@ export async function areaFor(kind: AroundTownKind, neighborhood: string, locati
       if (c) { centers.push(c); break }
     }
   }
-  return { kind, areaText: [neighborhood, location].filter(Boolean).join(', '), boxes, centers }
+  return { kind, areaText: [neighborhood, location].filter(Boolean).join(', '), boxes, centers, ...(away ? { away: true } : {}) }
 }
 
 /**
@@ -211,7 +227,7 @@ export function areaForRegion(kind: AroundTownKind, region: AroundTownRegion, ar
 
 /** G9, the saved-pin backstop: a pin outside its place's area is never saved or drawn. */
 export function pinInArea(area: PlaceArea, pin: Coordinates): boolean {
-  return area.boxes.some(b => inBox(b, pin.lat, pin.lng)) && regionFromCoords(pin.lat, pin.lng) !== null
+  return area.boxes.some(b => inBox(b, pin.lat, pin.lng)) && (area.away === true || regionFromCoords(pin.lat, pin.lng) !== null)
 }
 
 /**
@@ -237,6 +253,12 @@ const nearestCenterKm = (area: PlaceArea, pin: Coordinates) =>
 const withoutUnit = (a: string) =>
   a.replace(/,?\s*(?:\b(?:suite|ste|unit|apt)\b\.?|#)\s*[\w-]+/gi, '').replace(/\s+,/g, ',')
 
+/** Words every street has; they prove nothing about which street it is. */
+const STREET_WORDS = new Set([
+  'street', 'road', 'avenue', 'lane', 'boulevard', 'drive', 'terrace', 'highway', 'place', 'court',
+  'square', 'route', 'strada', 'viale', 'piazza', 'chemin', 'north', 'south', 'east', 'west', 'central',
+])
+
 // MARK: - Lookups
 
 const looksLikeStreetAddress = (q: string) => /^\s*\d+[a-z]?\s+\S/i.test(q)
@@ -254,16 +276,32 @@ export async function pinAddress(area: PlaceArea, fullAddress: string): Promise<
       source: 'US Census', confident: true }
   }
   const hay = ` ${fold(address)} `
+  // "Shop B, G/F, Jade Centre, 98 Wellington Street, Central, Hong Kong" finds
+  // nothing whole; its street line plus the last two parts finds the building.
+  const parts = address.split(',').map(s => s.trim()).filter(Boolean)
+  const tail = parts.slice(-2).join(', ')
+  const streetLines = parts.slice(0, -1).filter(s => /^\d[\w-]*\s+\D{4,}/.test(s) && !/^\d+\/f\b/i.test(s))
+  const tries = [...new Set([address, ...streetLines.map(s => `${s}, ${tail}`)])]
+  // A range like "11-15" contains 13.
+  const inRange = (n: string) => /^\d+$/.test(n) &&
+    [...address.matchAll(/\b(\d+)\s*-\s*(\d+)\b/g)].some(m => +n >= +m[1] && +n <= +m[2])
   for (const box of area.boxes) {
-    for (const f of (await photon({ q: address, bbox: bbox(box) })) ?? []) {
-      const p = f.properties
-      // Only this exact address: its house number and a street word both appear.
-      const houseOk = !!p.housenumber && !!p.street && hay.includes(` ${fold(p.housenumber)} `) &&
-        fold(p.street).split(' ').some((w: string) => w.length >= 4 && hay.includes(` ${w} `))
-      const pt = pointOf(f)
-      if (!houseOk || !pinInArea(area, pt)) continue
-      return { name: '', address: fullAddress.trim(), lat: Number(pt.lat.toFixed(6)), lng: Number(pt.lng.toFixed(6)),
-        source: 'OpenStreetMap', confident: true }
+    for (const q of tries) {
+      for (const f of (await photon({ q, bbox: bbox(box) })) ?? []) {
+        const p = f.properties
+        // Only this exact address: its house number, and EVERY distinctive word
+        // of the mapped street. One shared word is not enough: "Street" alone
+        // matched Bar Leone (Bridges Street) to 11 Man Kwong Street, and
+        // "Perpreuil" alone matched a boulevard to a rue (2026-10-08).
+        const streetWords = fold(p.street ?? '').split(' ').filter((w: string) => w.length >= 4 && !STREET_WORDS.has(w))
+        const houseOk = !!p.housenumber && streetWords.length > 0 &&
+          streetWords.every((w: string) => hay.includes(` ${w} `)) &&
+          (hay.includes(` ${fold(p.housenumber)} `) || inRange(p.housenumber))
+        const pt = pointOf(f)
+        if (!houseOk || !pinInArea(area, pt)) continue
+        return { name: '', address: fullAddress.trim(), lat: Number(pt.lat.toFixed(6)), lng: Number(pt.lng.toFixed(6)),
+          source: 'OpenStreetMap', confident: true }
+      }
     }
   }
   return null

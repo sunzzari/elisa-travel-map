@@ -2,7 +2,8 @@ import { Client } from '@notionhq/client'
 import { PREFERENCES, RESTAURANT_LOCATIONS } from './aroundtown-shared'
 import type { AroundTownKind } from './aroundtown-shared'
 import { areaFor, pinAddress, pinInArea } from './place-lookup'
-import { pinProperties } from './saved-pins'
+import { pinProperties, readSavedPin } from './saved-pins'
+import { MapLinkError, pinFromMapLink } from './map-link'
 import type { Coordinates } from './types'
 import type { Caller } from './edit-auth'
 
@@ -42,6 +43,12 @@ export interface PlacePatch {
    * itself, or saves it unpinned and it shows under "not on the map".
    */
   pin?: Coordinates
+  /**
+   * A Google or Apple Maps share link she pasted because the free sources could
+   * not place the address. The pin is read out of the link (lib/map-link.ts),
+   * then checked against the place's area like any other.
+   */
+  mapLink?: string
 }
 
 /** What a save did about the location, so both apps can say so. */
@@ -95,6 +102,12 @@ export function parsePatch(body: any): PlacePatch {
     if (out.address === undefined) throw new PlaceInputError('a pin is only saved with its address')
     out.pin = { lat, lng }
   }
+  if ('mapLink' in body) {
+    const link = str(body.mapLink, 'mapLink').trim()
+    if (link.length > 2000) throw new PlaceInputError('mapLink is too long')
+    if (link && out.pin) throw new PlaceInputError('send a map link or a pin, not both')
+    if (link) out.mapLink = link
+  }
   if ('preference' in body) {
     const p = body.preference
     if (p !== null && !(PREFERENCES as readonly string[]).includes(p)) {
@@ -127,6 +140,8 @@ export interface OurPage {
   kind: AroundTownKind
   neighborhood: string
   location: string
+  /** The Address already saved, so a pasted map link can pin it without retyping it. */
+  address: string
 }
 
 const plain = (prop: any): string =>
@@ -151,25 +166,40 @@ export async function kindOfPage(notion: Client, pageId: string): Promise<OurPag
     kind,
     neighborhood: kind === 'restaurant' ? plain(page.properties?.['Neighborhood']) : '',
     location: plain(page.properties?.['Location']),
+    address: plain(page.properties?.['Address']).trim(),
   }
 }
 
 /**
  * The Address, Latitude and Longitude values for a save. One rule for both
  * apps: a tapped candidate's pin is kept only inside the place's area; a typed
- * address is pinned by the free geocoders or saved unpinned; a place outside
- * LA and the Bay keeps its address and gets no pin.
+ * address is pinned by the free geocoders or saved unpinned; a pasted map link
+ * gives the pin when they cannot. A place with no Location has no area, so it
+ * keeps its address and gets no pin.
  */
 async function locationProperties(
-  where: { kind: AroundTownKind; neighborhood: string; location: string },
+  where: { kind: AroundTownKind; neighborhood: string; location: string; address?: string },
   patch: PlacePatch
 ): Promise<{ props: Record<string, any>; result: LocationResult } | null> {
-  if (patch.address === undefined) return null
-  const address = patch.address.trim()
+  // A map link alone pins the Address the row already has.
+  if (patch.address === undefined && patch.mapLink && where.address) patch = { ...patch, address: where.address }
+  if (patch.address === undefined) {
+    if (patch.mapLink) throw new PlaceInputError('Add the address first, then paste the map link.')
+    return null
+  }
+  if (patch.mapLink) {
+    try {
+      patch = { ...patch, pin: await pinFromMapLink(patch.mapLink) }
+    } catch (err) {
+      throw new PlaceInputError(err instanceof MapLinkError ? err.message : 'That map link could not be read.')
+    }
+  }
+  const address = (patch.address ?? '').trim()
   if (!address) {
     return { props: { Address: text(''), ...pinProperties(null) }, result: { placed: false, pin: null } }
   }
   const area = await areaFor(where.kind, where.neighborhood, where.location)
+  if (!area && patch.mapLink) throw new PlaceInputError('Set this place\'s Location first, then paste the map link.')
   let pin: Coordinates | null = null
   if (area && patch.pin) {
     if (!pinInArea(area, patch.pin)) {
@@ -213,6 +243,14 @@ export async function updatePlace(notion: Client, pageId: string, page: OurPage,
 }
 
 export async function createPlace(notion: Client, place: NewPlace): Promise<{ id: string; location: LocationResult | null }> {
+  // Elisa, 2026-10-07: "anytime a restaurnt is added to the guide location,
+  // address, lattitude should ALWAYS be added", and on what to do when there is
+  // no address to be found, 2026-10-08: "Block the add". This is the one gate
+  // every add path goes through, so it is enforced here and not in each app.
+  if (place.kind === 'restaurant') {
+    const missing = [!place.location?.trim() && 'a Location', !place.address?.trim() && 'an Address'].filter(Boolean)
+    if (missing.length) throw new PlaceInputError(`A restaurant needs ${missing.join(' and ')} before it can be saved.`)
+  }
   const location = await locationProperties(
     { kind: place.kind, neighborhood: place.neighborhood ?? '', location: place.location ?? '' }, place)
   const props = { ...properties(place.kind, place), ...(location?.props ?? {}) }
@@ -230,4 +268,58 @@ export async function createPlace(notion: Client, place: NewPlace): Promise<{ id
     properties: props,
   })
   return { id: page.id, location: location?.result ?? null }
+}
+
+// MARK: - Incomplete restaurants
+
+export interface IncompleteRow {
+  id: string
+  name: string
+  location: string
+  neighborhood: string
+  address: string
+  /** What the row lacks: any of "Location", "Address", "pin". Empty when it is only waiting on her review. */
+  missing: string[]
+  /** What Claude was unsure of, with its best candidate, for her to confirm or correct. */
+  toVerify: string
+  url: string
+}
+
+/**
+ * THE definition of an incomplete Restaurant Guide row, read by the weekly
+ * check, the fix skill, the Sunzzari session hook and the phone, so they can
+ * never disagree about the count: a row with no Location, no Address or no pin
+ * (unless she ticked `Skip Pin`), or one with a `To Verify` note waiting on her.
+ *
+ * It is the backstop for the one add path no gate can stop, a row typed
+ * straight into Notion. `Skip Pin` and `To Verify` are optional columns: a
+ * table without them reads as nothing skipped and nothing to verify.
+ */
+export async function incompleteRestaurants(notion: Client = serverNotion): Promise<IncompleteRow[]> {
+  const pages: any[] = []
+  let cursor: string | undefined
+  do {
+    const res: any = await notion.databases.query({ database_id: RESTAURANT_GUIDE_DB, start_cursor: cursor, page_size: 100 })
+    pages.push(...res.results)
+    cursor = res.has_more ? res.next_cursor : undefined
+  } while (cursor)
+
+  const out: IncompleteRow[] = []
+  for (const page of pages) {
+    const props = page.properties ?? {}
+    const name = (props['Name']?.title ?? []).map((t: any) => t.plain_text).join('').trim()
+    if (!name) continue
+    const location = plain(props['Location'])
+    const address = plain(props['Address']).trim()
+    const toVerify = plain(props['To Verify']).trim()
+    const skipPin = props['Skip Pin']?.checkbox === true
+    const missing = [
+      !location && 'Location',
+      !skipPin && !address && 'Address',
+      !skipPin && !readSavedPin(props).coordinates && 'pin',
+    ].filter((m): m is string => !!m)
+    if (missing.length === 0 && !toVerify) continue
+    out.push({ id: page.id, name, location, neighborhood: plain(props['Neighborhood']), address, missing, toVerify, url: page.url ?? '' })
+  }
+  return out.sort((a, b) => a.location.localeCompare(b.location) || a.name.localeCompare(b.name))
 }

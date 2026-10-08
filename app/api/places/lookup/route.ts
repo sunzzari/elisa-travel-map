@@ -24,7 +24,7 @@ export async function GET(request: Request) {
   if (!area) {
     return NextResponse.json({
       matches: [],
-      note: 'Map pins cover Los Angeles and the Bay Area. Set Location to one of those, or save without a pin.',
+      note: 'Set a Location first, so the search knows which city to look in.',
     })
   }
   const matches = await lookupPlace(q, area)

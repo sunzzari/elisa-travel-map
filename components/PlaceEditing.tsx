@@ -120,9 +120,14 @@ function AddressLookup({
   neighborhood,
   location,
   passcode,
+  mapLink,
+  onMapLink,
 }: {
   value: string
   onChange: (address: string, pin: PickedPin | null) => void
+  /** A pasted Google or Apple Maps link: the server reads the pin out of it when the free lookup cannot place the address. */
+  mapLink: string
+  onMapLink: (link: string) => void
   name: string
   kind: AroundTownKind
   neighborhood: string
@@ -145,7 +150,7 @@ function AddressLookup({
       const params = new URLSearchParams({ q, kind, neighborhood, location })
       const res = await send(`/api/places/lookup?${params}`, 'GET', passcode)
       setMatches(res.matches)
-      setNote(res.matches.length ? 'Pick the right one:' : res.note ?? 'No matches. Type the street address and press Find, or leave it blank.')
+      setNote(res.matches.length ? 'Pick the right one:' : res.note ?? 'No matches. Type the street address and press Find. If it still cannot be found, paste its Google Maps link below.')
     } catch (err) {
       setMatches([])
       setNote((err as Error).message)
@@ -167,6 +172,12 @@ function AddressLookup({
         </button>
       </div>
       {note && <p className="mt-1 text-xs text-white/40">{note}</p>}
+      <input
+        value={mapLink}
+        onChange={e => onMapLink(e.target.value)}
+        placeholder="Or paste a Google Maps link to set the pin"
+        className={`${field} mt-1.5`}
+      />
       {matches.length > 0 && (
         <div className="mt-1.5 space-y-1">
           {matches.map(m => (
@@ -198,7 +209,7 @@ function locationNote(location: { placed: boolean } | null | undefined, hadAddre
   if (!location) return ''
   if (location.placed) return 'Pinned on the map.'
   return hadAddress
-    ? 'That address could not be pinned, so it is under "Not on the map".'
+    ? 'That address could not be pinned. Open it in Google Maps, tap Share, and paste the link in the address box to pin it.'
     : 'No address yet, so it is under "Not on the map".'
 }
 
@@ -253,6 +264,7 @@ export function PlaceEditor({
 }) {
   const [draft, setDraft] = useState(meta)
   const [pin, setPin] = useState<PickedPin | null>(null)
+  const [mapLink, setMapLink] = useState('')
   const [status, setStatus] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   // Reset only when a different place is picked, so a save's own update does
@@ -277,11 +289,13 @@ export function PlaceEditor({
     // The address goes up only when it changed or a match was picked. Sending
     // an unchanged address would make the server re-pin it, and could drop a
     // good pin for no reason.
-    const locationChanged = pin !== null || draft.address.trim() !== meta.address.trim()
-    if (locationChanged) {
-      body.address = draft.address
-      if (pin) Object.assign(body, pin)
-    }
+    const link = mapLink.trim()
+    const addressChanged = draft.address.trim() !== meta.address.trim()
+    const locationChanged = pin !== null || addressChanged || link !== ''
+    if (pin !== null || addressChanged) body.address = draft.address
+    // A pasted link wins over a picked match: she pasted it because the match was wrong or missing.
+    if (link) body.mapLink = link
+    else if (pin) Object.assign(body, pin)
     if (isRestaurant) {
       body.preference = draft.preference
       body.comments = draft.comments
@@ -291,6 +305,7 @@ export function PlaceEditor({
       const res = await send(`/api/places/${placeIdOf(item.id)}`, 'PATCH', passcode, body)
       onSaved({ ...draft, thinkingAbout: draft.done ? false : draft.thinkingAbout }, locationChanged)
       setPin(null)
+      setMapLink('')
       setStatus(`Saved to Notion. ${locationNote(res.location, draft.address.trim() !== '')}`.trim())
     } catch (err) {
       setStatus((err as Error).message)
@@ -341,6 +356,8 @@ export function PlaceEditor({
           neighborhood={meta.neighborhood}
           location={meta.locationText}
           passcode={passcode}
+          mapLink={mapLink}
+          onMapLink={setMapLink}
         />
       </div>
 
@@ -361,12 +378,15 @@ export function AddPlaceForm({ passcode, onDone }: { passcode: string; onDone: (
   const [location, setLocation] = useState('')
   const [address, setAddress] = useState('')
   const [pin, setPin] = useState<PickedPin | null>(null)
+  const [mapLink, setMapLink] = useState('')
   const [beenThere, setBeenThere] = useState(false)
   const [thinkingAbout, setThinkingAbout] = useState(true)
   const [preference, setPreference] = useState<string | null>(null)
   const [comments, setComments] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  // The server refuses a restaurant without both (Elisa 2026-10-08, "Block the add"); say so before the tap.
+  const needsMore = kind === 'restaurant' && (!location || !address.trim())
 
   async function save() {
     setBusy(true)
@@ -379,7 +399,8 @@ export function AddPlaceForm({ passcode, onDone }: { passcode: string; onDone: (
       beenThere,
       thinkingAbout: beenThere ? false : thinkingAbout,
     }
-    if (pin) Object.assign(body, pin)
+    if (mapLink.trim()) body.mapLink = mapLink.trim()
+    else if (pin) Object.assign(body, pin)
     if (kind === 'restaurant') Object.assign(body, { neighborhood, preference, comments })
     try {
       const res = await send('/api/places', 'POST', passcode, body)
@@ -412,7 +433,7 @@ export function AddPlaceForm({ passcode, onDone }: { passcode: string; onDone: (
           <div className="w-32">
             <span className={label}>Location</span>
             <select value={location} onChange={e => setLocation(e.target.value)} className={field}>
-              <option value="">None</option>
+              <option value="">Choose</option>
               {RESTAURANT_LOCATIONS.map(l => (
                 <option key={l} value={l}>
                   {l}
@@ -440,6 +461,8 @@ export function AddPlaceForm({ passcode, onDone }: { passcode: string; onDone: (
           neighborhood={kind === 'restaurant' ? neighborhood : ''}
           location={location}
           passcode={passcode}
+          mapLink={mapLink}
+          onMapLink={setMapLink}
         />
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -453,9 +476,10 @@ export function AddPlaceForm({ passcode, onDone }: { passcode: string; onDone: (
         </>
       )}
       <div className="flex items-center gap-3">
-        <button onClick={save} disabled={!name.trim() || busy} className="rounded-lg bg-amber-400 px-4 py-2 text-xs font-semibold text-gray-950 disabled:opacity-40">
+        <button onClick={save} disabled={!name.trim() || needsMore || busy} className="rounded-lg bg-amber-400 px-4 py-2 text-xs font-semibold text-gray-950 disabled:opacity-40">
           {busy ? 'Saving...' : 'Add place'}
         </button>
+        {needsMore && !error && <span className="text-xs text-white/50">A restaurant needs a Location and an address.</span>}
         {error && <span className="text-xs text-red-400">{error}</span>}
       </div>
     </div>
