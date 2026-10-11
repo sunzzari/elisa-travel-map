@@ -73,7 +73,7 @@ const STATUS_PHRASES: Array<[string, keyof StatusFilters]> = [
   ['havent been to', 'haventBeen'], ['havent been', 'haventBeen'], ['havent tried', 'haventBeen'],
   ['have not been', 'haventBeen'], ['have not tried', 'haventBeen'], ['not been to', 'haventBeen'],
   ['not tried', 'haventBeen'], ['never been', 'haventBeen'], ['never tried', 'haventBeen'],
-  ['want to try', 'wantToTry'], ['wanna try', 'wantToTry'], ['wishlist', 'wantToTry'],
+  ['want to try', 'wantToTry'], ['bookmarked', 'wantToTry'], ['bookmarks', 'wantToTry'], ['wanna try', 'wantToTry'], ['wishlist', 'wantToTry'],
   ['top choice', 'topChoice'], ['top choices', 'topChoice'], ['favorite', 'topChoice'],
   ['favorites', 'topChoice'], ['favourite', 'topChoice'], ['favourites', 'topChoice'],
   ['been there', 'beenThere'], ['weve been', 'beenThere'], ['been to', 'beenThere'],
@@ -81,7 +81,7 @@ const STATUS_PHRASES: Array<[string, keyof StatusFilters]> = [
 ]
 
 const STATUS_LABEL: Record<keyof StatusFilters, string> = {
-  wantToTry: 'Want to try',
+  wantToTry: 'Bookmarked',
   haventBeen: "Haven't been",
   beenThere: 'Been there',
   topChoice: 'Top Choice',

@@ -4,6 +4,8 @@ Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.m
 
 ## 2026-10-11
 
+- `11:31am` **"Want to Try" is now "Bookmarked"** - Elisa: "instead of want to try put "bookmarked" because it doesn tmake sense to have havent tried vs .want to try". The gold legend line, the filter chip and the search note say Bookmarked, and typing "bookmarked" in the search filters to those places. The Notion column keeps its name (Thinking About), so no data moved.
+
 - `10:23am` **Around Town pins are three colours, Bad is hidden by default, and two new chips** - Elisa: "make hide bad the default. make want to try as a special colored pin. also havent tried vs tried. thats how i want you to color them."
   - **Three pin colours and nothing else** (`colorFor` in `lib/aroundtown-shared.ts`): gold is Want to Try, blue is Haven't Tried, grey is Tried. The rating colours (Top Choice, Great, Good, Bad) no longer colour a pin; the rating still shows in the list row, the place's sheet and the edit form. Activities follow the same three colours. A place ticked both Want to Try and Been There shows as Tried. The legend lists the three. **The phone's pins change colour with no app release**; its legend needs the next build.
   - **Hide Bad, on by default.** Places rated Bad are left off the map, the list and a search until the chip is switched off. A search for a Bad place by name finds nothing while it is on.

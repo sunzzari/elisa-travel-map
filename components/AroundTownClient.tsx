@@ -31,7 +31,7 @@ import {
  */
 
 const LEGEND: Array<{ color: string; label: string }> = [
-  { color: WANT_TO_TRY_COLOR, label: 'Want to Try' },
+  { color: WANT_TO_TRY_COLOR, label: 'Bookmarked' },
   { color: HAVENT_TRIED_COLOR, label: "Haven't Tried" },
   { color: TRIED_COLOR, label: 'Tried' },
 ]
@@ -426,7 +426,7 @@ export default function AroundTownClient({
           }}
         />
         <Chip label="Hide Bad" on={hideBad} onClick={() => setHideBad(!hideBad)} />
-        <Chip label="Want to Try" on={wantToTryOnly} onClick={() => setWantToTryOnly(!wantToTryOnly)} />
+        <Chip label="Bookmarked" on={wantToTryOnly} onClick={() => setWantToTryOnly(!wantToTryOnly)} />
 
         <button
           onClick={() => {
