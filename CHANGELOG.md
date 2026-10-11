@@ -2,6 +2,14 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-10-11
+
+- `10:23am` **Around Town pins are three colours, Bad is hidden by default, and two new chips** - Elisa: "make hide bad the default. make want to try as a special colored pin. also havent tried vs tried. thats how i want you to color them."
+  - **Three pin colours and nothing else** (`colorFor` in `lib/aroundtown-shared.ts`): gold is Want to Try, blue is Haven't Tried, grey is Tried. The rating colours (Top Choice, Great, Good, Bad) no longer colour a pin; the rating still shows in the list row, the place's sheet and the edit form. Activities follow the same three colours. A place ticked both Want to Try and Been There shows as Tried. The legend lists the three. **The phone's pins change colour with no app release**; its legend needs the next build.
+  - **Hide Bad, on by default.** Places rated Bad are left off the map, the list and a search until the chip is switched off. A search for a Bad place by name finds nothing while it is on.
+  - **Been There chip.** Shows only places we have been to. It and Haven't Tried switch each other off.
+  - Trip maps are unchanged and still colour by planning status. Whether they take the three colours is undecided (her words: "lets decide that later").
+
 ## 2026-10-08
 
 - `8:55am` **A restaurant cannot be added without a Location and an address, and travel cities can be pinned** - Elisa: "anytime a restaurnt is added to the guide location, address, lattitude should ALWAYS be added". 122 of 495 Restaurant Guide rows had no pin, nearly all of them outside Los Angeles and the Bay Area, because this server refused to look anything up there. This changes the phone too, with no app release: its address lookup and address save now work for every Location.

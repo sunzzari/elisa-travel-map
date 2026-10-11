@@ -380,8 +380,8 @@ export async function aroundTownPlaces() {
       beenThere: m.done,
       address: m.address,
       color: m.color,
-      // The colour before "been there" greys it, so the phone can un-grey a place
-      // the moment she unticks it, without its own copy of the colour table.
+      // The colour before "been there" greys it (Want to Try or Haven't Tried),
+      // so the phone can un-grey a place the moment she unticks it.
       baseColor: colorFor({ ...m, done: false }),
       lat: c?.lat ?? null,
       lng: c?.lng ?? null,

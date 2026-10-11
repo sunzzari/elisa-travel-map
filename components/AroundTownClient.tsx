@@ -15,9 +15,9 @@ import { branchId, placeIdOf } from '@/lib/saved-pins'
 // importing it drags node:fs into the browser bundle.
 import type { AroundTownMeta, AroundTownKind, AroundTownRegion } from '@/lib/aroundtown-shared'
 import {
-  NOT_RATED_COLOR,
-  ACTIVITY_COLOR,
-  BEEN_THERE_COLOR,
+  WANT_TO_TRY_COLOR,
+  HAVENT_TRIED_COLOR,
+  TRIED_COLOR,
   regionFromCoords,
   colorFor,
   fitAreaContains,
@@ -31,13 +31,9 @@ import {
  */
 
 const LEGEND: Array<{ color: string; label: string }> = [
-  { color: '#54A0FF', label: 'Top Choice' },
-  { color: '#70C17C', label: 'Great' },
-  { color: '#FBBF24', label: 'Good' },
-  { color: '#FF6B6B', label: 'Bad' },
-  { color: NOT_RATED_COLOR, label: 'Not rated' },
-  { color: ACTIVITY_COLOR, label: 'Activity' },
-  { color: BEEN_THERE_COLOR, label: 'Been there, not rated' },
+  { color: WANT_TO_TRY_COLOR, label: 'Want to Try' },
+  { color: HAVENT_TRIED_COLOR, label: "Haven't Tried" },
+  { color: TRIED_COLOR, label: 'Tried' },
 ]
 
 const REGION_LABEL: Record<AroundTownRegion, string> = { la: 'LA', sfBay: 'SF Bay' }
@@ -100,6 +96,10 @@ export default function AroundTownClient({
   const [kind, setKind] = useState<AroundTownKind | null>(null)
   const [wantToTryOnly, setWantToTryOnly] = useState(false)
   const [hideBeenThere, setHideBeenThere] = useState(false)
+  // "Been There" is the opposite of "Haven't Tried"; the two are never on together.
+  const [beenThereOnly, setBeenThereOnly] = useState(false)
+  // On unless she turns it off (Elisa, 2026-10-11).
+  const [hideBad, setHideBad] = useState(true)
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<TripItem | null>(null)
 
@@ -181,6 +181,8 @@ export default function AroundTownClient({
       if (kind && m.kind !== kind) return false
       if (wantToTryOnly && !m.thinkingAbout) return false
       if (hideBeenThere && m.done) return false
+      if (beenThereOnly && !m.done) return false
+      if (hideBad && m.preference === 'Bad') return false
       if (rank && !rank.has(item.id)) return false
       return true
     })
@@ -189,7 +191,7 @@ export default function AroundTownClient({
     if (!nearMeOn) return { shown: list, nearMeWidened: false }
     const near = nearest(list, distanceKm)
     return { shown: near.items, nearMeWidened: near.widened }
-  }, [items, meta, region, kind, wantToTryOnly, hideBeenThere, search, nearMeOn, distanceKm])
+  }, [items, meta, region, kind, wantToTryOnly, hideBeenThere, beenThereOnly, hideBad, search, nearMeOn, distanceKm])
 
   const mapped = shown.filter(i => i.coordinates)
 
@@ -261,7 +263,8 @@ export default function AroundTownClient({
     region ?? 'allregions',
     kind ?? 'allkinds',
     wantToTryOnly ? 'want' : 'any',
-    hideBeenThere ? 'nottried' : 'all',
+    hideBeenThere ? 'nottried' : beenThereOnly ? 'been' : 'all',
+    hideBad ? 'nobad' : 'bad',
     query.trim().toLowerCase(),
     nearMeOn ? 'nearme' : 'anywhere',
     `fit:${fitRegion}`,
@@ -270,20 +273,22 @@ export default function AroundTownClient({
   const styleFor = useCallback(
     (item: TripItem) => {
       const m = meta[placeIdOf(item.id)]
-      const bg = m?.color ?? NOT_RATED_COLOR
+      const bg = m?.color ?? HAVENT_TRIED_COLOR
       return { bg, border: bg, glyph: m?.kind === 'activity' ? '⚡' : '🍽️' }
     },
     [meta]
   )
 
   const hasFilters =
-    region !== null || kind !== null || wantToTryOnly || hideBeenThere || query !== '' || nearMe !== 'off'
+    region !== null || kind !== null || wantToTryOnly || hideBeenThere || beenThereOnly || !hideBad || query !== '' || nearMe !== 'off'
 
   function clearAll() {
     setRegion(null)
     setKind(null)
     setWantToTryOnly(false)
     setHideBeenThere(false)
+    setBeenThereOnly(false)
+    setHideBad(true)
     setQuery('')
     setNearMe('off')
     setUserLocation(null)
@@ -307,7 +312,7 @@ export default function AroundTownClient({
           >
             <span
               className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
-              style={{ background: m?.color ?? NOT_RATED_COLOR }}
+              style={{ background: m?.color ?? HAVENT_TRIED_COLOR }}
             />
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-medium text-white">{item.name}</span>
@@ -332,7 +337,7 @@ export default function AroundTownClient({
     <UnmappedList
       items={unmapped}
       onSelect={setSelected}
-      dotColor={item => meta[placeIdOf(item.id)]?.color ?? NOT_RATED_COLOR}
+      dotColor={item => meta[placeIdOf(item.id)]?.color ?? HAVENT_TRIED_COLOR}
       subtitle={item => {
         const m = meta[placeIdOf(item.id)]
         return [m?.kind === 'activity' ? 'Activity' : 'Restaurant', m?.locationText]
@@ -403,13 +408,25 @@ export default function AroundTownClient({
 
         <span className="mx-1 h-4 w-px flex-shrink-0 bg-white/15" />
 
-        <Chip label="Want to Try" on={wantToTryOnly} onClick={() => setWantToTryOnly(!wantToTryOnly)} />
+        <Chip
+          label="Been There"
+          on={beenThereOnly}
+          onClick={() => {
+            setBeenThereOnly(!beenThereOnly)
+            setHideBeenThere(false)
+          }}
+        />
         <Chip
           label="Haven't Tried"
           on={hideBeenThere}
           tone="green"
-          onClick={() => setHideBeenThere(!hideBeenThere)}
+          onClick={() => {
+            setHideBeenThere(!hideBeenThere)
+            setBeenThereOnly(false)
+          }}
         />
+        <Chip label="Hide Bad" on={hideBad} onClick={() => setHideBad(!hideBad)} />
+        <Chip label="Want to Try" on={wantToTryOnly} onClick={() => setWantToTryOnly(!wantToTryOnly)} />
 
         <button
           onClick={() => {

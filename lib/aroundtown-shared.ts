@@ -35,16 +35,21 @@ export interface AroundTownData {
   meta: Record<string, AroundTownMeta>
 }
 
-/** Same hexes as `AroundTownItem.swift`, so a place is the same colour on both. */
+/** Rating colours, for the rating buttons on the edit form. Not pin colours. */
 export const PREFERENCE_COLORS: Record<string, string> = {
   'Top Choice': '#54A0FF',
   Great: '#70C17C',
   Good: '#FBBF24',
   Bad: '#FF6B6B',
 }
-export const NOT_RATED_COLOR = '#E2E8F0'
-export const ACTIVITY_COLOR = '#A78BFA'
-export const BEEN_THERE_COLOR = '#8E8E93'
+/**
+ * Pin colours. Elisa, 2026-10-11: "make want to try as a special colored pin.
+ * also havent tried vs tried. thats how i want you to color them." Three
+ * colours and nothing else; the rating is in the row and the sheet, not the pin.
+ */
+export const WANT_TO_TRY_COLOR = '#FBBF24'
+export const HAVENT_TRIED_COLOR = '#54A0FF'
+export const TRIED_COLOR = '#8E8E93'
 
 export const PREFERENCES = ['Top Choice', 'Great', 'Good', 'Bad'] as const
 
@@ -56,17 +61,10 @@ export const RESTAURANT_LOCATIONS = [
   'Liguria', 'Park City', 'Chengdu', 'Shanghai',
 ]
 
-/**
- * A rating wins. Elisa, 2026-10-07: "there is a color legend that's always on
- * the map, but the colors don't actually show ... so it's completely pointless".
- * She was right: a place is only rated once we have been, and "been there" grey
- * was applied first, so 239 of 414 pins were grey and the four rating colours
- * showed on one. Grey now means been there and NOT rated.
- */
-export function colorFor(m: Pick<AroundTownMeta, 'kind' | 'done' | 'preference'>): string {
-  if (m.kind === 'activity') return m.done ? BEEN_THERE_COLOR : ACTIVITY_COLOR
-  if (m.preference && PREFERENCE_COLORS[m.preference]) return PREFERENCE_COLORS[m.preference]
-  return m.done ? BEEN_THERE_COLOR : NOT_RATED_COLOR
+/** Been there is a fact, so it wins over a Want to Try tick left on. */
+export function colorFor(m: Pick<AroundTownMeta, 'done' | 'thinkingAbout'>): string {
+  if (m.done) return TRIED_COLOR
+  return m.thinkingAbout ? WANT_TO_TRY_COLOR : HAVENT_TRIED_COLOR
 }
 
 // MARK: - Region classification
