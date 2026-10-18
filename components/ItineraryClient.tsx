@@ -405,7 +405,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
         )}
         <input
           value={query}
-          onChange={e => setQuery(e.target.value)}
+          // Typing closes any open popup so the results show (Elisa, 2026-10-18:
+          // "the search does not work at all when something is clicked").
+          onChange={e => { setQuery(e.target.value); setSelected(null) }}
           placeholder="Search"
           className="hidden w-40 flex-shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white placeholder:text-white/35 focus:border-amber-400/40 focus:outline-none sm:block"
         />

@@ -200,23 +200,35 @@ function MapContent({
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
 
-  // Hover card: name, status and the start of the notes, without a click.
-  // Elisa, 2026-10-18: "hovering over an item on the map shows the
-  // description". Markers are built once, so they look the item up here by id
-  // rather than keeping the copy they were built with.
-  const [hovered, setHovered] = useState<TripItem | null>(null)
-  const mappedRef = useRef(mapped)
-  mappedRef.current = mapped
-  // Steadied: it shows after a short rest on a pin and hides only after the
-  // pointer has left for a moment, so sliding across pins that sit close
-  // together no longer flickers ("the hovering is stuttering too much").
+  // Hover opens the pin's own popup, no separate card. Elisa, 2026-10-18: "i
+  // dont want you making a separate card. i want you just to have this open
+  // when i hover. but if there are too many close to each other, it flickers."
+  // Two causes of flicker, both removed:
+  //   - closing on mouse-out: the popup now stays until another pin is
+  //     rested on, the map is clicked, or its X;
+  //   - the map moving: a hover-opened popup never pans or zooms the map, so
+  //     no other pin slides under the pointer.
+  // A short rest is needed before a hover opens anything, so sweeping across
+  // a cluster does not open every pin on the way.
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const quietSelectRef = useRef(false)
+  const [openedByHover, setOpenedByHover] = useState(false)
+  const selectedIdRef = useRef<string | null>(null)
+  selectedIdRef.current = selected?.id ?? null
   const hoverRef = useRef((id: string | null) => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current)
+    if (!id) return
     hoverTimer.current = setTimeout(() => {
-      setHovered(id ? mappedRef.current.find(i => i.id === id) ?? null : null)
-    }, id ? 220 : 180)
+      if (selectedIdRef.current === id) return
+      const item = mappedRef.current.find(i => i.id === id)
+      if (!item) return
+      quietSelectRef.current = true
+      setOpenedByHover(true)
+      onSelectRef.current({ ...item, branches: undefined })
+    }, 250)
   })
+  const mappedRef = useRef(mapped)
+  mappedRef.current = mapped
   useEffect(() => () => { if (hoverTimer.current) clearTimeout(hoverTimer.current) }, [])
 
   const fitBounds = useCallback((includeUser: boolean) => {
@@ -279,6 +291,8 @@ function MapContent({
   // A pin tapped on the map arrives without `branches`, so it zooms to itself.
   useEffect(() => {
     if (!selected?.coordinates || !map) return
+    // Opened by hover: leave the map exactly where it is.
+    if (quietSelectRef.current) { quietSelectRef.current = false; return }
     const pins = [selected.coordinates, ...(selected.branches ?? [])]
     if (pins.length === 1) {
       map.panTo(selected.coordinates)
@@ -388,7 +402,7 @@ function MapContent({
       // Without `branches`: a tapped pin is one spot, and zooms to itself.
       marker.addListener('gmp-click', () => {
         if (hoverTimer.current) clearTimeout(hoverTimer.current)
-        setHovered(null)
+        setOpenedByHover(false)
         onSelectRef.current({ ...item, branches: undefined })
       })
       pin.addEventListener('mouseenter', () => hoverRef.current(item.id))
@@ -455,34 +469,16 @@ function MapContent({
         </AdvancedMarker>
       )}
 
-      {/* Hover card. Not over the popup it would duplicate. */}
-      {hovered && hovered.coordinates && hovered.id !== selected?.id && (
-        // Never catches a click: the pin under it must stay tappable.
-        <AdvancedMarker position={hovered.coordinates} zIndex={300} clickable={false} style={{ pointerEvents: 'none' }}>
-          <div style={{
-            pointerEvents: 'none', transform: 'translateY(-26px)', maxWidth: 240,
-            background: '#111827', color: '#fff', borderRadius: 10, padding: '8px 10px',
-            boxShadow: '0 6px 18px rgba(0,0,0,0.35)', fontFamily: 'var(--font-body), system-ui, sans-serif',
-          }}>
-            <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3 }}>{hovered.name}</div>
-            <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>
-              {[hovered.type, hovered.status, hovered.timeText].filter(Boolean).join(' · ')}
-            </div>
-            {hovered.notes && (
-              <div style={{ fontSize: 11.5, color: '#d1d5db', lineHeight: 1.45, marginTop: 4 }}>
-                {hovered.notes.length > 160 ? hovered.notes.slice(0, 160) + '…' : hovered.notes}
-              </div>
-            )}
-          </div>
-        </AdvancedMarker>
-      )}
-
       {/* InfoWindow */}
       {selected && selected.coordinates && (
         <InfoWindow
           position={selected.coordinates}
           onCloseClick={() => onSelect(null)}
           pixelOffset={[0, -20]}
+          disableAutoPan={openedByHover}
+          // Never take the keyboard: a popup redrawn on each search keystroke
+          // was pulling focus out of the search box after every letter.
+          shouldFocus={false}
         >
           <div style={{ maxWidth: 290, fontFamily: 'var(--font-body), system-ui, sans-serif', padding: '2px 0' }}>
             {selected.priority && (
