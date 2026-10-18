@@ -4,6 +4,8 @@ Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.m
 
 ## 2026-10-18
 
+- `10:54am` **The map's Considering switch is gone** - Elisa: "there are two places to toggle considering. that is redundant. take away the switch on the map". The Considering chip in the group row is now the one switch.
+
 - `10:54am` **A filter that hides a day's plans now says so** - Elisa, with the Hotel chip on: "it says nothing is planned for dates other than dec 27 but that is not true". The data was right; the Hotel filter hid every non-hotel plan and the panel said "Nothing planned". The Plan panel's day view and its Day by day rows now say "N planned, hidden by your filters. Show all", and Show all turns off every filter (type, leg, search, groups).
 
 - `9:03am` **One Booked / Planned / To book / Considering row** - Elisa (audit H1): "replace the layer and status chip rows with one Booked / Planned / To book / Considering row, keep the map switch." The layer row and the status row are gone on both tabs. One row of four group chips (`GROUPS` in `lib/plan.ts`) is the only show/hide filter; the summary tiles show one group only (tap again for all) and the map's Considering switch flips the same group. Hotels sit in their status group. Saved in the URL as `show=`.

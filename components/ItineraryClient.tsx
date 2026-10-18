@@ -507,8 +507,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
       </div>}
 
       {/* One row for what is shown: Booked / Planned / To book / Considering.
-          Each chip switches its group on or off; the summary tiles and the map
-          switch change the same four. Replaced a layer row and a status row
+          Each chip switches its group on or off; the summary tiles change the
+          same four. The map's own Considering switch was removed as a second
+          control for the same thing (Elisa, 2026-10-18: "that is redundant"). Replaced a layer row and a status row
           (audit H1, 2026-10-18). Same row on both tabs. */}
       <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
         {GROUPS.map(({ id, label, statuses }) => {
@@ -621,23 +622,6 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             styleFor={view !== 'trip' ? planStyle : undefined}
             fitScopeIds={view !== 'trip' ? planFitIds : undefined}
           />
-          {/* The one-tap Considering switch, on the map itself. */}
-          {view !== 'trip' && (() => {
-            const on = groups.has('considering')
-            const count = liveItems.filter(i => groupOf(i) === 'considering' && matchesExceptGroup(i)).length
-            return (
-              <button
-                onClick={() => toggleGroup('considering')}
-                aria-pressed={on}
-                className="absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-white/15 bg-gray-900/85 py-1.5 pl-2 pr-3 text-xs font-semibold text-white shadow-lg backdrop-blur-md"
-              >
-                <span className={`relative h-4 w-7 rounded-full transition-colors ${on ? 'bg-yellow-400' : 'bg-white/20'}`}>
-                  <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${on ? 'left-3.5' : 'left-0.5'}`} />
-                </span>
-                Considering <span className="text-white/50">{count}</span>
-              </button>
-            )
-          })()}
           <button
             onClick={() => { recenterRef.current?.(); setSelected(null) }}
             className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-gray-900/80 text-white/60 backdrop-blur-md transition-colors hover:text-amber-400"
