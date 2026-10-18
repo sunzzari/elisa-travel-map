@@ -5,6 +5,7 @@ import Link from 'next/link'
 import TripMap, { markerStyle, type MarkerStyle } from './TripMap'
 import UnmappedList from './UnmappedList'
 import PlanPanel, { StatusEditor, STATUS_DOT, type Section } from './PlanPanel'
+import TripCalendar from './TripCalendar'
 import { usePasscode } from './PlaceEditing'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
 import { buildPlan, layerOf, stopNumbers, LAYERS, type Layer } from '@/lib/plan'
@@ -100,13 +101,19 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const planningStage = !trip.departureDate || today < trip.departureDate
   const [view, setView] = useState<View>(planningStage ? 'plan' : 'trip')
   const [layers, setLayers] = useState<Set<Layer>>(new Set(DEFAULT_LAYERS))
+  // The calendar is a switch on the Plan tab. While it is on, its day headers
+  // pick the day, so the date bar steps aside for room. Elisa, 2026-10-18:
+  // "when you display the calendar (toggleable on and off) you get rid of the
+  // date bar up top to make more room".
+  const [calendarOn, setCalendarOn] = useState(false)
+  const showCalendar = view === 'plan' && calendarOn
   const [hidden, setHidden] = useState<Set<Section>>(new Set())
   const { passcode, lock } = usePasscode()
   const plan = useMemo(() => buildPlan(trip, legRows.ok ? legRows.value : [], items), [trip, legRows, items])
-  const planDayNow = view === 'plan' && selectedDate ? plan.days.find(d => d.date === selectedDate) ?? null : null
+  const planDayNow = view !== 'trip' && selectedDate ? plan.days.find(d => d.date === selectedDate) ?? null : null
 
   // In leg mode there is no "today", so default to showing everything.
-  const effectiveSelected = view === 'plan' ? (planDayNow ? selectedDate : null) : byLeg ? null : selectedDate
+  const effectiveSelected = view !== 'trip' ? (planDayNow ? selectedDate : null) : byLeg ? null : selectedDate
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
   const [activeStatuses, setActiveStatuses] = useState<Set<ItemStatus>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
@@ -143,7 +150,8 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // never reach the map. Elisa, 2026-09-08: "the whole map should be visible no
   // matter if things are or not assigned."
   const pool = useMemo(() => {
-    if (view === 'plan') {
+    // Plan and Calendar draw the map the same way; only their side differs.
+    if (view !== 'trip') {
       // Plan tab: what is on the map is chosen by layer. A day shows its own
       // plans plus EVERY Considering item on the trip, not only that leg's:
       // her words, "all of the 'considering' should display on the map". The
@@ -196,6 +204,8 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     const params = new URLSearchParams(window.location.search)
     const v = params.get('view')
     if (v === 'plan' || v === 'trip') setView(v)
+    if (v === 'calendar') { setView('plan'); setCalendarOn(true) } // an earlier bookmark
+    if (params.get('cal') === '1') setCalendarOn(true)
     const day = params.get('day')
     if (day) setSelectedDate(day)
     const l = readList(params, 'layers', LAYERS.map(x => x.id))
@@ -216,14 +226,15 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     const params = new URLSearchParams()
     const join = (set: Set<string>) => Array.from(set).map(encodeURIComponent).join(',')
     params.set('view', view)
+    if (showCalendar) params.set('cal', '1')
     if (selectedDate) params.set('day', selectedDate)
-    if (view === 'plan' && join(layers) !== DEFAULT_LAYERS.join(',')) params.set('layers', join(layers))
+    if (view !== 'trip' && join(layers) !== DEFAULT_LAYERS.join(',')) params.set('layers', join(layers))
     if (hidden.size) params.set('hide', join(hidden))
     if (activeTypes.size) params.set('types', join(activeTypes))
     if (activeStatuses.size) params.set('status', join(activeStatuses))
     if (activeLegs.size) params.set('legs', join(activeLegs))
     window.history.replaceState(null, '', `${window.location.pathname}?${params}`)
-  }, [hydrated, view, selectedDate, layers, hidden, activeTypes, activeStatuses, activeLegs])
+  }, [hydrated, view, showCalendar, selectedDate, layers, hidden, activeTypes, activeStatuses, activeLegs])
 
   const numbers = useMemo(() => (planDayNow ? stopNumbers(planDayNow) : new Map<string, number>()), [planDayNow])
   // On a planned day the map frames her plans; a candidate across the region
@@ -290,9 +301,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     )
   }
 
-  const todayIsInTrip = view === 'plan' ? plan.days.some(d => d.date === today) : plans.some(p => p.dateString === today)
-  const chipPlans = view === 'plan' ? plan.days.map(d => ({ dateString: d.date })) : plans
-  const chipByLeg = view === 'plan' ? false : byLeg
+  const todayIsInTrip = view !== 'trip' ? plan.days.some(d => d.date === today) : plans.some(p => p.dateString === today)
+  const chipPlans = view !== 'trip' ? plan.days.map(d => ({ dateString: d.date })) : plans
+  const chipByLeg = view !== 'trip' ? false : byLeg
 
   const shown = matchedIds.length > 0
     ? pool.filter(i => matchedIds.includes(i.id))
@@ -366,7 +377,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
               onClick={() => {
                 setView(v); setSelected(null)
                 // Its button is hidden on Plan, so a filter left on there could not be seen or undone.
-                if (v === 'plan') { setNearMe('off'); setUserLocation(null) }
+                if (v !== 'trip') { setNearMe('off'); setUserLocation(null) }
               }}
               className={`rounded-full px-2.5 py-1 transition-colors sm:px-3 ${view === v ? 'bg-amber-400 text-gray-950' : 'text-white/60 hover:text-white'}`}
             >
@@ -374,6 +385,17 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             </button>
           ))}
         </div>
+        {view === 'plan' && (
+          <button
+            onClick={() => setCalendarOn(on => !on)}
+            aria-pressed={calendarOn}
+            className={`flex-shrink-0 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+              calendarOn ? 'border-amber-400 bg-amber-400/15 text-amber-300' : 'border-white/15 text-white/60 hover:text-white'
+            }`}
+          >
+            Calendar
+          </button>
+        )}
         <input
           value={query}
           onChange={e => setQuery(e.target.value)}
@@ -446,8 +468,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
         </div>
       )}
 
-      {/* Date chips. "All days" first so it is reachable without scrolling. */}
-      <div className="flex flex-shrink-0 gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
+      {/* Date chips. "All days" first so it is reachable without scrolling.
+          Hidden while the calendar is on: its day headers do the same job. */}
+      {!showCalendar && <div className="flex flex-shrink-0 gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
         <button
           onClick={() => { setSelectedDate(null); setSelected(null) }}
           className={`flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
@@ -467,7 +490,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           </button>
         )}
         {chipPlans.map(plan => {
-          const active = plan.dateString === (view === 'plan' ? selectedDate : effectiveSelected)
+          const active = plan.dateString === (view !== 'trip' ? selectedDate : effectiveSelected)
           const isToday = !chipByLeg && plan.dateString === today
           const past = !chipByLeg && plan.dateString < today
           return (
@@ -493,10 +516,10 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             </button>
           )
         })}
-      </div>
+      </div>}
 
       {/* Plan tab layers: each part of the map switches on and off on its own. */}
-      {view === 'plan' && (
+      {view !== 'trip' && (
         <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
           <span className="flex-shrink-0 text-[10px] uppercase tracking-wider text-white/30">Show</span>
           {LAYERS.map(({ id, label }) => {
@@ -603,8 +626,22 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
 
       {/* Map is the page. On a laptop it sits beside the plan; on a phone the
           plan scrolls underneath it. */}
+      {showCalendar && (
+        <div className="max-h-[45vh] flex-shrink-0 overflow-auto border-b border-white/10 bg-gray-950">
+          <TripCalendar
+            plan={plan}
+            matches={matches}
+            selectedDate={selectedDate}
+            onSelectDate={date => { setSelectedDate(date); setSelected(null) }}
+            selected={selected}
+            onSelectItem={(item, date) => { setSelectedDate(date); setSelected(item) }}
+            today={today}
+          />
+        </div>
+      )}
+
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <div className="relative h-[45vh] flex-shrink-0 lg:h-auto lg:flex-1">
+        <div className={showCalendar ? 'relative min-h-[220px] flex-1' : 'relative h-[45vh] flex-shrink-0 lg:h-auto lg:flex-1'}>
           <TripMap
             items={shown}
             apiKey={apiKey}
@@ -613,11 +650,11 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             userLocation={null}
             onRecenterReady={onRecenterReady}
             fitKey={fitKey}
-            styleFor={view === 'plan' ? planStyle : undefined}
-            fitScopeIds={view === 'plan' ? planFitIds : undefined}
+            styleFor={view !== 'trip' ? planStyle : undefined}
+            fitScopeIds={view !== 'trip' ? planFitIds : undefined}
           />
           {/* The one-tap Considering switch, on the map itself. */}
-          {view === 'plan' && (() => {
+          {view !== 'trip' && (() => {
             const on = layers.has('considering')
             const count = liveItems.filter(i => layerOf(i) === 'considering' && matches(i)).length
             return (
