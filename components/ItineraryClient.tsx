@@ -111,7 +111,11 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
 
   // In leg mode there is no "today", so default to showing everything.
   const effectiveSelected = view !== 'trip' ? (planDayNow ? selectedDate : null) : byLeg ? null : selectedDate
-  const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
+  // Types and legs start ALL ON, like the group chips: a chip that looks off
+  // is hidden, a chip that looks on is shown. Elisa, 2026-10-18: "the default
+  // should be select all. and there should be select all buttons." Before, an
+  // empty selection meant "all", so every chip looked off while all showed.
+  const [hiddenTypes, setHiddenTypes] = useState<Set<ItemType>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
 
   // Ask-about-this-trip. Answers come from her own items only.
@@ -125,7 +129,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // Ported from the trip map before it was retired: this is the one map now,
   // so everything that was only available there has to live here.
   const [query, setQuery] = useState('')
-  const [activeLegs, setActiveLegs] = useState<Set<string>>(new Set())
+  const [hiddenLegs, setHiddenLegs] = useState<Set<string>>(new Set())
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
   const [nearMe, setNearMe] = useState<'off' | 'locating' | 'on' | 'denied'>('off')
   const recenterRef = useRef<(() => void) | null>(null)
@@ -175,13 +179,13 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
 
   // Every filter but the group, so each group chip can count what it would add.
   const matchesExceptGroup = useCallback((i: TripItem) => (
-    (activeTypes.size === 0 || activeTypes.has((i.type ?? 'Other') as ItemType)) &&
-    (activeLegs.size === 0 || activeLegs.has(i.legCity)) &&
+    !hiddenTypes.has((i.type ?? 'Other') as ItemType) &&
+    !hiddenLegs.has(i.legCity) &&
     (!q || i.name.toLowerCase().includes(q) || i.venue.toLowerCase().includes(q) || i.notes.toLowerCase().includes(q)) &&
     (nearMe !== 'on' || !userLocation || (
       !!i.coordinates && haversineKm(userLocation.lat, userLocation.lng, i.coordinates.lat, i.coordinates.lng) <= NEAR_KM
     ))
-  ), [activeTypes, activeLegs, q, nearMe, userLocation])
+  ), [hiddenTypes, hiddenLegs, q, nearMe, userLocation])
 
   const matches = useCallback((i: TripItem) => {
     const g = groupOf(i)
@@ -207,10 +211,12 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     if (g) setGroups(new Set(g))
     const h = readList(params, 'hide', SECTIONS)
     if (h) setHidden(new Set(h))
-    const t = readList<ItemType>(params, 'types')
-    if (t) setActiveTypes(new Set(t))
-    const lg = readList(params, 'legs')
-    if (lg) setActiveLegs(new Set(lg))
+    const t = readList<ItemType>(params, 'hideTypes')
+    if (t) setHiddenTypes(new Set(t))
+    const lg = readList(params, 'hideLegs')
+    if (lg) setHiddenLegs(new Set(lg))
+    const sq = params.get('q')
+    if (sq) setQuery(sq)
     setHydrated(true)
   }, [])
 
@@ -223,10 +229,11 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     if (selectedDate) params.set('day', selectedDate)
     if (groups.size !== ALL_GROUPS.length) params.set('show', join(groups))
     if (hidden.size) params.set('hide', join(hidden))
-    if (activeTypes.size) params.set('types', join(activeTypes))
-    if (activeLegs.size) params.set('legs', join(activeLegs))
+    if (hiddenTypes.size) params.set('hideTypes', join(hiddenTypes))
+    if (hiddenLegs.size) params.set('hideLegs', join(hiddenLegs))
+    if (query.trim()) params.set('q', query.trim())
     window.history.replaceState(null, '', `${window.location.pathname}?${params}`)
-  }, [hydrated, view, showCalendar, selectedDate, groups, hidden, activeTypes, activeLegs])
+  }, [hydrated, view, showCalendar, selectedDate, groups, hidden, hiddenTypes, hiddenLegs, query])
 
   const numbers = useMemo(() => (planDayNow ? stopNumbers(planDayNow) : new Map<string, number>()), [planDayNow])
   // On a planned day the map frames her plans; a candidate across the region
@@ -314,7 +321,12 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     view,
     Array.from(groups).sort().join(','),
     selectedDate ?? 'all',
-    Array.from(activeTypes).sort().join(',') || 'alltypes',
+    // Every filter is in the key, so the map re-frames on what is left.
+    // Search was missing: it filtered the pins but left the map zoomed out on
+    // the whole country, so it looked like it did nothing.
+    Array.from(hiddenTypes).sort().join(',') || 'alltypes',
+    Array.from(hiddenLegs).sort().join(',') || 'alllegs',
+    q || 'nosearch',
     matchedIds.join(',') || 'noask',
   ].join('|')
 
@@ -341,10 +353,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   }
 
   function toggleType(type: ItemType) {
-    setActiveTypes(prev => {
+    setHiddenTypes(prev => {
       const next = new Set(prev)
-      if (next.has(type)) next.delete(type)
-      else next.add(type)
+      if (next.has(type)) next.delete(type); else next.add(type)
       return next
     })
     setSelected(null)
@@ -533,18 +544,17 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             </button>
           )
         })}
-        {groups.size !== ALL_GROUPS.length && (
-          <button onClick={() => { setGroups(new Set(ALL_GROUPS)); setSelected(null) }} className="flex-shrink-0 text-xs text-white/40 underline hover:text-white/70">
-            Show all
-          </button>
-        )}
+        <SelectAll
+          active={groups.size !== ALL_GROUPS.length}
+          onClick={() => { setGroups(new Set(ALL_GROUPS)); setSelected(null) }}
+        />
       </div>
 
       {/* Type chips. Only the types actually present, so a Ferry toggle never
           shows up on a Utah ski weekend. */}
       <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
         {presentTypes.map(type => {
-          const on = activeTypes.has(type)
+          const on = !hiddenTypes.has(type)
           const meta = TYPE_META[type] ?? TYPE_META.Other
           return (
             <button
@@ -554,7 +564,8 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
               style={{
                 background: on ? meta.color : 'transparent',
                 borderColor: on ? meta.color : 'rgba(255,255,255,0.15)',
-                color: on ? '#0b0b0d' : meta.color,
+                color: on ? '#0b0b0d' : 'rgba(255,255,255,0.45)',
+                borderStyle: on ? 'solid' : 'dashed',
               }}
             >
               <span>{meta.glyph}</span>
@@ -562,18 +573,14 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             </button>
           )
         })}
-        {activeTypes.size > 0 && (
-          <button onClick={() => setActiveTypes(new Set())} className="flex-shrink-0 text-xs text-white/40 underline hover:text-white/70">
-            Clear
-          </button>
-        )}
+        <SelectAll active={hiddenTypes.size > 0} onClick={() => { setHiddenTypes(new Set()); setSelected(null) }} />
         {legs.length > 1 && !byLeg && legs.map(leg => {
-          const on = activeLegs.has(leg)
+          const on = !hiddenLegs.has(leg)
           return (
             <button
               key={leg}
               onClick={() => {
-                setActiveLegs(prev => {
+                setHiddenLegs(prev => {
                   const next = new Set(prev)
                   if (next.has(leg)) next.delete(leg); else next.add(leg)
                   return next
@@ -581,13 +588,16 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
                 setSelected(null)
               }}
               className={`flex-shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
-                on ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-indigo-400/30 text-indigo-300 hover:bg-white/5'
+                on ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-dashed border-white/20 text-white/45 hover:bg-white/5'
               }`}
             >
               {leg}
             </button>
           )
         })}
+        {legs.length > 1 && !byLeg && (
+          <SelectAll active={hiddenLegs.size > 0} onClick={() => { setHiddenLegs(new Set()); setSelected(null) }} />
+        )}
         <span className="flex-shrink-0 pl-2 text-xs text-white/30">
           {mapped.length} on the map{unmapped > 0 ? ` - ${unmapped} without a location` : ''}
         </span>
@@ -670,7 +680,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
                 groups={groups}
                 onPickGroup={soloGroup}
                 onClearFilters={() => {
-                  setActiveTypes(new Set()); setActiveLegs(new Set()); setQuery('')
+                  setHiddenTypes(new Set()); setHiddenLegs(new Set()); setQuery('')
                   setGroups(new Set(ALL_GROUPS)); setSelected(null)
                 }}
               />
@@ -841,5 +851,18 @@ function Rows({ planned, showTime, selected, onSelect, today, dayDate }: {
         )
       })}
     </>
+  )
+}
+
+/** "Select all" for a chip row. Always there; dim when everything is already on. */
+function SelectAll({ active, onClick }: { active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={!active}
+      className="flex-shrink-0 rounded-full border border-white/15 px-2.5 py-1 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 disabled:cursor-default disabled:opacity-35 disabled:hover:bg-transparent"
+    >
+      Select all
+    </button>
   )
 }

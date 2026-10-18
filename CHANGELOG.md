@@ -4,6 +4,8 @@ Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.m
 
 ## 2026-10-18
 
+- `11:01am` **Every chip starts on, each row has Select all, and search re-frames the map** - Elisa: "for calendar and map the default should be select all. and there should be select all buttons. also the search is not working. when i have the calendar pulled up the search should work and filter the map and the calendar for trip items". Type and leg chips used to mean "only these", so with none picked every chip looked off while everything showed; they now start on and a tap hides that kind (dashed when off), same as the group chips. Each chip row has a Select all button. Search did filter the calendar and the pins, but the map stayed zoomed out over the whole country, so it looked broken: every filter and the search are now in the map's re-frame key. The search is saved in the URL (`q=`). URL params changed: `hideTypes`, `hideLegs`.
+
 - `10:54am` **The map's Considering switch is gone** - Elisa: "there are two places to toggle considering. that is redundant. take away the switch on the map". The Considering chip in the group row is now the one switch.
 
 - `10:54am` **A filter that hides a day's plans now says so** - Elisa, with the Hotel chip on: "it says nothing is planned for dates other than dec 27 but that is not true". The data was right; the Hotel filter hid every non-hotel plan and the panel said "Nothing planned". The Plan panel's day view and its Day by day rows now say "N planned, hidden by your filters. Show all", and Show all turns off every filter (type, leg, search, groups).
