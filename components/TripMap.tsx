@@ -142,6 +142,7 @@ function MapContent({
   fitScopeIds,
   pinFilter,
   bubblesTakePinColour = false,
+  popupExtra,
 }: {
   items: TripItem[]
   selected: TripItem | null
@@ -164,6 +165,9 @@ function MapContent({
   /** A bubble takes the colour most of its pins have, instead of the one blue.
       Around Town asks for it, so its legend means something on a bubble too. */
   bubblesTakePinColour?: boolean
+  /** Extra controls at the bottom of a pin's popup. The trip Plan tab puts its
+      plan / book / drop editor here, so it works straight from the map. */
+  popupExtra?: (item: TripItem) => React.ReactNode
 }) {
   const map = useMap()
   const markerLib = useMapsLibrary('marker')
@@ -195,6 +199,17 @@ function MapContent({
   const imperativeMarkersRef = useRef<globalThis.Map<string, google.maps.marker.AdvancedMarkerElement>>(new globalThis.Map())
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
+
+  // Hover card: name, status and the start of the notes, without a click.
+  // Elisa, 2026-10-18: "hovering over an item on the map shows the
+  // description". Markers are built once, so they look the item up here by id
+  // rather than keeping the copy they were built with.
+  const [hovered, setHovered] = useState<TripItem | null>(null)
+  const mappedRef = useRef(mapped)
+  mappedRef.current = mapped
+  const hoverRef = useRef((id: string | null) => {
+    setHovered(id ? mappedRef.current.find(i => i.id === id) ?? null : null)
+  })
 
   const fitBounds = useCallback((includeUser: boolean) => {
     if (!map) return
@@ -363,7 +378,9 @@ function MapContent({
         title: item.name,
       })
       // Without `branches`: a tapped pin is one spot, and zooms to itself.
-      marker.addListener('gmp-click', () => onSelectRef.current({ ...item, branches: undefined }))
+      marker.addListener('gmp-click', () => { hoverRef.current(null); onSelectRef.current({ ...item, branches: undefined }) })
+      pin.addEventListener('mouseenter', () => hoverRef.current(item.id))
+      pin.addEventListener('mouseleave', () => hoverRef.current(null))
       pinColours.set(marker, style.bg)
       prev.set(item.id, marker)
       newMarkers.push(marker)
@@ -423,6 +440,28 @@ function MapContent({
             background: '#3B82F6', border: '3px solid #fff',
             boxShadow: '0 0 0 4px rgba(59,130,246,0.25), 0 2px 6px rgba(0,0,0,0.3)',
           }} />
+        </AdvancedMarker>
+      )}
+
+      {/* Hover card. Not over the popup it would duplicate. */}
+      {hovered && hovered.coordinates && hovered.id !== selected?.id && (
+        // Never catches a click: the pin under it must stay tappable.
+        <AdvancedMarker position={hovered.coordinates} zIndex={300} clickable={false} style={{ pointerEvents: 'none' }}>
+          <div style={{
+            pointerEvents: 'none', transform: 'translateY(-26px)', maxWidth: 240,
+            background: '#111827', color: '#fff', borderRadius: 10, padding: '8px 10px',
+            boxShadow: '0 6px 18px rgba(0,0,0,0.35)', fontFamily: 'var(--font-body), system-ui, sans-serif',
+          }}>
+            <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3 }}>{hovered.name}</div>
+            <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>
+              {[hovered.type, hovered.status, hovered.timeText].filter(Boolean).join(' · ')}
+            </div>
+            {hovered.notes && (
+              <div style={{ fontSize: 11.5, color: '#d1d5db', lineHeight: 1.45, marginTop: 4 }}>
+                {hovered.notes.length > 160 ? hovered.notes.slice(0, 160) + '…' : hovered.notes}
+              </div>
+            )}
+          </div>
         </AdvancedMarker>
       )}
 
@@ -528,6 +567,7 @@ function MapContent({
                 Notion →
               </a>
             </div>
+            {popupExtra && <div style={{ marginTop: 10 }}>{popupExtra(selected)}</div>}
           </div>
         </InfoWindow>
       )}
@@ -550,9 +590,10 @@ interface Props {
   fitScopeIds?: Set<string>
   pinFilter?: (pin: { id: string; lat: number; lng: number }) => boolean
   bubblesTakePinColour?: boolean
+  popupExtra?: (item: TripItem) => React.ReactNode
 }
 
-export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour }: Props) {
+export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour, popupExtra }: Props) {
   const mapped = items.filter(i => i.coordinates)
 
   const center = userLocation ?? (mapped.length > 0
@@ -579,7 +620,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         clickableIcons={false}
         onClick={() => onSelect(null)}
       >
-        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} />
+        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} popupExtra={popupExtra} />
       </Map>
     </APIProvider>
   )

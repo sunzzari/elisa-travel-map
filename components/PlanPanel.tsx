@@ -307,13 +307,15 @@ const DATED = new Set(['Assigned', 'Reservation Pending', 'Confirmed'])
 
 const field = 'w-full rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-sm text-white placeholder:text-white/25 focus:border-amber-400/40 focus:outline-none'
 
-export function StatusEditor({ item, dates, defaultDate, passcode, onSaved, onClose }: {
+export function StatusEditor({ item, dates, defaultDate, passcode, onSaved, onClose, compact = false }: {
   item: TripItem
   dates: string[]
   defaultDate: string | null
   passcode: string
   onSaved: (item: TripItem) => void
   onClose: () => void
+  /** Inside the map popup: the popup already shows the name, so skip the header. */
+  compact?: boolean
 }) {
   const [status, setStatus] = useState<EditableStatus>((item.status as EditableStatus | null) ?? 'Shortlisted')
   const [date, setDate] = useState(item.assignedToDate ?? item.date ?? defaultDate ?? dates[0] ?? '')
@@ -353,14 +355,15 @@ export function StatusEditor({ item, dates, defaultDate, passcode, onSaved, onCl
 
   return (
     <div className="space-y-2.5 rounded-xl border border-amber-400/25 bg-gray-900 p-3">
-      <div className="flex items-start gap-2">
+      {!compact && <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-white">{item.name}</p>
           <p className="text-[11px] text-white/40">{[item.type, item.legCity, item.status].filter(Boolean).join(' - ')}</p>
         </div>
         <a href={item.url} target="_blank" rel="noreferrer" className="flex-shrink-0 text-[11px] text-amber-400 hover:underline">Notion</a>
         <button onClick={onClose} className="flex-shrink-0 text-xs text-white/40 hover:text-white" aria-label="Close">✕</button>
-      </div>
+      </div>}
+      {compact && <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-300/80">Plan this</p>}
 
       <div className="flex flex-wrap gap-1">
         {CHOICES.map(c => (

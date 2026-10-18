@@ -244,8 +244,16 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // Elisa, 2026-10-18: "when i toggle 'restaurant' it does not filter for the
   // 'considering'" - it did, but the map zoomed onto her two planned cafes and
   // every Considering restaurant sat off-screen.
+  // All days: frame the trip, not the flights. With a pin at both ends, the
+  // flight home would zoom the whole trip out to San Francisco. Flights stay
+  // drawn; a selected day still frames its own flight.
+  const allDaysFitIds = useMemo(() => {
+    const ids = items.filter(i => i.coordinates && i.type !== 'Flight' && matches(i)).map(i => i.id)
+    return ids.length ? new Set(ids) : undefined
+  }, [items, matches])
+
   const planFitIds = useMemo(() => {
-    if (!planDayNow) return undefined
+    if (!planDayNow) return allDaysFitIds
     const onMap = (i: TripItem) => !!i.coordinates && matches(i)
     const plans = planDayNow.committed.map(c => c.item).filter(onMap)
     // Elisa, 2026-10-18: "the zoom should keep the considering on screen".
@@ -264,7 +272,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
       : []
     const ids = [...plans, ...ideas].map(i => i.id)
     return ids.length ? new Set(ids) : undefined
-  }, [planDayNow, matches, groups])
+  }, [planDayNow, matches, groups, allDaysFitIds])
   // Plan tab pins: the day's stops numbered 1, 2, 3 in order; candidates small
   // and faded so they never read as plans.
   const planStyle = useCallback((item: TripItem): MarkerStyle => {
@@ -630,7 +638,25 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             onRecenterReady={onRecenterReady}
             fitKey={fitKey}
             styleFor={view !== 'trip' ? planStyle : undefined}
-            fitScopeIds={view !== 'trip' ? planFitIds : undefined}
+            fitScopeIds={view !== 'trip' ? planFitIds : effectiveSelected ? undefined : allDaysFitIds}
+            popupExtra={view !== 'trip' ? item => (
+              // Plan, book or drop right from the pin. Elisa, 2026-10-18:
+              // "theres no way for me to toggle, confirm, or assign to date in
+              // the map". It was only in the side panel.
+              <StatusEditor
+                key={item.id}
+                item={items.find(i => i.id === item.id) ?? item}
+                dates={plan.days.map(d => d.date)}
+                defaultDate={selectedDate}
+                passcode={passcode}
+                compact
+                onSaved={saved => {
+                  setSaved(prev => ({ ...prev, [saved.id]: saved }))
+                  setSelected(null)
+                }}
+                onClose={() => setSelected(null)}
+              />
+            ) : undefined}
           />
           <button
             onClick={() => { recenterRef.current?.(); setSelected(null) }}
@@ -648,7 +674,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
         <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
           {view === 'plan' ? (
             <>
-              {selected && (
+              {/* The map popup carries the editor for anything with a pin; the
+                  panel carries it only for items that are not on the map. */}
+              {selected && !selected.coordinates && (
                 <div className="px-4 pt-4">
                   <StatusEditor
                       key={selected.id}
@@ -696,7 +724,14 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             items={shown.filter(i => !i.coordinates)}
             onSelect={setSelected}
             dotColor={item => STATUS_DOT[item.status ?? ''] ?? '#8E8E93'}
-            subtitle={item => [item.type, item.legCity].filter(Boolean).join(' - ')}
+            // Say what is missing, so a gap can be closed rather than wondered at.
+            subtitle={item => {
+              const why = item.type === 'Flight' ? 'needs both airport codes from the booking in Notes'
+                : item.type === 'Train' ? 'needs both stations from the booking in Notes'
+                : item.address ? 'address could not be placed'
+                : 'no address'
+              return [item.type, item.legCity, why].filter(Boolean).join(' - ')
+            }}
           />
         </div>
       </div>

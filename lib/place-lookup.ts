@@ -121,7 +121,10 @@ const GENERIC = new Set([
   'bbq', 'grill', 'bistro', 'tea', 'seafood', 'deli', 'pizzeria', 'eatery', 'cantina', 'taqueria',
 ])
 
-const fold = (s: string) => s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase()
+// "ß" becomes "ss" first: OpenStreetMap writes Praterstraße where a typed
+// address says Praterstrasse, and dropping the letter left "praterstra e",
+// so no German "-straße" address could ever match (Das LOFT, 2026-10-18).
+const fold = (s: string) => s.replace(/ß/g, 'ss').normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase()
   .replace(/&/g, ' and ').replace(/['’`]/g, '').replace(/[^a-z0-9]+/g, ' ').trim()
 
 /** 80% of the longer name's distinctive words shared. A miss costs a tap; a wrong match costs a pin that lies. */
@@ -214,6 +217,21 @@ export async function areaFor(kind: AroundTownKind, neighborhood: string, locati
     }
   }
   return { kind, areaText: [neighborhood, location].filter(Boolean).join(', '), boxes, centers, ...(away ? { away: true } : {}) }
+}
+
+/**
+ * The area for a TRIP item: a box around the pins its trip (or leg) already
+ * has, widened by `marginKm`. No city table to keep up: a new trip's area
+ * comes from its own pins. Null when there is nothing to anchor it.
+ */
+export function areaAroundPins(areaText: string, pins: Coordinates[], marginKm = 25): PlaceArea | null {
+  if (pins.length === 0) return null
+  const lats = pins.map(p => p.lat)
+  const lngs = pins.map(p => p.lng)
+  const lo = boxAround({ lat: Math.min(...lats), lng: Math.min(...lngs) }, marginKm)
+  const hi = boxAround({ lat: Math.max(...lats), lng: Math.max(...lngs) }, marginKm)
+  const box: Box = { minLat: lo.minLat, maxLat: hi.maxLat, minLng: lo.minLng, maxLng: hi.maxLng }
+  return { kind: 'restaurant', areaText, boxes: [box], centers: [], away: true }
 }
 
 /**
