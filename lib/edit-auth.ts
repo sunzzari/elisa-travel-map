@@ -1,5 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto'
 import { NextResponse } from 'next/server'
+import { hasSiteCookie } from './site-auth'
 
 /**
  * Editing Around Town writes to Notion from a public site, so every write and
@@ -39,7 +40,7 @@ function sameSecret(given: string | null, expected: string | undefined): boolean
   return a.length === b.length && timingSafeEqual(a, b)
 }
 
-async function notionKeyOpensOurTable(token: string): Promise<boolean> {
+export async function notionKeyOpensOurTable(token: string): Promise<boolean> {
   // Shape first, so junk never becomes a request to Notion.
   if (!/^(secret_|ntn_)[A-Za-z0-9_]{30,200}$/.test(token)) return false
   const key = createHash('sha256').update(token).digest('hex')
@@ -68,6 +69,9 @@ async function notionKeyOpensOurTable(token: string): Promise<boolean> {
 export async function authorize(request: Request): Promise<{ caller: Caller } | { refused: NextResponse }> {
   const passcode = process.env.AROUND_TOWN_PASSCODE
   if (sameSecret(request.headers.get('x-edit-passcode'), passcode)) return { caller: { via: 'passcode' } }
+  // Signed in to the site with the same password (lib/site-auth.ts): one
+  // password to view and to edit.
+  if (hasSiteCookie(request.headers.get('cookie'))) return { caller: { via: 'passcode' } }
 
   const notionToken = request.headers.get('x-notion-token')
   if (notionToken && (await notionKeyOpensOurTable(notionToken))) {

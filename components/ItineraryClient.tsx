@@ -1,12 +1,16 @@
 'use client'
 
-import { useMemo, useState, useCallback, useRef } from 'react'
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import TripMap from './TripMap'
+import TripMap, { markerStyle, type MarkerStyle } from './TripMap'
 import UnmappedList from './UnmappedList'
+import PlanPanel, { StatusEditor, StatusControl, STATUS_DOT, type Section } from './PlanPanel'
+import TripCalendar from './TripCalendar'
+import { usePasscode } from './PlaceEditing'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
+import { buildPlan, groupOf, stopNumbers, GROUPS, ALL_GROUPS, type Group } from '@/lib/plan'
 import { haversineKm } from '@/lib/geo'
-import type { Trip, TripItem, ItemType, ItemStatus } from '@/lib/types'
+import type { Trip, TripItem, ItemType, TripLeg, TripTask, Loaded } from '@/lib/types'
 import type { UserLocation } from '@/lib/geo'
 
 // Map-first day view.
@@ -30,16 +34,19 @@ const TYPE_META: Record<string, { glyph: string; color: string }> = {
 
 const TYPE_ORDER: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Train', 'Ferry', 'Car Rental', 'Other']
 
-// Order matters: this is the pipeline from "booked" to "idea", and the chips
-// read left to right as certainty decreasing.
-const STATUS_ORDER: ItemStatus[] = ['Confirmed', 'Assigned', 'Reservation Pending', 'Shortlisted', 'Researching']
+type View = 'plan' | 'trip'
+// Every group is on by default, Considering included. Elisa, 2026-10-18: "all
+// of the 'considering' should display on the map with easy toggle on/off".
+const SECTIONS: Section[] = ['summary', 'todo', 'coverage', 'days']
 
-const STATUS_DOT: Record<string, string> = {
-  Confirmed: '#34C759',
-  Assigned: '#0A84FF',
-  'Reservation Pending': '#FF9F0A',
-  Shortlisted: '#FFD60A',
-  Researching: '#8E8E93',
+// Every setting the views are made of lives in the URL, so any view can be
+// bookmarked and reopens the same. Elisa, 2026-10-18: "i want this map to be
+// highly modular in terms of the views i can make".
+function readList<T extends string>(params: URLSearchParams, key: string, allowed?: readonly T[]): T[] | null {
+  const raw = params.get(key)
+  if (raw === null) return null
+  const list = raw.split(',').map(decodeURIComponent).filter(Boolean) as T[]
+  return allowed ? list.filter(v => allowed.includes(v)) : list
 }
 
 function mapsHref(item: TripItem): string {
@@ -52,10 +59,19 @@ function mapsHref(item: TripItem): string {
 interface Props {
   trip: Trip
   items: TripItem[]
+  legs: Loaded<TripLeg[]>
+  tasks: Loaded<TripTask[]>
   apiKey: string
 }
 
-export default function ItineraryClient({ trip, items, apiKey }: Props) {
+export default function ItineraryClient({ trip, items: loadedItems, legs: legRows, tasks, apiKey }: Props) {
+  // A status saved from the Plan tab shows at once; the page itself catches up
+  // on its next 60s refresh. The saved row keeps the pin the page already had.
+  const [saved, setSaved] = useState<Record<string, TripItem>>({})
+  const items = useMemo(
+    () => loadedItems.map(i => (saved[i.id] ? { ...i, ...saved[i.id], coordinates: saved[i.id].coordinates ?? i.coordinates } : i)),
+    [loadedItems, saved]
+  )
   const days = useMemo(() => groupDays(items), [items])
   const allDates = useMemo(() => days.map(d => d.dateString), [days])
   const datedPlans = useMemo(() => days.map(d => planDay(d, allDates)), [days, allDates])
@@ -74,10 +90,32 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   // to a very functional map 100% of the time... and then ALSO to toggle today
   // view which filters the map". Today is one tap away in the chip row.
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
+
+  // Plan tab: opens on Plan until the trip starts (in the trip's own zone),
+  // on the day view once it has.
+  const planningStage = !trip.departureDate || today < trip.departureDate
+  const [view, setView] = useState<View>(planningStage ? 'plan' : 'trip')
+  // Booked / Planned / To book / Considering: the one filter the chip row, the
+  // summary tiles and the map switch all share (lib/plan.ts GROUPS).
+  const [groups, setGroups] = useState<Set<Group>>(new Set(ALL_GROUPS))
+  // The calendar is a switch on the Plan tab. While it is on, its day headers
+  // pick the day, so the date bar steps aside for room. Elisa, 2026-10-18:
+  // "when you display the calendar (toggleable on and off) you get rid of the
+  // date bar up top to make more room".
+  const [calendarOn, setCalendarOn] = useState(false)
+  const showCalendar = view === 'plan' && calendarOn
+  const [hidden, setHidden] = useState<Set<Section>>(new Set())
+  const { passcode, lock } = usePasscode()
+  const plan = useMemo(() => buildPlan(trip, legRows.ok ? legRows.value : [], items), [trip, legRows, items])
+  const planDayNow = view !== 'trip' && selectedDate ? plan.days.find(d => d.date === selectedDate) ?? null : null
+
   // In leg mode there is no "today", so default to showing everything.
-  const effectiveSelected = byLeg ? null : selectedDate
-  const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
-  const [activeStatuses, setActiveStatuses] = useState<Set<ItemStatus>>(new Set())
+  const effectiveSelected = view !== 'trip' ? (planDayNow ? selectedDate : null) : byLeg ? null : selectedDate
+  // Types and legs start ALL ON, like the group chips: a chip that looks off
+  // is hidden, a chip that looks on is shown. Elisa, 2026-10-18: "the default
+  // should be select all. and there should be select all buttons." Before, an
+  // empty selection meant "all", so every chip looked off while all showed.
+  const [hiddenTypes, setHiddenTypes] = useState<Set<ItemType>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
 
   // Ask-about-this-trip. Answers come from her own items only.
@@ -91,7 +129,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   // Ported from the trip map before it was retired: this is the one map now,
   // so everything that was only available there has to live here.
   const [query, setQuery] = useState('')
-  const [activeLegs, setActiveLegs] = useState<Set<string>>(new Set())
+  const [hiddenLegs, setHiddenLegs] = useState<Set<string>>(new Set())
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
   const [nearMe, setNearMe] = useState<'off' | 'locating' | 'on' | 'denied'>('off')
   const recenterRef = useRef<(() => void) | null>(null)
@@ -112,15 +150,22 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   // never reach the map. Elisa, 2026-09-08: "the whole map should be visible no
   // matter if things are or not assigned."
   const pool = useMemo(() => {
+    // Plan and Calendar draw the map the same way; only their side differs.
+    if (view !== 'trip') {
+      // A day shows its own plans plus EVERY Considering item on the trip, not
+      // only that leg's: her words, "all of the 'considering' should display on
+      // the map". The map stays framed on the day's plans, so other-city ideas
+      // sit off-frame. Which groups show is decided by `matches`.
+      if (planDayNow) {
+        const list = [...planDayNow.committed.map(c => c.item), ...liveItems.filter(i => groupOf(i) === 'considering')]
+        return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i)
+      }
+      return liveItems
+    }
     if (!effectiveSelected) return liveItems
     const list = visiblePlans.flatMap(p => [...p.timeline.map(x => x.item), ...p.anytime.map(x => x.item), ...p.options])
     return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i)
-  }, [effectiveSelected, liveItems, visiblePlans])
-
-  const presentStatuses = useMemo(
-    () => STATUS_ORDER.filter(st => pool.some(i => i.status === st)),
-    [pool]
-  )
+  }, [view, planDayNow, effectiveSelected, liveItems, visiblePlans])
 
   const presentTypes = useMemo(
     () => TYPE_ORDER.filter(t => pool.some(i => (i.type ?? 'Other') === t)),
@@ -132,20 +177,133 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const q = query.trim().toLowerCase()
   const NEAR_KM = 5
 
-  const matches = useCallback((i: TripItem) => (
-    (activeTypes.size === 0 || activeTypes.has((i.type ?? 'Other') as ItemType)) &&
-    (activeStatuses.size === 0 || (i.status != null && activeStatuses.has(i.status))) &&
-    (activeLegs.size === 0 || activeLegs.has(i.legCity)) &&
+  // Every filter but the group, so each group chip can count what it would add.
+  const matchesExceptGroup = useCallback((i: TripItem) => (
+    !hiddenTypes.has((i.type ?? 'Other') as ItemType) &&
+    !hiddenLegs.has(i.legCity) &&
     (!q || i.name.toLowerCase().includes(q) || i.venue.toLowerCase().includes(q) || i.notes.toLowerCase().includes(q)) &&
     (nearMe !== 'on' || !userLocation || (
       !!i.coordinates && haversineKm(userLocation.lat, userLocation.lng, i.coordinates.lat, i.coordinates.lng) <= NEAR_KM
     ))
-  ), [activeTypes, activeStatuses, activeLegs, q, nearMe, userLocation])
+  ), [hiddenTypes, hiddenLegs, q, nearMe, userLocation])
+
+  const matches = useCallback((i: TripItem) => {
+    const g = groupOf(i)
+    return g !== null && groups.has(g) && matchesExceptGroup(i)
+  }, [groups, matchesExceptGroup])
 
   const legs = useMemo(
     () => Array.from(new Set(items.map(i => i.legCity).filter(Boolean))).sort(),
     [items]
   )
+
+  // Restore a bookmarked view, then keep the URL in step with every toggle.
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const v = params.get('view')
+    if (v === 'plan' || v === 'trip') setView(v)
+    if (v === 'calendar') { setView('plan'); setCalendarOn(true) } // an earlier bookmark
+    if (params.get('cal') === '1') setCalendarOn(true)
+    const day = params.get('day')
+    if (day) setSelectedDate(day)
+    const g = readList(params, 'show', ALL_GROUPS)
+    if (g) setGroups(new Set(g))
+    const h = readList(params, 'hide', SECTIONS)
+    if (h) setHidden(new Set(h))
+    const t = readList<ItemType>(params, 'hideTypes')
+    if (t) setHiddenTypes(new Set(t))
+    const lg = readList(params, 'hideLegs')
+    if (lg) setHiddenLegs(new Set(lg))
+    const sq = params.get('q')
+    if (sq) setQuery(sq)
+    setHydrated(true)
+  }, [])
+
+  useEffect(() => {
+    if (!hydrated) return
+    const params = new URLSearchParams()
+    const join = (set: Set<string>) => Array.from(set).map(encodeURIComponent).join(',')
+    params.set('view', view)
+    if (showCalendar) params.set('cal', '1')
+    if (selectedDate) params.set('day', selectedDate)
+    if (groups.size !== ALL_GROUPS.length) params.set('show', join(groups))
+    if (hidden.size) params.set('hide', join(hidden))
+    if (hiddenTypes.size) params.set('hideTypes', join(hiddenTypes))
+    if (hiddenLegs.size) params.set('hideLegs', join(hiddenLegs))
+    if (query.trim()) params.set('q', query.trim())
+    window.history.replaceState(null, '', `${window.location.pathname}?${params}`)
+  }, [hydrated, view, showCalendar, selectedDate, groups, hidden, hiddenTypes, hiddenLegs, query])
+
+  const numbers = useMemo(() => (planDayNow ? stopNumbers(planDayNow) : new Map<string, number>()), [planDayNow])
+  // On a planned day the map frames her plans; a candidate across the region
+  // must not zoom it out to the whole country. A day with no plans frames all.
+  //
+  // With a filter on (Restaurant, a status, a leg, a search), or fewer than two
+  // plans left to frame, the frame widens to this leg's matching ideas too.
+  // Elisa, 2026-10-18: "when i toggle 'restaurant' it does not filter for the
+  // 'considering'" - it did, but the map zoomed onto her two planned cafes and
+  // every Considering restaurant sat off-screen.
+  // All days: frame the trip, not the flights. With a pin at both ends, the
+  // flight home would zoom the whole trip out to San Francisco. Flights stay
+  // drawn; a selected day still frames its own flight.
+  const allDaysFitIds = useMemo(() => {
+    const ids = items.filter(i => i.coordinates && i.type !== 'Flight' && matches(i)).map(i => i.id)
+    return ids.length ? new Set(ids) : undefined
+  }, [items, matches])
+
+  const planFitIds = useMemo(() => {
+    if (!planDayNow) return allDaysFitIds
+    const onMap = (i: TripItem) => !!i.coordinates && matches(i)
+    const plans = planDayNow.committed.map(c => c.item).filter(onMap)
+    // Elisa, 2026-10-18: "the zoom should keep the considering on screen".
+    // So with Considering on, this leg's ideas are in the frame - those within
+    // FRAME_KM of the day. One Wachau day-trip idea 70km out would otherwise
+    // zoom a Vienna day out to the whole region.
+    const FRAME_KM = 15
+    const legIdeas = groups.has('considering') ? planDayNow.considering.filter(onMap) : []
+    const anchor = plans.length ? plans : legIdeas
+    const mid = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
+    const centre = anchor.length
+      ? { lat: mid(anchor.map(i => i.coordinates!.lat)), lng: mid(anchor.map(i => i.coordinates!.lng)) }
+      : null
+    const ideas = centre
+      ? legIdeas.filter(i => haversineKm(centre.lat, centre.lng, i.coordinates!.lat, i.coordinates!.lng) <= FRAME_KM)
+      : []
+    const ids = [...plans, ...ideas].map(i => i.id)
+    return ids.length ? new Set(ids) : undefined
+  }, [planDayNow, matches, groups, allDaysFitIds])
+  // Plan tab pins: the day's stops numbered 1, 2, 3 in order; candidates small
+  // and faded so they never read as plans.
+  const planStyle = useCallback((item: TripItem): MarkerStyle => {
+    const base = markerStyle(item)
+    if (groupOf(item) === 'considering') return { ...base, size: 24, opacity: 0.6 }
+    const n = numbers.get(item.id)
+    return n ? { ...base, glyph: String(n) } : base
+  }, [numbers])
+
+  function toggleGroup(group: Group) {
+    setGroups(prev => {
+      const next = new Set(prev)
+      if (next.has(group)) next.delete(group); else next.add(group)
+      return next
+    })
+    setSelected(null)
+  }
+
+  // A summary tile shows only its group; tapping the same tile again shows all.
+  function soloGroup(group: Group) {
+    setGroups(prev => (prev.size === 1 && prev.has(group) ? new Set(ALL_GROUPS) : new Set([group])))
+    setSelected(null)
+  }
+
+  function toggleSection(section: Section) {
+    setHidden(prev => {
+      const next = new Set(prev)
+      if (next.has(section)) next.delete(section); else next.add(section)
+      return next
+    })
+  }
 
   function requestNearMe() {
     if (nearMe === 'on') { setNearMe('off'); setUserLocation(null); return }
@@ -157,7 +315,9 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
     )
   }
 
-  const todayIsInTrip = plans.some(p => p.dateString === today)
+  const todayIsInTrip = view !== 'trip' ? plan.days.some(d => d.date === today) : plans.some(p => p.dateString === today)
+  const chipPlans = view !== 'trip' ? plan.days.map(d => ({ dateString: d.date })) : plans
+  const chipByLeg = view !== 'trip' ? false : byLeg
 
   const shown = matchedIds.length > 0
     ? pool.filter(i => matchedIds.includes(i.id))
@@ -166,9 +326,15 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const unmapped = shown.length - mapped.length
 
   const fitKey = [
+    view,
+    Array.from(groups).sort().join(','),
     selectedDate ?? 'all',
-    Array.from(activeTypes).sort().join(',') || 'alltypes',
-    Array.from(activeStatuses).sort().join(',') || 'allstatus',
+    // Every filter is in the key, so the map re-frames on what is left.
+    // Search was missing: it filtered the pins but left the map zoomed out on
+    // the whole country, so it looked like it did nothing.
+    Array.from(hiddenTypes).sort().join(',') || 'alltypes',
+    Array.from(hiddenLegs).sort().join(',') || 'alllegs',
+    q || 'nosearch',
     matchedIds.join(',') || 'noask',
   ].join('|')
 
@@ -194,21 +360,10 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
     }
   }
 
-  function toggleStatus(status: ItemStatus) {
-    setActiveStatuses(prev => {
-      const next = new Set(prev)
-      if (next.has(status)) next.delete(status)
-      else next.add(status)
-      return next
-    })
-    setSelected(null)
-  }
-
   function toggleType(type: ItemType) {
-    setActiveTypes(prev => {
+    setHiddenTypes(prev => {
       const next = new Set(prev)
-      if (next.has(type)) next.delete(type)
-      else next.add(type)
+      if (next.has(type)) next.delete(type); else next.add(type)
       return next
     })
     setSelected(null)
@@ -222,13 +377,40 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           <h1 className="truncate font-display text-lg leading-tight">{trip.name}</h1>
           <p className="truncate text-xs text-white/40">{trip.location}</p>
         </div>
+        <div className="flex flex-shrink-0 rounded-full border border-white/15 p-0.5 text-xs font-semibold">
+          {(['plan', 'trip'] as View[]).map(v => (
+            <button
+              key={v}
+              onClick={() => {
+                setView(v); setSelected(null)
+                // Its button is hidden on Plan, so a filter left on there could not be seen or undone.
+                if (v !== 'trip') { setNearMe('off'); setUserLocation(null) }
+              }}
+              className={`rounded-full px-2.5 py-1 transition-colors sm:px-3 ${view === v ? 'bg-amber-400 text-gray-950' : 'text-white/60 hover:text-white'}`}
+            >
+              {v === 'plan' ? 'Plan' : 'Trip'}
+            </button>
+          ))}
+        </div>
+        {view === 'plan' && (
+          <button
+            onClick={() => setCalendarOn(on => !on)}
+            aria-pressed={calendarOn}
+            className={`flex-shrink-0 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+              calendarOn ? 'border-amber-400 bg-amber-400/15 text-amber-300' : 'border-white/15 text-white/60 hover:text-white'
+            }`}
+          >
+            Calendar
+          </button>
+        )}
         <input
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search"
           className="hidden w-40 flex-shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white placeholder:text-white/35 focus:border-amber-400/40 focus:outline-none sm:block"
         />
-        <button
+        {/* Near me is for standing in the city; the Plan tab gives its room to the trip name. */}
+        {view === 'trip' && <button
           onClick={requestNearMe}
           className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
             nearMe === 'on' ? 'bg-blue-500 text-white'
@@ -237,7 +419,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           }`}
         >
           {nearMe === 'locating' ? '...' : nearMe === 'denied' ? 'Location off' : 'Near me'}
-        </button>
+        </button>}
         <button
           onClick={() => setAskOpen(v => !v)}
           className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
@@ -293,15 +475,16 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
         </div>
       )}
 
-      {/* Date chips. "All days" first so it is reachable without scrolling. */}
-      <div className="flex flex-shrink-0 gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
+      {/* Date chips. "All days" first so it is reachable without scrolling.
+          Hidden while the calendar is on: its day headers do the same job. */}
+      {!showCalendar && <div className="flex flex-shrink-0 gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
         <button
           onClick={() => { setSelectedDate(null); setSelected(null) }}
           className={`flex-shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
             selectedDate === null ? 'bg-amber-400 text-gray-950' : 'bg-white/10 text-white/70 hover:bg-white/15'
           }`}
         >
-          {byLeg ? 'Everywhere' : 'All days'}
+          {chipByLeg ? 'Everywhere' : 'All days'}
         </button>
         {todayIsInTrip && (
           <button
@@ -313,10 +496,10 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             Today
           </button>
         )}
-        {plans.map(plan => {
-          const active = plan.dateString === effectiveSelected
-          const isToday = !byLeg && plan.dateString === today
-          const past = !byLeg && plan.dateString < today
+        {chipPlans.map(plan => {
+          const active = plan.dateString === (view !== 'trip' ? selectedDate : effectiveSelected)
+          const isToday = !chipByLeg && plan.dateString === today
+          const past = !chipByLeg && plan.dateString < today
           return (
             <button
               key={plan.dateString}
@@ -325,7 +508,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
                 active ? 'bg-amber-400 text-gray-950' : past ? 'bg-white/5 text-white/35 hover:bg-white/10' : 'bg-white/10 text-white/70 hover:bg-white/15'
               } ${isToday && !active ? 'ring-1 ring-amber-400/50' : ''}`}
             >
-              {byLeg ? (
+              {chipByLeg ? (
                 <span className="block px-1 text-sm font-semibold leading-tight">{plan.dateString}</span>
               ) : (
                 <>
@@ -340,41 +523,46 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             </button>
           )
         })}
-      </div>
+      </div>}
 
-      {/* Status chips. Same rule as types: only what is actually present. */}
+      {/* One row for what is shown: Booked / Planned / To book / Considering.
+          Each chip switches its group on or off; the summary tiles change the
+          same four. The map's own Considering switch was removed as a second
+          control for the same thing (Elisa, 2026-10-18: "that is redundant"). Replaced a layer row and a status row
+          (audit H1, 2026-10-18). Same row on both tabs. */}
       <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
-        {presentStatuses.map(status => {
-          const on = activeStatuses.has(status)
-          const color = STATUS_DOT[status] ?? '#8E8E93'
+        {GROUPS.map(({ id, label, statuses }) => {
+          const on = groups.has(id)
+          const color = STATUS_DOT[statuses[0]] ?? '#8E8E93'
+          const count = pool.filter(i => groupOf(i) === id && matchesExceptGroup(i)).length
           return (
             <button
-              key={status}
-              onClick={() => toggleStatus(status)}
-              className="flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all"
+              key={id}
+              onClick={() => toggleGroup(id)}
+              aria-pressed={on}
+              className={`flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${on ? '' : 'border-dashed'}`}
               style={{
                 background: on ? color : 'transparent',
-                borderColor: on ? color : 'rgba(255,255,255,0.15)',
-                color: on ? '#0b0b0d' : color,
+                borderColor: on ? color : 'rgba(255,255,255,0.2)',
+                color: on ? '#0b0b0d' : 'rgba(255,255,255,0.55)',
               }}
             >
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: on ? '#0b0b0d' : color }} />
-              {status}
+              {label} <span className="opacity-60">{count}</span>
             </button>
           )
         })}
-        {activeStatuses.size > 0 && (
-          <button onClick={() => setActiveStatuses(new Set())} className="flex-shrink-0 text-xs text-white/40 underline hover:text-white/70">
-            Clear
-          </button>
-        )}
+        <SelectAll
+          active={groups.size !== ALL_GROUPS.length}
+          onClick={() => { setGroups(new Set(ALL_GROUPS)); setSelected(null) }}
+        />
       </div>
 
       {/* Type chips. Only the types actually present, so a Ferry toggle never
           shows up on a Utah ski weekend. */}
       <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
         {presentTypes.map(type => {
-          const on = activeTypes.has(type)
+          const on = !hiddenTypes.has(type)
           const meta = TYPE_META[type] ?? TYPE_META.Other
           return (
             <button
@@ -384,7 +572,8 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
               style={{
                 background: on ? meta.color : 'transparent',
                 borderColor: on ? meta.color : 'rgba(255,255,255,0.15)',
-                color: on ? '#0b0b0d' : meta.color,
+                color: on ? '#0b0b0d' : 'rgba(255,255,255,0.45)',
+                borderStyle: on ? 'solid' : 'dashed',
               }}
             >
               <span>{meta.glyph}</span>
@@ -392,18 +581,14 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             </button>
           )
         })}
-        {activeTypes.size > 0 && (
-          <button onClick={() => setActiveTypes(new Set())} className="flex-shrink-0 text-xs text-white/40 underline hover:text-white/70">
-            Clear
-          </button>
-        )}
+        <SelectAll active={hiddenTypes.size > 0} onClick={() => { setHiddenTypes(new Set()); setSelected(null) }} />
         {legs.length > 1 && !byLeg && legs.map(leg => {
-          const on = activeLegs.has(leg)
+          const on = !hiddenLegs.has(leg)
           return (
             <button
               key={leg}
               onClick={() => {
-                setActiveLegs(prev => {
+                setHiddenLegs(prev => {
                   const next = new Set(prev)
                   if (next.has(leg)) next.delete(leg); else next.add(leg)
                   return next
@@ -411,13 +596,16 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
                 setSelected(null)
               }}
               className={`flex-shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
-                on ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-indigo-400/30 text-indigo-300 hover:bg-white/5'
+                on ? 'border-indigo-400 bg-indigo-500 text-white' : 'border-dashed border-white/20 text-white/45 hover:bg-white/5'
               }`}
             >
               {leg}
             </button>
           )
         })}
+        {legs.length > 1 && !byLeg && (
+          <SelectAll active={hiddenLegs.size > 0} onClick={() => { setHiddenLegs(new Set()); setSelected(null) }} />
+        )}
         <span className="flex-shrink-0 pl-2 text-xs text-white/30">
           {mapped.length} on the map{unmapped > 0 ? ` - ${unmapped} without a location` : ''}
         </span>
@@ -425,8 +613,22 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
 
       {/* Map is the page. On a laptop it sits beside the plan; on a phone the
           plan scrolls underneath it. */}
+      {showCalendar && (
+        <div className="max-h-[45vh] flex-shrink-0 overflow-auto border-b border-white/10 bg-gray-950">
+          <TripCalendar
+            plan={plan}
+            matches={matches}
+            selectedDate={selectedDate}
+            onSelectDate={date => { setSelectedDate(date); setSelected(null) }}
+            selected={selected}
+            onSelectItem={(item, date) => { setSelectedDate(date); setSelected(item) }}
+            today={today}
+          />
+        </div>
+      )}
+
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <div className="relative h-[45vh] flex-shrink-0 lg:h-auto lg:flex-1">
+        <div className={showCalendar ? 'relative min-h-[220px] flex-1' : 'relative h-[45vh] flex-shrink-0 lg:h-auto lg:flex-1'}>
           <TripMap
             items={shown}
             apiKey={apiKey}
@@ -435,6 +637,24 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             userLocation={null}
             onRecenterReady={onRecenterReady}
             fitKey={fitKey}
+            styleFor={view !== 'trip' ? planStyle : undefined}
+            fitScopeIds={view !== 'trip' ? planFitIds : effectiveSelected ? undefined : allDaysFitIds}
+            popupExtra={view !== 'trip' ? item => (
+              // Plan, book or drop right from the pin. Elisa, 2026-10-18:
+              // "theres no way for me to toggle, confirm, or assign to date in
+              // the map". It was only in the side panel.
+              <StatusControl
+                key={item.id}
+                item={items.find(i => i.id === item.id) ?? item}
+                dates={plan.days.map(d => d.date)}
+                defaultDate={selectedDate}
+                passcode={passcode}
+                onSaved={saved => {
+                  setSaved(prev => ({ ...prev, [saved.id]: saved }))
+                  setSelected(null)
+                }}
+              />
+            ) : undefined}
           />
           <button
             onClick={() => { recenterRef.current?.(); setSelected(null) }}
@@ -450,7 +670,51 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
-          {visiblePlans.map(plan => (
+          {view === 'plan' ? (
+            <>
+              {/* The map popup carries the editor for anything with a pin; the
+                  panel carries it only for items that are not on the map. */}
+              {selected && !selected.coordinates && (
+                <div className="px-4 pt-4">
+                  <StatusEditor
+                      key={selected.id}
+                      item={items.find(i => i.id === selected.id) ?? selected}
+                      dates={plan.days.map(d => d.date)}
+                      defaultDate={selectedDate}
+                      passcode={passcode}
+                      onSaved={item => {
+                        setSaved(prev => ({ ...prev, [item.id]: item }))
+                        setSelected(null)
+                      }}
+                      onClose={() => setSelected(null)}
+                    />
+                </div>
+              )}
+              <PlanPanel
+                plan={plan}
+                tasks={tasks}
+                legsError={legRows.ok ? null : legRows.error}
+                day={planDayNow}
+                numbers={numbers}
+                onSelectDate={date => { setSelectedDate(date); setSelected(null) }}
+                selected={selected}
+                onSelect={setSelected}
+                hidden={hidden}
+                onToggleSection={toggleSection}
+                showConsidering={groups.has('considering')}
+                matches={matches}
+                groups={groups}
+                onPickGroup={soloGroup}
+                onClearFilters={() => {
+                  setHiddenTypes(new Set()); setHiddenLegs(new Set()); setQuery('')
+                  setGroups(new Set(ALL_GROUPS)); setSelected(null)
+                }}
+              />
+              <p className="px-4 pb-2 text-[11px] text-white/30">
+                <button onClick={lock} className="underline">Sign out</button> of the travel map on this browser
+              </p>
+            </>
+          ) : visiblePlans.map(plan => (
             <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} matches={matches} byLeg={byLeg} />
           ))}
 
@@ -458,7 +722,14 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             items={shown.filter(i => !i.coordinates)}
             onSelect={setSelected}
             dotColor={item => STATUS_DOT[item.status ?? ''] ?? '#8E8E93'}
-            subtitle={item => [item.type, item.legCity].filter(Boolean).join(' - ')}
+            // Say what is missing, so a gap can be closed rather than wondered at.
+            subtitle={item => {
+              const why = item.type === 'Flight' ? 'needs both airport codes from the booking in Notes'
+                : item.type === 'Train' ? 'needs both stations from the booking in Notes'
+                : item.address ? 'address could not be placed'
+                : 'no address'
+              return [item.type, item.legCity, why].filter(Boolean).join(' - ')
+            }}
           />
         </div>
       </div>
@@ -613,5 +884,18 @@ function Rows({ planned, showTime, selected, onSelect, today, dayDate }: {
         )
       })}
     </>
+  )
+}
+
+/** "Select all" for a chip row. Always there; dim when everything is already on. */
+function SelectAll({ active, onClick }: { active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={!active}
+      className="flex-shrink-0 rounded-full border border-white/15 px-2.5 py-1 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 disabled:cursor-default disabled:opacity-35 disabled:hover:bg-transparent"
+    >
+      Select all
+    </button>
   )
 }

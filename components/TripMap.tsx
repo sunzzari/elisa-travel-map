@@ -46,10 +46,14 @@ export interface MarkerStyle {
   bg: string
   border: string
   glyph: string
+  /** Pin diameter in px. Default 32. The Plan tab draws candidates smaller. */
+  size?: number
+  /** Default 1. The Plan tab fades candidates so they never read as plans. */
+  opacity?: number
 }
 
 /** The trip rule: colour by status, glyph by type. */
-function markerStyle(item: TripItem): MarkerStyle {
+export function markerStyle(item: TripItem): MarkerStyle {
   const bg = STATUS_COLORS[item.status ?? ''] ?? '#9ca3af'
   return {
     bg,
@@ -138,6 +142,7 @@ function MapContent({
   fitScopeIds,
   pinFilter,
   bubblesTakePinColour = false,
+  popupExtra,
 }: {
   items: TripItem[]
   selected: TripItem | null
@@ -160,6 +165,9 @@ function MapContent({
   /** A bubble takes the colour most of its pins have, instead of the one blue.
       Around Town asks for it, so its legend means something on a bubble too. */
   bubblesTakePinColour?: boolean
+  /** Replaces the status pill in a pin's popup. The trip Plan tab puts its
+      Idea / Planned / Booked dropdown here, so it works straight from the map. */
+  popupExtra?: (item: TripItem) => React.ReactNode
 }) {
   const map = useMap()
   const markerLib = useMapsLibrary('marker')
@@ -192,6 +200,25 @@ function MapContent({
   const onSelectRef = useRef(onSelect)
   onSelectRef.current = onSelect
 
+  // Hover card: name, status and the start of the notes, without a click.
+  // Elisa, 2026-10-18: "hovering over an item on the map shows the
+  // description". Markers are built once, so they look the item up here by id
+  // rather than keeping the copy they were built with.
+  const [hovered, setHovered] = useState<TripItem | null>(null)
+  const mappedRef = useRef(mapped)
+  mappedRef.current = mapped
+  // Steadied: it shows after a short rest on a pin and hides only after the
+  // pointer has left for a moment, so sliding across pins that sit close
+  // together no longer flickers ("the hovering is stuttering too much").
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hoverRef = useRef((id: string | null) => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current)
+    hoverTimer.current = setTimeout(() => {
+      setHovered(id ? mappedRef.current.find(i => i.id === id) ?? null : null)
+    }, id ? 220 : 180)
+  })
+  useEffect(() => () => { if (hoverTimer.current) clearTimeout(hoverTimer.current) }, [])
+
   const fitBounds = useCallback((includeUser: boolean) => {
     if (!map) return
     // Scope the fit, but never to nothing: an empty scope (coordinates still
@@ -220,6 +247,11 @@ function MapContent({
       { north: Math.max(...lats), south: Math.min(...lats), east: Math.max(...lngs), west: Math.min(...lngs) },
       60
     )
+    // Two pins a street apart would otherwise zoom to the pavement and hide
+    // everything around them. Cap a fit at street level, same as one pin.
+    google.maps.event.addListenerOnce(map, 'idle', () => {
+      if ((map.getZoom() ?? 0) > 16) map.setZoom(16)
+    })
   }, [map, mapped, userLocation, fitScopeIds])
 
   // Fit map to all pins on initial load
@@ -344,7 +376,7 @@ function MapContent({
         background: ${style.bg}; border: 2px solid ${style.border};
         border-radius: 50%; width: 32px; height: 32px;
         display: flex; align-items: center; justify-content: center;
-        font-size: 14px; cursor: pointer;
+        font-size: 14px; font-weight: 700; color: #0b0b0d; cursor: pointer;
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       `
       pin.textContent = style.glyph
@@ -354,7 +386,13 @@ function MapContent({
         title: item.name,
       })
       // Without `branches`: a tapped pin is one spot, and zooms to itself.
-      marker.addListener('gmp-click', () => onSelectRef.current({ ...item, branches: undefined }))
+      marker.addListener('gmp-click', () => {
+        if (hoverTimer.current) clearTimeout(hoverTimer.current)
+        setHovered(null)
+        onSelectRef.current({ ...item, branches: undefined })
+      })
+      pin.addEventListener('mouseenter', () => hoverRef.current(item.id))
+      pin.addEventListener('mouseleave', () => hoverRef.current(null))
       pinColours.set(marker, style.bg)
       prev.set(item.id, marker)
       newMarkers.push(marker)
@@ -364,7 +402,9 @@ function MapContent({
     }
   }, [map, markerLib, mapped])
 
-  // Highlight selected marker in clusterer
+  // Highlight selected marker in clusterer. Also re-applies the whole style,
+  // because a marker is built once per item: a status saved from the Plan tab,
+  // or a day switch renumbering its stops, must reach a pin that already exists.
   useEffect(() => {
     for (const [id, marker] of imperativeMarkersRef.current) {
       const el = marker.content as HTMLElement
@@ -373,16 +413,21 @@ function MapContent({
       if (!item) continue
       const style = styleFor(item)
       const isSelected = selected?.id === id
+      const size = (style.size ?? 32) + (isSelected ? 6 : 0)
+      el.style.background = style.bg
+      el.textContent = style.glyph
+      el.style.opacity = String(isSelected ? 1 : style.opacity ?? 1)
+      pinColours.set(marker, style.bg)
       el.style.border = `2px solid ${isSelected ? '#fff' : style.border}`
-      el.style.width = isSelected ? '38px' : '32px'
-      el.style.height = isSelected ? '38px' : '32px'
-      el.style.fontSize = isSelected ? '17px' : '14px'
+      el.style.width = `${size}px`
+      el.style.height = `${size}px`
+      el.style.fontSize = `${Math.round(size * 0.44)}px`
       el.style.boxShadow = isSelected
         ? '0 0 0 3px rgba(59,130,246,0.5), 0 2px 8px rgba(0,0,0,0.4)'
         : '0 2px 6px rgba(0,0,0,0.3)'
-      marker.zIndex = isSelected ? 100 : 1
+      marker.zIndex = isSelected ? 100 : (style.opacity ?? 1) < 1 ? 0 : 1
     }
-  }, [selected, items])
+  }, [selected, items, styleFor])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -407,6 +452,28 @@ function MapContent({
             background: '#3B82F6', border: '3px solid #fff',
             boxShadow: '0 0 0 4px rgba(59,130,246,0.25), 0 2px 6px rgba(0,0,0,0.3)',
           }} />
+        </AdvancedMarker>
+      )}
+
+      {/* Hover card. Not over the popup it would duplicate. */}
+      {hovered && hovered.coordinates && hovered.id !== selected?.id && (
+        // Never catches a click: the pin under it must stay tappable.
+        <AdvancedMarker position={hovered.coordinates} zIndex={300} clickable={false} style={{ pointerEvents: 'none' }}>
+          <div style={{
+            pointerEvents: 'none', transform: 'translateY(-26px)', maxWidth: 240,
+            background: '#111827', color: '#fff', borderRadius: 10, padding: '8px 10px',
+            boxShadow: '0 6px 18px rgba(0,0,0,0.35)', fontFamily: 'var(--font-body), system-ui, sans-serif',
+          }}>
+            <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3 }}>{hovered.name}</div>
+            <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>
+              {[hovered.type, hovered.status, hovered.timeText].filter(Boolean).join(' · ')}
+            </div>
+            {hovered.notes && (
+              <div style={{ fontSize: 11.5, color: '#d1d5db', lineHeight: 1.45, marginTop: 4 }}>
+                {hovered.notes.length > 160 ? hovered.notes.slice(0, 160) + '…' : hovered.notes}
+              </div>
+            )}
+          </div>
         </AdvancedMarker>
       )}
 
@@ -444,7 +511,7 @@ function MapContent({
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
-              {selected.status && (
+              {popupExtra ? popupExtra(selected) : selected.status && (
                 <span style={{
                   fontSize: 11, fontWeight: 600, padding: '2px 8px',
                   borderRadius: 12, background: STATUS_COLORS[selected.status] ?? '#9ca3af', color: '#fff',
@@ -534,9 +601,10 @@ interface Props {
   fitScopeIds?: Set<string>
   pinFilter?: (pin: { id: string; lat: number; lng: number }) => boolean
   bubblesTakePinColour?: boolean
+  popupExtra?: (item: TripItem) => React.ReactNode
 }
 
-export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour }: Props) {
+export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour, popupExtra }: Props) {
   const mapped = items.filter(i => i.coordinates)
 
   const center = userLocation ?? (mapped.length > 0
@@ -563,7 +631,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         clickableIcons={false}
         onClick={() => onSelect(null)}
       >
-        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} />
+        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} popupExtra={popupExtra} />
       </Map>
     </APIProvider>
   )
