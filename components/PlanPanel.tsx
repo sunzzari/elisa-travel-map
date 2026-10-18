@@ -125,12 +125,11 @@ function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hi
       <section>
         <Heading id="summary" title="Where it stands" hidden={hidden} onToggle={onToggleSection} />
         {!hidden.has('summary') && (
-          <div className="mt-1 grid grid-cols-4 gap-1.5">
+          <div className="mt-1 grid grid-cols-3 gap-1.5">
             {([
               ['booked', 'Booked', plan.counts.booked, STATUS_DOT.Confirmed],
               ['planned', 'Planned', plan.counts.planned, STATUS_DOT.Assigned],
-              ['tobook', 'To book', plan.counts.toBook, STATUS_DOT['Reservation Pending']],
-              ['considering', 'Considering', plan.counts.considering, STATUS_DOT.Shortlisted],
+              ['considering', 'Idea', plan.counts.considering, STATUS_DOT.Shortlisted],
             ] as [Group, string, number, string][]).map(([id, label, n, color]) => {
               // Tap a tile to show only that group (same four as the chip row);
               // tap it again to show all.
@@ -170,7 +169,7 @@ function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hi
             ))}
             {plan.toBook.map(item => (
               <ItemRow key={item.id} item={item} selected={selected?.id === item.id} onSelect={onSelect}
-                sub={`To book - ${shortDate(item.assignedToDate ?? item.date)}`} />
+                sub={`Needs booking - ${shortDate(item.assignedToDate ?? item.date)}`} />
             ))}
             {tasks.ok && todoCount === 0 && <p className="px-1.5 text-xs text-white/35">Nothing open.</p>}
           </div>
@@ -247,7 +246,7 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
         <section className="rounded-lg border border-orange-400/30 bg-orange-400/10 px-2 py-1.5">
           <p className="px-1.5 text-[10px] font-semibold uppercase tracking-wider text-orange-400">To do for this day</p>
           {day.toBook.map(item => (
-            <ItemRow key={item.id} item={item} selected={selected?.id === item.id} onSelect={onSelect} sub="To book" />
+            <ItemRow key={item.id} item={item} selected={selected?.id === item.id} onSelect={onSelect} sub="Needs booking" />
           ))}
           {day.gaps.map(g => <GapRow key={g.kind} gap={g} withDate={false} />)}
         </section>
@@ -277,7 +276,7 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
 
       <section>
         <p className="px-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/50">
-          Considering{day.leg ? ` in ${day.leg}` : ''} <span className="text-white/30">{considering.length}</span>
+          Ideas{day.leg ? ` in ${day.leg}` : ''} <span className="text-white/30">{considering.length}</span>
           {!showConsidering && <span className="ml-1 normal-case tracking-normal text-white/30">(switched off)</span>}
         </p>
         {shownConsidering.map(item => (
@@ -297,9 +296,8 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
 // Status editor. Her click is her word: this is how a candidate becomes a plan.
 
 const CHOICES: { status: EditableStatus; label: string }[] = [
-  { status: 'Shortlisted', label: 'Considering' },
+  { status: 'Shortlisted', label: 'Idea' },
   { status: 'Assigned', label: 'Planned' },
-  { status: 'Reservation Pending', label: 'To book' },
   { status: 'Confirmed', label: 'Booked' },
   { status: 'Cancelled', label: 'Drop' },
 ]
@@ -410,6 +408,120 @@ export function StatusEditor({ item, dates, defaultDate, passcode, onSaved, onCl
       <button onClick={save} disabled={busy || (dated && !date)} className="w-full rounded-lg bg-amber-400 py-2 text-sm font-semibold text-gray-950 disabled:opacity-40">
         {busy ? 'Saving...' : 'Save to Notion'}
       </button>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Compact status control for the map popup: a small dropdown where the status
+// pill was. Elisa, 2026-10-18: "for the planned vs. booked. you can make a
+// small drop down next to assigned", and three choices instead of four.
+// Day and time appear only once something changes.
+
+type Choice = 'idea' | 'planned' | 'booked'
+const CHOICE_STATUS: Record<Choice, EditableStatus> = { idea: 'Shortlisted', planned: 'Assigned', booked: 'Confirmed' }
+const CHOICE_COLOR: Record<Choice, string> = { idea: '#eab308', planned: '#3B82F6', booked: '#22c55e' }
+
+function choiceOf(status: string | null): Choice {
+  if (status === 'Confirmed') return 'booked'
+  if (status === 'Assigned' || status === 'Reservation Pending') return 'planned'
+  return 'idea'
+}
+
+export function StatusControl({ item, dates, defaultDate, passcode, onSaved }: {
+  item: TripItem
+  dates: string[]
+  defaultDate: string | null
+  passcode: string
+  onSaved: (item: TripItem) => void
+}) {
+  const start = choiceOf(item.status)
+  const startDate = item.assignedToDate ?? item.date ?? ''
+  const [choice, setChoice] = useState<Choice>(start)
+  const [date, setDate] = useState(startDate || defaultDate || dates[0] || '')
+  const [endDate, setEndDate] = useState(item.assignedToDateEnd ?? item.dateEnd ?? '')
+  const [time, setTime] = useState(item.timeText)
+  const [confirmation, setConfirmation] = useState(item.confirmationNumber)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const isHotel = item.type === 'Hotel'
+  const dated = choice !== 'idea'
+  const dirty = choice !== start || (dated && (date !== startDate || time !== item.timeText ||
+    (isHotel && endDate !== (item.assignedToDateEnd ?? item.dateEnd ?? '')) ||
+    (choice === 'booked' && confirmation !== item.confirmationNumber)))
+
+  async function send(status: EditableStatus) {
+    setBusy(true); setError(null)
+    const body: Record<string, unknown> = { status }
+    if (status === 'Assigned' || status === 'Confirmed') {
+      body.date = date
+      if (isHotel && endDate) body.endDate = endDate
+      body.time = time
+    }
+    if (status === 'Confirmed') body.confirmationNumber = confirmation
+    try {
+      const res = await fetch(`/api/trip-items/${item.id.replace(/-/g, '')}`, {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json', ...(passcode ? { 'x-edit-passcode': passcode } : {}) },
+        body: JSON.stringify(body),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) { setError(json.error ?? `Save failed (${res.status})`); return }
+      onSaved(json.item)
+    } catch {
+      setError('No connection. Nothing was saved.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const input: React.CSSProperties = { fontSize: 12, padding: '4px 6px', border: '1px solid #e5e7eb', borderRadius: 6, background: '#fff', color: '#111', minWidth: 0 }
+  const fmt = (d: string) => formatLongDate(d, { weekday: 'short', month: 'short', day: 'numeric' })
+
+  return (
+    <div style={{ display: 'contents' }}>
+      <select
+        value={choice}
+        onChange={e => setChoice(e.target.value as Choice)}
+        aria-label="Status"
+        style={{ fontSize: 11, fontWeight: 600, padding: '2px 6px', borderRadius: 12, border: 'none', cursor: 'pointer',
+          background: CHOICE_COLOR[choice], color: choice === 'idea' ? '#111' : '#fff' }}
+      >
+        <option value="idea">Idea</option>
+        <option value="planned">Planned</option>
+        <option value="booked">Booked</option>
+      </select>
+      {dirty && (
+        <div style={{ width: '100%', display: 'grid', gap: 6, marginTop: 4 }}>
+          {dated && (
+            <div style={{ display: 'flex', gap: 6 }}>
+              <select value={date} onChange={e => setDate(e.target.value)} style={{ ...input, flex: 1 }} aria-label={isHotel ? 'Check in' : 'Day'}>
+                {dates.map(d => <option key={d} value={d}>{fmt(d)}</option>)}
+              </select>
+              {isHotel
+                ? <select value={endDate} onChange={e => setEndDate(e.target.value)} style={{ ...input, flex: 1 }} aria-label="Check out">
+                    <option value="">Check out</option>
+                    {dates.filter(d => d > date).map(d => <option key={d} value={d}>{fmt(d)}</option>)}
+                  </select>
+                : <input value={time} onChange={e => setTime(e.target.value)} placeholder="Time" style={{ ...input, width: 80 }} aria-label="Time" />}
+            </div>
+          )}
+          {choice === 'booked' && (
+            <input value={confirmation} onChange={e => setConfirmation(e.target.value)} placeholder="Confirmation #" style={input} />
+          )}
+          <button onClick={() => send(CHOICE_STATUS[choice])} disabled={busy || (dated && !date)}
+            style={{ fontSize: 12, fontWeight: 600, padding: '5px 10px', borderRadius: 6, border: 'none', background: '#111827', color: '#fff', cursor: 'pointer', opacity: busy ? 0.5 : 1 }}>
+            {busy ? 'Saving...' : 'Save'}
+          </button>
+        </div>
+      )}
+      {error && <div style={{ width: '100%', fontSize: 11, color: '#dc2626' }}>{error}</div>}
+      {!dirty && (
+        <button onClick={() => send('Cancelled')} disabled={busy}
+          style={{ fontSize: 11, color: '#9ca3af', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: '2px 4px' }}>
+          Drop
+        </button>
+      )}
     </div>
   )
 }

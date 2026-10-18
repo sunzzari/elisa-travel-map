@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import TripMap, { markerStyle, type MarkerStyle } from './TripMap'
 import UnmappedList from './UnmappedList'
-import PlanPanel, { StatusEditor, STATUS_DOT, type Section } from './PlanPanel'
+import PlanPanel, { StatusEditor, StatusControl, STATUS_DOT, type Section } from './PlanPanel'
 import TripCalendar from './TripCalendar'
 import { usePasscode } from './PlaceEditing'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
@@ -643,18 +643,16 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
               // Plan, book or drop right from the pin. Elisa, 2026-10-18:
               // "theres no way for me to toggle, confirm, or assign to date in
               // the map". It was only in the side panel.
-              <StatusEditor
+              <StatusControl
                 key={item.id}
                 item={items.find(i => i.id === item.id) ?? item}
                 dates={plan.days.map(d => d.date)}
                 defaultDate={selectedDate}
                 passcode={passcode}
-                compact
                 onSaved={saved => {
                   setSaved(prev => ({ ...prev, [saved.id]: saved }))
                   setSelected(null)
                 }}
-                onClose={() => setSelected(null)}
               />
             ) : undefined}
           />

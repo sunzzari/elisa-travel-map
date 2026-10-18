@@ -31,12 +31,15 @@ export function isConsidering(item: TripItem): boolean {
  * Considering had four switches and "Planned" meant two different things.
  * Every live item sits in exactly one group, hotels included.
  */
-export type Group = 'booked' | 'planned' | 'tobook' | 'considering'
+// Three choices, Elisa 2026-10-18: "its not clear what the difference is
+// between considering, planned, to book, booked ... can we clean up the
+// choices?" -> Idea / Planned / Booked. A legacy Reservation Pending row
+// counts as Planned (on a day, not booked yet). The id stays 'considering'.
+export type Group = 'booked' | 'planned' | 'considering'
 export const GROUPS: { id: Group; label: string; statuses: string[] }[] = [
   { id: 'booked', label: 'Booked', statuses: ['Confirmed'] },
-  { id: 'planned', label: 'Planned', statuses: ['Assigned'] },
-  { id: 'tobook', label: 'To book', statuses: ['Reservation Pending'] },
-  { id: 'considering', label: 'Considering', statuses: ['Shortlisted', 'Researching'] },
+  { id: 'planned', label: 'Planned', statuses: ['Assigned', 'Reservation Pending'] },
+  { id: 'considering', label: 'Idea', statuses: ['Shortlisted', 'Researching'] },
 ]
 export const ALL_GROUPS: Group[] = GROUPS.map(g => g.id)
 
@@ -188,7 +191,7 @@ export function buildPlan(trip: Trip, legs: TripLeg[], items: TripItem[]): TripP
     gaps: days.flatMap(d => d.gaps),
     counts: {
       booked: live.filter(i => i.status === 'Confirmed').length,
-      planned: live.filter(i => i.status === 'Assigned').length,
+      planned: live.filter(i => i.status === 'Assigned' || i.status === 'Reservation Pending').length,
       toBook: live.filter(i => i.status === 'Reservation Pending').length,
       considering: live.filter(isConsidering).length,
     },

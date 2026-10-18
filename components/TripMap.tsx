@@ -165,8 +165,8 @@ function MapContent({
   /** A bubble takes the colour most of its pins have, instead of the one blue.
       Around Town asks for it, so its legend means something on a bubble too. */
   bubblesTakePinColour?: boolean
-  /** Extra controls at the bottom of a pin's popup. The trip Plan tab puts its
-      plan / book / drop editor here, so it works straight from the map. */
+  /** Replaces the status pill in a pin's popup. The trip Plan tab puts its
+      Idea / Planned / Booked dropdown here, so it works straight from the map. */
   popupExtra?: (item: TripItem) => React.ReactNode
 }) {
   const map = useMap()
@@ -207,9 +207,17 @@ function MapContent({
   const [hovered, setHovered] = useState<TripItem | null>(null)
   const mappedRef = useRef(mapped)
   mappedRef.current = mapped
+  // Steadied: it shows after a short rest on a pin and hides only after the
+  // pointer has left for a moment, so sliding across pins that sit close
+  // together no longer flickers ("the hovering is stuttering too much").
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const hoverRef = useRef((id: string | null) => {
-    setHovered(id ? mappedRef.current.find(i => i.id === id) ?? null : null)
+    if (hoverTimer.current) clearTimeout(hoverTimer.current)
+    hoverTimer.current = setTimeout(() => {
+      setHovered(id ? mappedRef.current.find(i => i.id === id) ?? null : null)
+    }, id ? 220 : 180)
   })
+  useEffect(() => () => { if (hoverTimer.current) clearTimeout(hoverTimer.current) }, [])
 
   const fitBounds = useCallback((includeUser: boolean) => {
     if (!map) return
@@ -378,7 +386,11 @@ function MapContent({
         title: item.name,
       })
       // Without `branches`: a tapped pin is one spot, and zooms to itself.
-      marker.addListener('gmp-click', () => { hoverRef.current(null); onSelectRef.current({ ...item, branches: undefined }) })
+      marker.addListener('gmp-click', () => {
+        if (hoverTimer.current) clearTimeout(hoverTimer.current)
+        setHovered(null)
+        onSelectRef.current({ ...item, branches: undefined })
+      })
       pin.addEventListener('mouseenter', () => hoverRef.current(item.id))
       pin.addEventListener('mouseleave', () => hoverRef.current(null))
       pinColours.set(marker, style.bg)
@@ -499,7 +511,7 @@ function MapContent({
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 8 }}>
-              {selected.status && (
+              {popupExtra ? popupExtra(selected) : selected.status && (
                 <span style={{
                   fontSize: 11, fontWeight: 600, padding: '2px 8px',
                   borderRadius: 12, background: STATUS_COLORS[selected.status] ?? '#9ca3af', color: '#fff',
@@ -567,7 +579,6 @@ function MapContent({
                 Notion →
               </a>
             </div>
-            {popupExtra && <div style={{ marginTop: 10 }}>{popupExtra(selected)}</div>}
           </div>
         </InfoWindow>
       )}
