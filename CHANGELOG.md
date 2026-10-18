@@ -4,6 +4,8 @@ Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.m
 
 ## 2026-10-18
 
+- `7:27am` **Considering is on the map by default, with a switch on the map** - Elisa: "all of the 'considering' should display on the map with easy toggle on/off". The Plan tab now opens with every Considering item drawn (small faded pins), and a Considering switch sits in the map's top-left corner. On a selected day the map shows that day's plans plus every Considering item on the trip, not only that leg's; it stays framed on the day's plans. The day panel's list is labelled by leg ("Considering in Salzburg").
+
 - `7:12am` **Plan tab: a trip planning dashboard on the trip map** - Elisa: "a trip planning dashboard connected to the travel map... so I can see what things I have booked, what things I still have left to do, and the map representation of the things that I'm considering or confirmed on each day." Then: "nicely look at each days planned/assigned things just on the map", "considering items... that i can also see on the map if i toggle", "a to-do per day? and a to-do overall?", "highly modular in terms of the views i can make".
   - **Plan / Trip toggle** on every trip page, same map. Opens on Plan until the trip starts (trip time zone), on the day view after. No new map: `TripMap` is still the only one.
   - **Plan panel** (`components/PlanPanel.tsx`, `lib/plan.ts`): Booked / Planned / To book / Considering counts; To do = her open Central Tasks on the trip's Master Project plus every Reservation Pending item; Gaps from your dates = nights with no booked hotel and legs with no booked way in (computed, never written as tasks); Day by day for every trip date, each with its own to-do count. Nothing Claude suggested can reach To do.

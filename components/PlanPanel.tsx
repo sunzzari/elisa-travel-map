@@ -235,7 +235,7 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
 
       <section>
         <p className="px-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/50">
-          Considering <span className="text-white/30">{considering.length}</span>
+          Considering{day.leg ? ` in ${day.leg}` : ''} <span className="text-white/30">{considering.length}</span>
           {!showConsidering && considering.length > 0 && <span className="ml-1 normal-case tracking-normal text-white/30">(off on the map)</span>}
         </p>
         {shownConsidering.map(item => (

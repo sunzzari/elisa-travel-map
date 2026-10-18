@@ -38,7 +38,9 @@ const TYPE_ORDER: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Tr
 const STATUS_ORDER: ItemStatus[] = ['Confirmed', 'Assigned', 'Reservation Pending', 'Shortlisted', 'Researching']
 
 type View = 'plan' | 'trip'
-const DEFAULT_LAYERS: Layer[] = ['committed', 'tobook', 'hotels']
+// Considering is ON by default. Elisa, 2026-10-18: "all of the 'considering'
+// should display on the map with easy toggle on/off".
+const DEFAULT_LAYERS: Layer[] = ['committed', 'tobook', 'hotels', 'considering']
 const SECTIONS: Section[] = ['summary', 'todo', 'coverage', 'days']
 
 // Every setting the views are made of lives in the URL, so any view can be
@@ -142,11 +144,13 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // matter if things are or not assigned."
   const pool = useMemo(() => {
     if (view === 'plan') {
-      // Plan tab: what is on the map is chosen by layer. Off by default:
-      // Considering, so a day reads as her plan and nothing else.
+      // Plan tab: what is on the map is chosen by layer. A day shows its own
+      // plans plus EVERY Considering item on the trip, not only that leg's:
+      // her words, "all of the 'considering' should display on the map". The
+      // map stays framed on the day's plans, so other-city ideas sit off-frame.
       const inLayer = (i: TripItem) => { const l = layerOf(i); return l !== null && layers.has(l) }
       if (planDayNow) {
-        const list = [...planDayNow.committed.map(c => c.item), ...planDayNow.considering]
+        const list = [...planDayNow.committed.map(c => c.item), ...liveItems.filter(i => layerOf(i) === 'considering')]
         return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i).filter(inLayer)
       }
       return liveItems.filter(inLayer)
@@ -476,7 +480,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           {LAYERS.map(({ id, label }) => {
             const on = layers.has(id)
             const count = (planDayNow
-              ? [...planDayNow.committed.map(c => c.item), ...planDayNow.considering]
+              ? [...planDayNow.committed.map(c => c.item), ...liveItems.filter(i => layerOf(i) === 'considering')]
               : liveItems
             ).filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i && layerOf(item) === id).length
             return (
@@ -590,6 +594,23 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             styleFor={view === 'plan' ? planStyle : undefined}
             fitScopeIds={view === 'plan' ? planFitIds : undefined}
           />
+          {/* The one-tap Considering switch, on the map itself. */}
+          {view === 'plan' && (() => {
+            const on = layers.has('considering')
+            const count = liveItems.filter(i => layerOf(i) === 'considering').length
+            return (
+              <button
+                onClick={() => { toggleLayer('considering'); setSelected(null) }}
+                aria-pressed={on}
+                className="absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-white/15 bg-gray-900/85 py-1.5 pl-2 pr-3 text-xs font-semibold text-white shadow-lg backdrop-blur-md"
+              >
+                <span className={`relative h-4 w-7 rounded-full transition-colors ${on ? 'bg-yellow-400' : 'bg-white/20'}`}>
+                  <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${on ? 'left-3.5' : 'left-0.5'}`} />
+                </span>
+                Considering <span className="text-white/50">{count}</span>
+              </button>
+            )
+          })()}
           <button
             onClick={() => { recenterRef.current?.(); setSelected(null) }}
             className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-gray-900/80 text-white/60 backdrop-blur-md transition-colors hover:text-amber-400"
