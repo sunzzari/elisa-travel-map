@@ -685,6 +685,10 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
                 matches={matches}
                 groups={groups}
                 onPickGroup={soloGroup}
+                onClearFilters={() => {
+                  setActiveTypes(new Set()); setActiveLegs(new Set()); setQuery('')
+                  setGroups(new Set(ALL_GROUPS)); setSelected(null)
+                }}
               />
               <p className="px-4 pb-2 text-[11px] text-white/30">
                 <button onClick={lock} className="underline">Sign out</button> of the travel map on this browser

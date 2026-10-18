@@ -88,6 +88,28 @@ interface Props {
   matches: (i: TripItem) => boolean
   groups: Set<Group>
   onPickGroup: (group: Group) => void
+  /** Turns off every filter (types, legs, search, groups). */
+  onClearFilters: () => void
+}
+
+// When filters hide a day's plans, say so: "Nothing planned" next to a hidden
+// plan read as missing data. Elisa, 2026-10-18, with the Hotel chip on: "it
+// says nothing is planned for dates other than dec 27 but that is not true".
+function Hidden({ count, onClear }: { count: number; onClear: () => void }) {
+  return (
+    <p className="mt-0.5 text-xs text-white/40">
+      {count} planned, hidden by your filters.{' '}
+      <span
+        role="button"
+        tabIndex={0}
+        onClick={e => { e.stopPropagation(); onClear() }}
+        onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); onClear() } }}
+        className="cursor-pointer text-amber-400 underline"
+      >
+        Show all
+      </span>
+    </p>
+  )
 }
 
 export default function PlanPanel(props: Props) {
@@ -95,7 +117,7 @@ export default function PlanPanel(props: Props) {
   return day ? <DayView {...props} day={day} /> : <TripView {...props} />
 }
 
-function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hidden, onToggleSection, matches, groups, onPickGroup }: Props) {
+function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hidden, onToggleSection, matches, groups, onPickGroup, onClearFilters }: Props) {
   const openTasks = tasks.ok ? tasks.value : []
   const todoCount = openTasks.length + plan.toBook.length
   return (
@@ -184,7 +206,9 @@ function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hi
                   {d.isNight && (
                     <p className="text-[11px] text-white/45">{d.hotel ? `Sleeping at ${d.hotel.name}` : 'No hotel booked'}</p>
                   )}
-                  {stops.length > 0
+                  {stops.length === 0 && d.committed.some(c => c.item.type !== 'Hotel')
+                    ? <Hidden count={d.committed.filter(c => c.item.type !== 'Hotel').length} onClear={onClearFilters} />
+                    : stops.length > 0
                     ? <p className="mt-0.5 truncate text-xs text-white/70">{stops.map(s => s.item.name).join(' · ')}</p>
                     : <p className="mt-0.5 text-xs text-white/30">Nothing planned</p>}
                   {d.considering.length > 0 && <p className="text-[11px] text-white/30">{d.considering.length} considering</p>}
@@ -198,7 +222,7 @@ function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hi
   )
 }
 
-function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showConsidering, matches }: Props & { day: PlanDay }) {
+function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showConsidering, matches, onClearFilters }: Props & { day: PlanDay }) {
   const index = plan.days.findIndex(d => d.date === day.date)
   const prev = plan.days[index - 1]
   const next = plan.days[index + 1]
@@ -243,7 +267,12 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
           <ItemRow key={item.id} item={item} number={numbers.get(item.id)} selected={selected?.id === item.id} onSelect={onSelect}
             sub={[time.label, item.type, item.status].filter(Boolean).join(' - ')} />
         ))}
-        {committed.filter(c => c.item.type !== 'Hotel').length === 0 && <p className="px-1.5 text-xs text-white/35">Nothing planned yet.</p>}
+        {committed.filter(c => c.item.type !== 'Hotel').length === 0 && (() => {
+          const all = day.committed.filter(c => c.item.type !== 'Hotel').length
+          return all > 0
+            ? <div className="px-1.5"><Hidden count={all} onClear={onClearFilters} /></div>
+            : <p className="px-1.5 text-xs text-white/35">Nothing planned yet.</p>
+        })()}
       </section>
 
       <section>
