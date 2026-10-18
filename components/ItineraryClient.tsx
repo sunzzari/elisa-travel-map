@@ -8,9 +8,9 @@ import PlanPanel, { StatusEditor, STATUS_DOT, type Section } from './PlanPanel'
 import TripCalendar from './TripCalendar'
 import { usePasscode } from './PlaceEditing'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
-import { buildPlan, layerOf, stopNumbers, LAYERS, type Layer } from '@/lib/plan'
+import { buildPlan, groupOf, stopNumbers, GROUPS, ALL_GROUPS, type Group } from '@/lib/plan'
 import { haversineKm } from '@/lib/geo'
-import type { Trip, TripItem, ItemType, ItemStatus, TripLeg, TripTask, Loaded } from '@/lib/types'
+import type { Trip, TripItem, ItemType, TripLeg, TripTask, Loaded } from '@/lib/types'
 import type { UserLocation } from '@/lib/geo'
 
 // Map-first day view.
@@ -34,14 +34,9 @@ const TYPE_META: Record<string, { glyph: string; color: string }> = {
 
 const TYPE_ORDER: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Train', 'Ferry', 'Car Rental', 'Other']
 
-// Order matters: this is the pipeline from "booked" to "idea", and the chips
-// read left to right as certainty decreasing.
-const STATUS_ORDER: ItemStatus[] = ['Confirmed', 'Assigned', 'Reservation Pending', 'Shortlisted', 'Researching']
-
 type View = 'plan' | 'trip'
-// Considering is ON by default. Elisa, 2026-10-18: "all of the 'considering'
-// should display on the map with easy toggle on/off".
-const DEFAULT_LAYERS: Layer[] = ['committed', 'tobook', 'hotels', 'considering']
+// Every group is on by default, Considering included. Elisa, 2026-10-18: "all
+// of the 'considering' should display on the map with easy toggle on/off".
 const SECTIONS: Section[] = ['summary', 'todo', 'coverage', 'days']
 
 // Every setting the views are made of lives in the URL, so any view can be
@@ -100,7 +95,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // on the day view once it has.
   const planningStage = !trip.departureDate || today < trip.departureDate
   const [view, setView] = useState<View>(planningStage ? 'plan' : 'trip')
-  const [layers, setLayers] = useState<Set<Layer>>(new Set(DEFAULT_LAYERS))
+  // Booked / Planned / To book / Considering: the one filter the chip row, the
+  // summary tiles and the map switch all share (lib/plan.ts GROUPS).
+  const [groups, setGroups] = useState<Set<Group>>(new Set(ALL_GROUPS))
   // The calendar is a switch on the Plan tab. While it is on, its day headers
   // pick the day, so the date bar steps aside for room. Elisa, 2026-10-18:
   // "when you display the calendar (toggleable on and off) you get rid of the
@@ -115,7 +112,6 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // In leg mode there is no "today", so default to showing everything.
   const effectiveSelected = view !== 'trip' ? (planDayNow ? selectedDate : null) : byLeg ? null : selectedDate
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
-  const [activeStatuses, setActiveStatuses] = useState<Set<ItemStatus>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
 
   // Ask-about-this-trip. Answers come from her own items only.
@@ -152,26 +148,20 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const pool = useMemo(() => {
     // Plan and Calendar draw the map the same way; only their side differs.
     if (view !== 'trip') {
-      // Plan tab: what is on the map is chosen by layer. A day shows its own
-      // plans plus EVERY Considering item on the trip, not only that leg's:
-      // her words, "all of the 'considering' should display on the map". The
-      // map stays framed on the day's plans, so other-city ideas sit off-frame.
-      const inLayer = (i: TripItem) => { const l = layerOf(i); return l !== null && layers.has(l) }
+      // A day shows its own plans plus EVERY Considering item on the trip, not
+      // only that leg's: her words, "all of the 'considering' should display on
+      // the map". The map stays framed on the day's plans, so other-city ideas
+      // sit off-frame. Which groups show is decided by `matches`.
       if (planDayNow) {
-        const list = [...planDayNow.committed.map(c => c.item), ...liveItems.filter(i => layerOf(i) === 'considering')]
-        return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i).filter(inLayer)
+        const list = [...planDayNow.committed.map(c => c.item), ...liveItems.filter(i => groupOf(i) === 'considering')]
+        return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i)
       }
-      return liveItems.filter(inLayer)
+      return liveItems
     }
     if (!effectiveSelected) return liveItems
     const list = visiblePlans.flatMap(p => [...p.timeline.map(x => x.item), ...p.anytime.map(x => x.item), ...p.options])
     return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i)
-  }, [view, layers, planDayNow, effectiveSelected, liveItems, visiblePlans])
-
-  const presentStatuses = useMemo(
-    () => STATUS_ORDER.filter(st => pool.some(i => i.status === st)),
-    [pool]
-  )
+  }, [view, planDayNow, effectiveSelected, liveItems, visiblePlans])
 
   const presentTypes = useMemo(
     () => TYPE_ORDER.filter(t => pool.some(i => (i.type ?? 'Other') === t)),
@@ -183,15 +173,20 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const q = query.trim().toLowerCase()
   const NEAR_KM = 5
 
-  const matches = useCallback((i: TripItem) => (
+  // Every filter but the group, so each group chip can count what it would add.
+  const matchesExceptGroup = useCallback((i: TripItem) => (
     (activeTypes.size === 0 || activeTypes.has((i.type ?? 'Other') as ItemType)) &&
-    (activeStatuses.size === 0 || (i.status != null && activeStatuses.has(i.status))) &&
     (activeLegs.size === 0 || activeLegs.has(i.legCity)) &&
     (!q || i.name.toLowerCase().includes(q) || i.venue.toLowerCase().includes(q) || i.notes.toLowerCase().includes(q)) &&
     (nearMe !== 'on' || !userLocation || (
       !!i.coordinates && haversineKm(userLocation.lat, userLocation.lng, i.coordinates.lat, i.coordinates.lng) <= NEAR_KM
     ))
-  ), [activeTypes, activeStatuses, activeLegs, q, nearMe, userLocation])
+  ), [activeTypes, activeLegs, q, nearMe, userLocation])
+
+  const matches = useCallback((i: TripItem) => {
+    const g = groupOf(i)
+    return g !== null && groups.has(g) && matchesExceptGroup(i)
+  }, [groups, matchesExceptGroup])
 
   const legs = useMemo(
     () => Array.from(new Set(items.map(i => i.legCity).filter(Boolean))).sort(),
@@ -208,14 +203,12 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     if (params.get('cal') === '1') setCalendarOn(true)
     const day = params.get('day')
     if (day) setSelectedDate(day)
-    const l = readList(params, 'layers', LAYERS.map(x => x.id))
-    if (l) setLayers(new Set(l))
+    const g = readList(params, 'show', ALL_GROUPS)
+    if (g) setGroups(new Set(g))
     const h = readList(params, 'hide', SECTIONS)
     if (h) setHidden(new Set(h))
     const t = readList<ItemType>(params, 'types')
     if (t) setActiveTypes(new Set(t))
-    const st = readList<ItemStatus>(params, 'status')
-    if (st) setActiveStatuses(new Set(st))
     const lg = readList(params, 'legs')
     if (lg) setActiveLegs(new Set(lg))
     setHydrated(true)
@@ -228,13 +221,12 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     params.set('view', view)
     if (showCalendar) params.set('cal', '1')
     if (selectedDate) params.set('day', selectedDate)
-    if (view !== 'trip' && join(layers) !== DEFAULT_LAYERS.join(',')) params.set('layers', join(layers))
+    if (groups.size !== ALL_GROUPS.length) params.set('show', join(groups))
     if (hidden.size) params.set('hide', join(hidden))
     if (activeTypes.size) params.set('types', join(activeTypes))
-    if (activeStatuses.size) params.set('status', join(activeStatuses))
     if (activeLegs.size) params.set('legs', join(activeLegs))
     window.history.replaceState(null, '', `${window.location.pathname}?${params}`)
-  }, [hydrated, view, showCalendar, selectedDate, layers, hidden, activeTypes, activeStatuses, activeLegs])
+  }, [hydrated, view, showCalendar, selectedDate, groups, hidden, activeTypes, activeLegs])
 
   const numbers = useMemo(() => (planDayNow ? stopNumbers(planDayNow) : new Map<string, number>()), [planDayNow])
   // On a planned day the map frames her plans; a candidate across the region
@@ -254,7 +246,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     // FRAME_KM of the day. One Wachau day-trip idea 70km out would otherwise
     // zoom a Vienna day out to the whole region.
     const FRAME_KM = 15
-    const legIdeas = layers.has('considering') ? planDayNow.considering.filter(onMap) : []
+    const legIdeas = groups.has('considering') ? planDayNow.considering.filter(onMap) : []
     const anchor = plans.length ? plans : legIdeas
     const mid = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
     const centre = anchor.length
@@ -265,22 +257,29 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
       : []
     const ids = [...plans, ...ideas].map(i => i.id)
     return ids.length ? new Set(ids) : undefined
-  }, [planDayNow, matches, layers])
+  }, [planDayNow, matches, groups])
   // Plan tab pins: the day's stops numbered 1, 2, 3 in order; candidates small
   // and faded so they never read as plans.
   const planStyle = useCallback((item: TripItem): MarkerStyle => {
     const base = markerStyle(item)
-    if (layerOf(item) === 'considering') return { ...base, size: 24, opacity: 0.6 }
+    if (groupOf(item) === 'considering') return { ...base, size: 24, opacity: 0.6 }
     const n = numbers.get(item.id)
     return n ? { ...base, glyph: String(n) } : base
   }, [numbers])
 
-  function toggleLayer(layer: Layer) {
-    setLayers(prev => {
+  function toggleGroup(group: Group) {
+    setGroups(prev => {
       const next = new Set(prev)
-      if (next.has(layer)) next.delete(layer); else next.add(layer)
+      if (next.has(group)) next.delete(group); else next.add(group)
       return next
     })
+    setSelected(null)
+  }
+
+  // A summary tile shows only its group; tapping the same tile again shows all.
+  function soloGroup(group: Group) {
+    setGroups(prev => (prev.size === 1 && prev.has(group) ? new Set(ALL_GROUPS) : new Set([group])))
+    setSelected(null)
   }
 
   function toggleSection(section: Section) {
@@ -313,10 +312,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
 
   const fitKey = [
     view,
-    Array.from(layers).sort().join(','),
+    Array.from(groups).sort().join(','),
     selectedDate ?? 'all',
     Array.from(activeTypes).sort().join(',') || 'alltypes',
-    Array.from(activeStatuses).sort().join(',') || 'allstatus',
     matchedIds.join(',') || 'noask',
   ].join('|')
 
@@ -340,16 +338,6 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     } finally {
       setAsking(false)
     }
-  }
-
-  function toggleStatus(status: ItemStatus) {
-    setActiveStatuses(prev => {
-      const next = new Set(prev)
-      if (next.has(status)) next.delete(status)
-      else next.add(status)
-      return next
-    })
-    setSelected(null)
   }
 
   function toggleType(type: ItemType) {
@@ -518,55 +506,35 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
         })}
       </div>}
 
-      {/* Plan tab layers: each part of the map switches on and off on its own. */}
-      {view !== 'trip' && (
-        <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
-          <span className="flex-shrink-0 text-[10px] uppercase tracking-wider text-white/30">Show</span>
-          {LAYERS.map(({ id, label }) => {
-            const on = layers.has(id)
-            const count = (planDayNow
-              ? [...planDayNow.committed.map(c => c.item), ...liveItems.filter(i => layerOf(i) === 'considering')]
-              : liveItems
-            ).filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i && layerOf(item) === id && matches(item)).length
-            return (
-              <button
-                key={id}
-                onClick={() => { toggleLayer(id); setSelected(null) }}
-                className={`flex flex-shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
-                  on ? 'border-white/60 bg-white text-gray-950' : 'border-white/15 text-white/55 hover:bg-white/5'
-                } ${id === 'considering' && !on ? 'border-dashed' : ''}`}
-              >
-                {label} <span className="opacity-60">{count}</span>
-              </button>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Status chips. Same rule as types: only what is actually present. */}
+      {/* One row for what is shown: Booked / Planned / To book / Considering.
+          Each chip switches its group on or off; the summary tiles and the map
+          switch change the same four. Replaced a layer row and a status row
+          (audit H1, 2026-10-18). Same row on both tabs. */}
       <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
-        {presentStatuses.map(status => {
-          const on = activeStatuses.has(status)
-          const color = STATUS_DOT[status] ?? '#8E8E93'
+        {GROUPS.map(({ id, label, statuses }) => {
+          const on = groups.has(id)
+          const color = STATUS_DOT[statuses[0]] ?? '#8E8E93'
+          const count = pool.filter(i => groupOf(i) === id && matchesExceptGroup(i)).length
           return (
             <button
-              key={status}
-              onClick={() => toggleStatus(status)}
-              className="flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all"
+              key={id}
+              onClick={() => toggleGroup(id)}
+              aria-pressed={on}
+              className={`flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${on ? '' : 'border-dashed'}`}
               style={{
                 background: on ? color : 'transparent',
-                borderColor: on ? color : 'rgba(255,255,255,0.15)',
-                color: on ? '#0b0b0d' : color,
+                borderColor: on ? color : 'rgba(255,255,255,0.2)',
+                color: on ? '#0b0b0d' : 'rgba(255,255,255,0.55)',
               }}
             >
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: on ? '#0b0b0d' : color }} />
-              {status}
+              {label} <span className="opacity-60">{count}</span>
             </button>
           )
         })}
-        {activeStatuses.size > 0 && (
-          <button onClick={() => setActiveStatuses(new Set())} className="flex-shrink-0 text-xs text-white/40 underline hover:text-white/70">
-            Clear
+        {groups.size !== ALL_GROUPS.length && (
+          <button onClick={() => { setGroups(new Set(ALL_GROUPS)); setSelected(null) }} className="flex-shrink-0 text-xs text-white/40 underline hover:text-white/70">
+            Show all
           </button>
         )}
       </div>
@@ -655,11 +623,11 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           />
           {/* The one-tap Considering switch, on the map itself. */}
           {view !== 'trip' && (() => {
-            const on = layers.has('considering')
-            const count = liveItems.filter(i => layerOf(i) === 'considering' && matches(i)).length
+            const on = groups.has('considering')
+            const count = liveItems.filter(i => groupOf(i) === 'considering' && matchesExceptGroup(i)).length
             return (
               <button
-                onClick={() => { toggleLayer('considering'); setSelected(null) }}
+                onClick={() => toggleGroup('considering')}
                 aria-pressed={on}
                 className="absolute left-3 top-3 z-10 flex items-center gap-2 rounded-full border border-white/15 bg-gray-900/85 py-1.5 pl-2 pr-3 text-xs font-semibold text-white shadow-lg backdrop-blur-md"
               >
@@ -713,19 +681,10 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
                 onSelect={setSelected}
                 hidden={hidden}
                 onToggleSection={toggleSection}
-                showConsidering={layers.has('considering')}
+                showConsidering={groups.has('considering')}
                 matches={matches}
-                activeStatuses={activeStatuses}
-                onPickStatuses={statuses => {
-                  // A tile is a status filter: tap to show only those on the
-                  // map, tap again to clear. Considering also turns its layer on.
-                  const same = statuses.length === activeStatuses.size && statuses.every(st => activeStatuses.has(st))
-                  setActiveStatuses(same ? new Set() : new Set(statuses))
-                  if (!same && statuses.some(st => st === 'Shortlisted' || st === 'Researching')) {
-                    setLayers(prev => new Set([...prev, 'considering']))
-                  }
-                  setSelected(null)
-                }}
+                groups={groups}
+                onPickGroup={soloGroup}
               />
               <p className="px-4 pb-2 text-[11px] text-white/30">
                 <button onClick={lock} className="underline">Sign out</button> of the travel map on this browser

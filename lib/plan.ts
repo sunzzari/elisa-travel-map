@@ -23,21 +23,25 @@ export function isConsidering(item: TripItem): boolean {
   return CONSIDERING_STATUSES.has(item.status ?? '')
 }
 
-/** The map layers. Each item sits in exactly one, so toggles never fight. */
-export type Layer = 'committed' | 'tobook' | 'hotels' | 'considering'
-export const LAYERS: { id: Layer; label: string }[] = [
-  { id: 'committed', label: 'Planned' },
-  { id: 'tobook', label: 'To book' },
-  { id: 'hotels', label: 'Hotels' },
-  { id: 'considering', label: 'Considering' },
+/**
+ * The four groups every control speaks in: the chip row, the summary tiles and
+ * the map's Considering switch all switch these, and nothing else. Elisa,
+ * 2026-10-18 (audit H1): "replace the layer and status chip rows with one
+ * Booked / Planned / To book / Considering row, keep the map switch." Before,
+ * Considering had four switches and "Planned" meant two different things.
+ * Every live item sits in exactly one group, hotels included.
+ */
+export type Group = 'booked' | 'planned' | 'tobook' | 'considering'
+export const GROUPS: { id: Group; label: string; statuses: string[] }[] = [
+  { id: 'booked', label: 'Booked', statuses: ['Confirmed'] },
+  { id: 'planned', label: 'Planned', statuses: ['Assigned'] },
+  { id: 'tobook', label: 'To book', statuses: ['Reservation Pending'] },
+  { id: 'considering', label: 'Considering', statuses: ['Shortlisted', 'Researching'] },
 ]
+export const ALL_GROUPS: Group[] = GROUPS.map(g => g.id)
 
-export function layerOf(item: TripItem): Layer | null {
-  if (isConsidering(item)) return 'considering'
-  if (!isCommitted(item)) return null
-  if (item.type === 'Hotel') return 'hotels'
-  if (item.status === 'Reservation Pending') return 'tobook'
-  return 'committed'
+export function groupOf(item: TripItem): Group | null {
+  return GROUPS.find(g => g.statuses.includes(item.status ?? ''))?.id ?? null
 }
 
 /** A gap worked out from her own dates. A fact, never written as a task. */

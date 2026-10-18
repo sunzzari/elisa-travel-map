@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { formatLongDate } from '@/lib/day'
-import type { TripPlan, PlanDay, Gap } from '@/lib/plan'
-import type { ItemStatus, Loaded, TripItem, TripTask } from '@/lib/types'
+import type { TripPlan, PlanDay, Gap, Group } from '@/lib/plan'
+import type { Loaded, TripItem, TripTask } from '@/lib/types'
 import type { EditableStatus } from '@/lib/trip-item-write'
 
 // The Plan tab's side panel. Same map, same filters as the Trip tab; this only
@@ -86,8 +86,8 @@ interface Props {
   onToggleSection: (s: Section) => void
   showConsidering: boolean
   matches: (i: TripItem) => boolean
-  activeStatuses: Set<ItemStatus>
-  onPickStatuses: (statuses: ItemStatus[]) => void
+  groups: Set<Group>
+  onPickGroup: (group: Group) => void
 }
 
 export default function PlanPanel(props: Props) {
@@ -95,7 +95,7 @@ export default function PlanPanel(props: Props) {
   return day ? <DayView {...props} day={day} /> : <TripView {...props} />
 }
 
-function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hidden, onToggleSection, matches, activeStatuses, onPickStatuses }: Props) {
+function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hidden, onToggleSection, matches, groups, onPickGroup }: Props) {
   const openTasks = tasks.ok ? tasks.value : []
   const todoCount = openTasks.length + plan.toBook.length
   return (
@@ -105,23 +105,24 @@ function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hi
         {!hidden.has('summary') && (
           <div className="mt-1 grid grid-cols-4 gap-1.5">
             {([
-              ['Booked', plan.counts.booked, STATUS_DOT.Confirmed, ['Confirmed']],
-              ['Planned', plan.counts.planned, STATUS_DOT.Assigned, ['Assigned']],
-              ['To book', plan.counts.toBook, STATUS_DOT['Reservation Pending'], ['Reservation Pending']],
-              ['Considering', plan.counts.considering, STATUS_DOT.Shortlisted, ['Shortlisted', 'Researching']],
-            ] as [string, number, string, ItemStatus[]][]).map(([label, n, color, statuses]) => {
-              // Tap a tile to see only those on the map; tap again to clear.
-              const on = statuses.length === activeStatuses.size && statuses.every(st => activeStatuses.has(st))
+              ['booked', 'Booked', plan.counts.booked, STATUS_DOT.Confirmed],
+              ['planned', 'Planned', plan.counts.planned, STATUS_DOT.Assigned],
+              ['tobook', 'To book', plan.counts.toBook, STATUS_DOT['Reservation Pending']],
+              ['considering', 'Considering', plan.counts.considering, STATUS_DOT.Shortlisted],
+            ] as [Group, string, number, string][]).map(([id, label, n, color]) => {
+              // Tap a tile to show only that group (same four as the chip row);
+              // tap it again to show all.
+              const on = groups.size === 1 && groups.has(id)
               return (
                 <button
-                  key={label}
-                  onClick={() => onPickStatuses(statuses)}
+                  key={id}
+                  onClick={() => onPickGroup(id)}
                   aria-pressed={on}
                   className={`rounded-lg px-2 py-1.5 text-left transition-colors ${on ? 'bg-white/15 ring-1' : 'bg-white/5 hover:bg-white/10'}`}
                   style={on ? { ['--tw-ring-color' as string]: color } : undefined}
                 >
                   <p className="text-lg font-semibold leading-tight tabular-nums" style={{ color }}>{n}</p>
-                  <p className="text-[10px] text-white/40">{label}{on ? ' - on map' : ''}</p>
+                  <p className="text-[10px] text-white/40">{label}{on ? ' only' : ''}</p>
                 </button>
               )
             })}
@@ -248,7 +249,7 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
       <section>
         <p className="px-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/50">
           Considering{day.leg ? ` in ${day.leg}` : ''} <span className="text-white/30">{considering.length}</span>
-          {!showConsidering && considering.length > 0 && <span className="ml-1 normal-case tracking-normal text-white/30">(off on the map)</span>}
+          {!showConsidering && <span className="ml-1 normal-case tracking-normal text-white/30">(switched off)</span>}
         </p>
         {shownConsidering.map(item => (
           <ItemRow key={item.id} item={item} selected={selected?.id === item.id} onSelect={onSelect} sub={[item.type, item.status].filter(Boolean).join(' - ')} />

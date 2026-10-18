@@ -91,10 +91,15 @@ export async function fetchTripItems(tripId: string): Promise<TripItem[]> {
   const normalizedTripId = tripId.replace(/-/g, '')
 
   do {
+    // Asked for this trip's rows only. It used to read the whole table (every
+    // trip, ~700 rows) and throw most away, on every page view, pin refresh
+    // and build; two builds in a row hit Notion's rate limit (2026-10-18).
+    // The first-relation check below is unchanged, so results are identical.
     const response: any = await notion.databases.query({
       database_id: TRIP_ITEMS_DB,
       start_cursor: cursor,
       page_size: 100,
+      filter: { property: 'Trip', relation: { contains: tripId } },
     })
 
     for (const page of response.results as any[]) {
