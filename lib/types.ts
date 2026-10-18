@@ -68,6 +68,30 @@ export interface DayBundle {
   possibilities: TripItem[]
 }
 
+/** A row of Trip Legs. Legs are a fixed universe set at trip start; read only. */
+export interface TripLeg {
+  id: string
+  name: string
+  order: number | null
+  startDate: string | null
+  /** Checkout-exclusive, like a hotel: the leg's last night is the day before. */
+  endDate: string | null
+  nights: number | null
+}
+
+/** An open Central Task on the trip's Master Project. Read only. */
+export interface TripTask {
+  id: string
+  url: string
+  title: string
+  workStatus: string
+  dueDate: string | null
+  targetDate: string | null
+}
+
+/** A Notion read that may have failed. A failure is shown, never rendered as empty. */
+export type Loaded<T> = { ok: true; value: T } | { ok: false; error: string }
+
 export interface TripWithItems extends Trip {
   items: TripItem[]
 }

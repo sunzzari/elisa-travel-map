@@ -2,6 +2,18 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-10-18
+
+- `7:12am` **Plan tab: a trip planning dashboard on the trip map** - Elisa: "a trip planning dashboard connected to the travel map... so I can see what things I have booked, what things I still have left to do, and the map representation of the things that I'm considering or confirmed on each day." Then: "nicely look at each days planned/assigned things just on the map", "considering items... that i can also see on the map if i toggle", "a to-do per day? and a to-do overall?", "highly modular in terms of the views i can make".
+  - **Plan / Trip toggle** on every trip page, same map. Opens on Plan until the trip starts (trip time zone), on the day view after. No new map: `TripMap` is still the only one.
+  - **Plan panel** (`components/PlanPanel.tsx`, `lib/plan.ts`): Booked / Planned / To book / Considering counts; To do = her open Central Tasks on the trip's Master Project plus every Reservation Pending item; Gaps from your dates = nights with no booked hotel and legs with no booked way in (computed, never written as tasks); Day by day for every trip date, each with its own to-do count. Nothing Claude suggested can reach To do.
+  - **Day map**: a selected day shows only her plans (Confirmed, Assigned, Reservation Pending) plus that night's hotel, numbered 1, 2, 3 in time order, framed on those plans. Previous / next arrows step through the trip.
+  - **Layers**: Planned, To book, Hotels, Considering, each on and off by itself. Considering is off by default and draws small faded pins.
+  - **Every setting is in the URL** (view, day, layers, folded sections, type / status / leg filters), so a view can be bookmarked.
+  - **Click to plan, book or drop** (`PATCH /api/trip-items/[id]`, `lib/trip-item-write.ts`), behind the same passcode as Around Town. Enforces the trip status tree: a day for Assigned / To book / Booked, a checkout day for a booked hotel, both date fields cleared on the way back to Considering, Drop = Cancelled, nothing deleted. Stamps Notes `[map date]` and reads the row back before reporting success. **The phone's trip screens show the change with no app release.**
+  - Reads added: Trip Legs (full rows) and the trip's Central Tasks. Each failure is shown on the page, never rendered as empty.
+  - `TripMap`: `MarkerStyle` takes an optional size and opacity, and a pin is restyled when its style changes, so a saved status or a renumbered day reaches pins already drawn. Around Town pins draw as before.
+
 ## 2026-10-11
 
 - `11:31am` **"Want to Try" is now "Bookmarked"** - Elisa: "instead of want to try put "bookmarked" because it doesn tmake sense to have havent tried vs .want to try". The gold legend line, the filter chip and the search note say Bookmarked, and typing "bookmarked" in the search filters to those places. The Notion column keeps its name (Thinking About), so no data moved.

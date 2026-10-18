@@ -1,4 +1,4 @@
-import { fetchAllTrips, fetchTripItems } from '@/lib/notion'
+import { fetchAllTrips, fetchTripItems, fetchTripLegs, fetchTripTasks } from '@/lib/notion'
 import { geocodeItem } from '@/lib/geocode'
 import ItineraryClient from '@/components/ItineraryClient'
 import { notFound } from 'next/navigation'
@@ -25,7 +25,13 @@ export default async function ItineraryPage({ params }: { params: Promise<{ trip
   const trip = trips.find(t => t.id.replace(/-/g, '') === tripSlug)
   if (!trip) notFound()
 
-  const rawItems = await fetchTripItems(trip.id)
+  // Legs and tasks feed the Plan tab. Each can fail on its own and says so on
+  // the page; neither failure takes the map down with it.
+  const [rawItems, legs, tasks] = await Promise.all([
+    fetchTripItems(trip.id),
+    fetchTripLegs(trip.id),
+    fetchTripTasks(trip.id),
+  ])
   const items = await Promise.all(
     rawItems.map(async item => {
       const coords = await geocodeItem(item, trip.location)
@@ -33,5 +39,5 @@ export default async function ItineraryPage({ params }: { params: Promise<{ trip
     })
   )
 
-  return <ItineraryClient trip={trip} items={items} apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} />
+  return <ItineraryClient trip={trip} items={items} legs={legs} tasks={tasks} apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} />
 }

@@ -46,10 +46,14 @@ export interface MarkerStyle {
   bg: string
   border: string
   glyph: string
+  /** Pin diameter in px. Default 32. The Plan tab draws candidates smaller. */
+  size?: number
+  /** Default 1. The Plan tab fades candidates so they never read as plans. */
+  opacity?: number
 }
 
 /** The trip rule: colour by status, glyph by type. */
-function markerStyle(item: TripItem): MarkerStyle {
+export function markerStyle(item: TripItem): MarkerStyle {
   const bg = STATUS_COLORS[item.status ?? ''] ?? '#9ca3af'
   return {
     bg,
@@ -344,7 +348,7 @@ function MapContent({
         background: ${style.bg}; border: 2px solid ${style.border};
         border-radius: 50%; width: 32px; height: 32px;
         display: flex; align-items: center; justify-content: center;
-        font-size: 14px; cursor: pointer;
+        font-size: 14px; font-weight: 700; color: #0b0b0d; cursor: pointer;
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       `
       pin.textContent = style.glyph
@@ -364,7 +368,9 @@ function MapContent({
     }
   }, [map, markerLib, mapped])
 
-  // Highlight selected marker in clusterer
+  // Highlight selected marker in clusterer. Also re-applies the whole style,
+  // because a marker is built once per item: a status saved from the Plan tab,
+  // or a day switch renumbering its stops, must reach a pin that already exists.
   useEffect(() => {
     for (const [id, marker] of imperativeMarkersRef.current) {
       const el = marker.content as HTMLElement
@@ -373,16 +379,21 @@ function MapContent({
       if (!item) continue
       const style = styleFor(item)
       const isSelected = selected?.id === id
+      const size = (style.size ?? 32) + (isSelected ? 6 : 0)
+      el.style.background = style.bg
+      el.textContent = style.glyph
+      el.style.opacity = String(isSelected ? 1 : style.opacity ?? 1)
+      pinColours.set(marker, style.bg)
       el.style.border = `2px solid ${isSelected ? '#fff' : style.border}`
-      el.style.width = isSelected ? '38px' : '32px'
-      el.style.height = isSelected ? '38px' : '32px'
-      el.style.fontSize = isSelected ? '17px' : '14px'
+      el.style.width = `${size}px`
+      el.style.height = `${size}px`
+      el.style.fontSize = `${Math.round(size * 0.44)}px`
       el.style.boxShadow = isSelected
         ? '0 0 0 3px rgba(59,130,246,0.5), 0 2px 8px rgba(0,0,0,0.4)'
         : '0 2px 6px rgba(0,0,0,0.3)'
-      marker.zIndex = isSelected ? 100 : 1
+      marker.zIndex = isSelected ? 100 : (style.opacity ?? 1) < 1 ? 0 : 1
     }
-  }, [selected, items])
+  }, [selected, items, styleFor])
 
   // Cleanup on unmount
   useEffect(() => {

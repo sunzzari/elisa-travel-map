@@ -1,12 +1,15 @@
 'use client'
 
-import { useMemo, useState, useCallback, useRef } from 'react'
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import TripMap from './TripMap'
+import TripMap, { markerStyle, type MarkerStyle } from './TripMap'
 import UnmappedList from './UnmappedList'
+import PlanPanel, { StatusEditor, STATUS_DOT, type Section } from './PlanPanel'
+import { usePasscode, UnlockForm } from './PlaceEditing'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
+import { buildPlan, layerOf, stopNumbers, LAYERS, type Layer } from '@/lib/plan'
 import { haversineKm } from '@/lib/geo'
-import type { Trip, TripItem, ItemType, ItemStatus } from '@/lib/types'
+import type { Trip, TripItem, ItemType, ItemStatus, TripLeg, TripTask, Loaded } from '@/lib/types'
 import type { UserLocation } from '@/lib/geo'
 
 // Map-first day view.
@@ -34,12 +37,18 @@ const TYPE_ORDER: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Tr
 // read left to right as certainty decreasing.
 const STATUS_ORDER: ItemStatus[] = ['Confirmed', 'Assigned', 'Reservation Pending', 'Shortlisted', 'Researching']
 
-const STATUS_DOT: Record<string, string> = {
-  Confirmed: '#34C759',
-  Assigned: '#0A84FF',
-  'Reservation Pending': '#FF9F0A',
-  Shortlisted: '#FFD60A',
-  Researching: '#8E8E93',
+type View = 'plan' | 'trip'
+const DEFAULT_LAYERS: Layer[] = ['committed', 'tobook', 'hotels']
+const SECTIONS: Section[] = ['summary', 'todo', 'coverage', 'days']
+
+// Every setting the views are made of lives in the URL, so any view can be
+// bookmarked and reopens the same. Elisa, 2026-10-18: "i want this map to be
+// highly modular in terms of the views i can make".
+function readList<T extends string>(params: URLSearchParams, key: string, allowed?: readonly T[]): T[] | null {
+  const raw = params.get(key)
+  if (raw === null) return null
+  const list = raw.split(',').map(decodeURIComponent).filter(Boolean) as T[]
+  return allowed ? list.filter(v => allowed.includes(v)) : list
 }
 
 function mapsHref(item: TripItem): string {
@@ -52,10 +61,19 @@ function mapsHref(item: TripItem): string {
 interface Props {
   trip: Trip
   items: TripItem[]
+  legs: Loaded<TripLeg[]>
+  tasks: Loaded<TripTask[]>
   apiKey: string
 }
 
-export default function ItineraryClient({ trip, items, apiKey }: Props) {
+export default function ItineraryClient({ trip, items: loadedItems, legs: legRows, tasks, apiKey }: Props) {
+  // A status saved from the Plan tab shows at once; the page itself catches up
+  // on its next 60s refresh. The saved row keeps the pin the page already had.
+  const [saved, setSaved] = useState<Record<string, TripItem>>({})
+  const items = useMemo(
+    () => loadedItems.map(i => (saved[i.id] ? { ...i, ...saved[i.id], coordinates: saved[i.id].coordinates ?? i.coordinates } : i)),
+    [loadedItems, saved]
+  )
   const days = useMemo(() => groupDays(items), [items])
   const allDates = useMemo(() => days.map(d => d.dateString), [days])
   const datedPlans = useMemo(() => days.map(d => planDay(d, allDates)), [days, allDates])
@@ -74,8 +92,19 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   // to a very functional map 100% of the time... and then ALSO to toggle today
   // view which filters the map". Today is one tap away in the chip row.
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
+
+  // Plan tab: opens on Plan until the trip starts (in the trip's own zone),
+  // on the day view once it has.
+  const planningStage = !trip.departureDate || today < trip.departureDate
+  const [view, setView] = useState<View>(planningStage ? 'plan' : 'trip')
+  const [layers, setLayers] = useState<Set<Layer>>(new Set(DEFAULT_LAYERS))
+  const [hidden, setHidden] = useState<Set<Section>>(new Set())
+  const { passcode, unlocked, unlock, lock } = usePasscode()
+  const plan = useMemo(() => buildPlan(trip, legRows.ok ? legRows.value : [], items), [trip, legRows, items])
+  const planDayNow = view === 'plan' && selectedDate ? plan.days.find(d => d.date === selectedDate) ?? null : null
+
   // In leg mode there is no "today", so default to showing everything.
-  const effectiveSelected = byLeg ? null : selectedDate
+  const effectiveSelected = view === 'plan' ? (planDayNow ? selectedDate : null) : byLeg ? null : selectedDate
   const [activeTypes, setActiveTypes] = useState<Set<ItemType>>(new Set())
   const [activeStatuses, setActiveStatuses] = useState<Set<ItemStatus>>(new Set())
   const [selected, setSelected] = useState<TripItem | null>(null)
@@ -112,10 +141,20 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   // never reach the map. Elisa, 2026-09-08: "the whole map should be visible no
   // matter if things are or not assigned."
   const pool = useMemo(() => {
+    if (view === 'plan') {
+      // Plan tab: what is on the map is chosen by layer. Off by default:
+      // Considering, so a day reads as her plan and nothing else.
+      const inLayer = (i: TripItem) => { const l = layerOf(i); return l !== null && layers.has(l) }
+      if (planDayNow) {
+        const list = [...planDayNow.committed.map(c => c.item), ...planDayNow.considering]
+        return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i).filter(inLayer)
+      }
+      return liveItems.filter(inLayer)
+    }
     if (!effectiveSelected) return liveItems
     const list = visiblePlans.flatMap(p => [...p.timeline.map(x => x.item), ...p.anytime.map(x => x.item), ...p.options])
     return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i)
-  }, [effectiveSelected, liveItems, visiblePlans])
+  }, [view, layers, planDayNow, effectiveSelected, liveItems, visiblePlans])
 
   const presentStatuses = useMemo(
     () => STATUS_ORDER.filter(st => pool.some(i => i.status === st)),
@@ -147,6 +186,74 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
     [items]
   )
 
+  // Restore a bookmarked view, then keep the URL in step with every toggle.
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const v = params.get('view')
+    if (v === 'plan' || v === 'trip') setView(v)
+    const day = params.get('day')
+    if (day) setSelectedDate(day)
+    const l = readList(params, 'layers', LAYERS.map(x => x.id))
+    if (l) setLayers(new Set(l))
+    const h = readList(params, 'hide', SECTIONS)
+    if (h) setHidden(new Set(h))
+    const t = readList<ItemType>(params, 'types')
+    if (t) setActiveTypes(new Set(t))
+    const st = readList<ItemStatus>(params, 'status')
+    if (st) setActiveStatuses(new Set(st))
+    const lg = readList(params, 'legs')
+    if (lg) setActiveLegs(new Set(lg))
+    setHydrated(true)
+  }, [])
+
+  useEffect(() => {
+    if (!hydrated) return
+    const params = new URLSearchParams()
+    const join = (set: Set<string>) => Array.from(set).map(encodeURIComponent).join(',')
+    params.set('view', view)
+    if (selectedDate) params.set('day', selectedDate)
+    if (view === 'plan' && join(layers) !== DEFAULT_LAYERS.join(',')) params.set('layers', join(layers))
+    if (hidden.size) params.set('hide', join(hidden))
+    if (activeTypes.size) params.set('types', join(activeTypes))
+    if (activeStatuses.size) params.set('status', join(activeStatuses))
+    if (activeLegs.size) params.set('legs', join(activeLegs))
+    window.history.replaceState(null, '', `${window.location.pathname}?${params}`)
+  }, [hydrated, view, selectedDate, layers, hidden, activeTypes, activeStatuses, activeLegs])
+
+  const numbers = useMemo(() => (planDayNow ? stopNumbers(planDayNow) : new Map<string, number>()), [planDayNow])
+  // On a planned day the map frames her plans; a candidate across the region
+  // must not zoom it out to the whole country. A day with no plans frames all.
+  const planFitIds = useMemo(() => {
+    if (!planDayNow) return undefined
+    const ids = planDayNow.committed.map(c => c.item).filter(i => i.coordinates).map(i => i.id)
+    return ids.length ? new Set(ids) : undefined
+  }, [planDayNow])
+  // Plan tab pins: the day's stops numbered 1, 2, 3 in order; candidates small
+  // and faded so they never read as plans.
+  const planStyle = useCallback((item: TripItem): MarkerStyle => {
+    const base = markerStyle(item)
+    if (layerOf(item) === 'considering') return { ...base, size: 24, opacity: 0.6 }
+    const n = numbers.get(item.id)
+    return n ? { ...base, glyph: String(n) } : base
+  }, [numbers])
+
+  function toggleLayer(layer: Layer) {
+    setLayers(prev => {
+      const next = new Set(prev)
+      if (next.has(layer)) next.delete(layer); else next.add(layer)
+      return next
+    })
+  }
+
+  function toggleSection(section: Section) {
+    setHidden(prev => {
+      const next = new Set(prev)
+      if (next.has(section)) next.delete(section); else next.add(section)
+      return next
+    })
+  }
+
   function requestNearMe() {
     if (nearMe === 'on') { setNearMe('off'); setUserLocation(null); return }
     setNearMe('locating')
@@ -157,7 +264,9 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
     )
   }
 
-  const todayIsInTrip = plans.some(p => p.dateString === today)
+  const todayIsInTrip = view === 'plan' ? plan.days.some(d => d.date === today) : plans.some(p => p.dateString === today)
+  const chipPlans = view === 'plan' ? plan.days.map(d => ({ dateString: d.date })) : plans
+  const chipByLeg = view === 'plan' ? false : byLeg
 
   const shown = matchedIds.length > 0
     ? pool.filter(i => matchedIds.includes(i.id))
@@ -166,6 +275,8 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
   const unmapped = shown.length - mapped.length
 
   const fitKey = [
+    view,
+    Array.from(layers).sort().join(','),
     selectedDate ?? 'all',
     Array.from(activeTypes).sort().join(',') || 'alltypes',
     Array.from(activeStatuses).sort().join(',') || 'allstatus',
@@ -222,13 +333,29 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           <h1 className="truncate font-display text-lg leading-tight">{trip.name}</h1>
           <p className="truncate text-xs text-white/40">{trip.location}</p>
         </div>
+        <div className="flex flex-shrink-0 rounded-full border border-white/15 p-0.5 text-xs font-semibold">
+          {(['plan', 'trip'] as View[]).map(v => (
+            <button
+              key={v}
+              onClick={() => {
+                setView(v); setSelected(null)
+                // Its button is hidden on Plan, so a filter left on there could not be seen or undone.
+                if (v === 'plan') { setNearMe('off'); setUserLocation(null) }
+              }}
+              className={`rounded-full px-2.5 py-1 transition-colors sm:px-3 ${view === v ? 'bg-amber-400 text-gray-950' : 'text-white/60 hover:text-white'}`}
+            >
+              {v === 'plan' ? 'Plan' : 'Trip'}
+            </button>
+          ))}
+        </div>
         <input
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search"
           className="hidden w-40 flex-shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white placeholder:text-white/35 focus:border-amber-400/40 focus:outline-none sm:block"
         />
-        <button
+        {/* Near me is for standing in the city; the Plan tab gives its room to the trip name. */}
+        {view === 'trip' && <button
           onClick={requestNearMe}
           className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
             nearMe === 'on' ? 'bg-blue-500 text-white'
@@ -237,7 +364,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           }`}
         >
           {nearMe === 'locating' ? '...' : nearMe === 'denied' ? 'Location off' : 'Near me'}
-        </button>
+        </button>}
         <button
           onClick={() => setAskOpen(v => !v)}
           className={`flex-shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
@@ -301,7 +428,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             selectedDate === null ? 'bg-amber-400 text-gray-950' : 'bg-white/10 text-white/70 hover:bg-white/15'
           }`}
         >
-          {byLeg ? 'Everywhere' : 'All days'}
+          {chipByLeg ? 'Everywhere' : 'All days'}
         </button>
         {todayIsInTrip && (
           <button
@@ -313,10 +440,10 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             Today
           </button>
         )}
-        {plans.map(plan => {
-          const active = plan.dateString === effectiveSelected
-          const isToday = !byLeg && plan.dateString === today
-          const past = !byLeg && plan.dateString < today
+        {chipPlans.map(plan => {
+          const active = plan.dateString === (view === 'plan' ? selectedDate : effectiveSelected)
+          const isToday = !chipByLeg && plan.dateString === today
+          const past = !chipByLeg && plan.dateString < today
           return (
             <button
               key={plan.dateString}
@@ -325,7 +452,7 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
                 active ? 'bg-amber-400 text-gray-950' : past ? 'bg-white/5 text-white/35 hover:bg-white/10' : 'bg-white/10 text-white/70 hover:bg-white/15'
               } ${isToday && !active ? 'ring-1 ring-amber-400/50' : ''}`}
             >
-              {byLeg ? (
+              {chipByLeg ? (
                 <span className="block px-1 text-sm font-semibold leading-tight">{plan.dateString}</span>
               ) : (
                 <>
@@ -341,6 +468,31 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
           )
         })}
       </div>
+
+      {/* Plan tab layers: each part of the map switches on and off on its own. */}
+      {view === 'plan' && (
+        <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
+          <span className="flex-shrink-0 text-[10px] uppercase tracking-wider text-white/30">Show</span>
+          {LAYERS.map(({ id, label }) => {
+            const on = layers.has(id)
+            const count = (planDayNow
+              ? [...planDayNow.committed.map(c => c.item), ...planDayNow.considering]
+              : liveItems
+            ).filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i && layerOf(item) === id).length
+            return (
+              <button
+                key={id}
+                onClick={() => { toggleLayer(id); setSelected(null) }}
+                className={`flex flex-shrink-0 items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+                  on ? 'border-white/60 bg-white text-gray-950' : 'border-white/15 text-white/55 hover:bg-white/5'
+                } ${id === 'considering' && !on ? 'border-dashed' : ''}`}
+              >
+                {label} <span className="opacity-60">{count}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
 
       {/* Status chips. Same rule as types: only what is actually present. */}
       <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
@@ -435,6 +587,8 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
             userLocation={null}
             onRecenterReady={onRecenterReady}
             fitKey={fitKey}
+            styleFor={view === 'plan' ? planStyle : undefined}
+            fitScopeIds={view === 'plan' ? planFitIds : undefined}
           />
           <button
             onClick={() => { recenterRef.current?.(); setSelected(null) }}
@@ -450,7 +604,53 @@ export default function ItineraryClient({ trip, items, apiKey }: Props) {
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
-          {visiblePlans.map(plan => (
+          {view === 'plan' ? (
+            <>
+              {selected && (
+                <div className="px-4 pt-4">
+                  {unlocked ? (
+                    <StatusEditor
+                      key={selected.id}
+                      item={items.find(i => i.id === selected.id) ?? selected}
+                      dates={plan.days.map(d => d.date)}
+                      defaultDate={selectedDate}
+                      passcode={passcode}
+                      onSaved={item => {
+                        setSaved(prev => ({ ...prev, [item.id]: item }))
+                        setSelected(null)
+                      }}
+                      onClose={() => setSelected(null)}
+                    />
+                  ) : (
+                    <div className="space-y-2 rounded-xl border border-white/10 p-3">
+                      <p className="text-sm font-semibold text-white">{selected.name}</p>
+                      <p className="text-xs text-white/45">Unlock to plan, book or drop it from here.</p>
+                      <UnlockForm onUnlock={unlock} />
+                    </div>
+                  )}
+                </div>
+              )}
+              <PlanPanel
+                plan={plan}
+                tasks={tasks}
+                legsError={legRows.ok ? null : legRows.error}
+                day={planDayNow}
+                numbers={numbers}
+                onSelectDate={date => { setSelectedDate(date); setSelected(null) }}
+                selected={selected}
+                onSelect={setSelected}
+                hidden={hidden}
+                onToggleSection={toggleSection}
+                showConsidering={layers.has('considering')}
+                matches={matches}
+              />
+              {unlocked && (
+                <p className="px-4 pb-2 text-[11px] text-white/30">
+                  Editing on. <button onClick={lock} className="underline">Lock</button>
+                </p>
+              )}
+            </>
+          ) : visiblePlans.map(plan => (
             <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} matches={matches} byLeg={byLeg} />
           ))}
 
