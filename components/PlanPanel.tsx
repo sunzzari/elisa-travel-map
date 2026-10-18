@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { formatLongDate } from '@/lib/day'
 import type { TripPlan, PlanDay, Gap } from '@/lib/plan'
-import type { Loaded, TripItem, TripTask } from '@/lib/types'
+import type { ItemStatus, Loaded, TripItem, TripTask } from '@/lib/types'
 import type { EditableStatus } from '@/lib/trip-item-write'
 
 // The Plan tab's side panel. Same map, same filters as the Trip tab; this only
@@ -86,6 +86,8 @@ interface Props {
   onToggleSection: (s: Section) => void
   showConsidering: boolean
   matches: (i: TripItem) => boolean
+  activeStatuses: Set<ItemStatus>
+  onPickStatuses: (statuses: ItemStatus[]) => void
 }
 
 export default function PlanPanel(props: Props) {
@@ -93,7 +95,7 @@ export default function PlanPanel(props: Props) {
   return day ? <DayView {...props} day={day} /> : <TripView {...props} />
 }
 
-function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hidden, onToggleSection, matches }: Props) {
+function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hidden, onToggleSection, matches, activeStatuses, onPickStatuses }: Props) {
   const openTasks = tasks.ok ? tasks.value : []
   const todoCount = openTasks.length + plan.toBook.length
   return (
@@ -102,17 +104,27 @@ function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hi
         <Heading id="summary" title="Where it stands" hidden={hidden} onToggle={onToggleSection} />
         {!hidden.has('summary') && (
           <div className="mt-1 grid grid-cols-4 gap-1.5">
-            {[
-              ['Booked', plan.counts.booked, STATUS_DOT.Confirmed],
-              ['Planned', plan.counts.planned, STATUS_DOT.Assigned],
-              ['To book', plan.counts.toBook, STATUS_DOT['Reservation Pending']],
-              ['Considering', plan.counts.considering, STATUS_DOT.Shortlisted],
-            ].map(([label, n, color]) => (
-              <div key={label as string} className="rounded-lg bg-white/5 px-2 py-1.5">
-                <p className="text-lg font-semibold leading-tight tabular-nums" style={{ color: color as string }}>{n as number}</p>
-                <p className="text-[10px] text-white/40">{label as string}</p>
-              </div>
-            ))}
+            {([
+              ['Booked', plan.counts.booked, STATUS_DOT.Confirmed, ['Confirmed']],
+              ['Planned', plan.counts.planned, STATUS_DOT.Assigned, ['Assigned']],
+              ['To book', plan.counts.toBook, STATUS_DOT['Reservation Pending'], ['Reservation Pending']],
+              ['Considering', plan.counts.considering, STATUS_DOT.Shortlisted, ['Shortlisted', 'Researching']],
+            ] as [string, number, string, ItemStatus[]][]).map(([label, n, color, statuses]) => {
+              // Tap a tile to see only those on the map; tap again to clear.
+              const on = statuses.length === activeStatuses.size && statuses.every(st => activeStatuses.has(st))
+              return (
+                <button
+                  key={label}
+                  onClick={() => onPickStatuses(statuses)}
+                  aria-pressed={on}
+                  className={`rounded-lg px-2 py-1.5 text-left transition-colors ${on ? 'bg-white/15 ring-1' : 'bg-white/5 hover:bg-white/10'}`}
+                  style={on ? { ['--tw-ring-color' as string]: color } : undefined}
+                >
+                  <p className="text-lg font-semibold leading-tight tabular-nums" style={{ color }}>{n}</p>
+                  <p className="text-[10px] text-white/40">{label}{on ? ' - on map' : ''}</p>
+                </button>
+              )
+            })}
           </div>
         )}
       </section>
@@ -296,7 +308,7 @@ export function StatusEditor({ item, dates, defaultDate, passcode, onSaved, onCl
     try {
       const res = await fetch(`/api/trip-items/${item.id.replace(/-/g, '')}`, {
         method: 'PATCH',
-        headers: { 'content-type': 'application/json', 'x-edit-passcode': passcode },
+        headers: { 'content-type': 'application/json', ...(passcode ? { 'x-edit-passcode': passcode } : {}) },
         body: JSON.stringify(body),
       })
       const json = await res.json().catch(() => ({}))

@@ -224,6 +224,11 @@ function MapContent({
       { north: Math.max(...lats), south: Math.min(...lats), east: Math.max(...lngs), west: Math.min(...lngs) },
       60
     )
+    // Two pins a street apart would otherwise zoom to the pavement and hide
+    // everything around them. Cap a fit at street level, same as one pin.
+    google.maps.event.addListenerOnce(map, 'idle', () => {
+      if ((map.getZoom() ?? 0) > 16) map.setZoom(16)
+    })
   }, [map, mapped, userLocation, fitScopeIds])
 
   // Fit map to all pins on initial load

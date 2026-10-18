@@ -5,7 +5,7 @@ import Link from 'next/link'
 import TripMap, { markerStyle, type MarkerStyle } from './TripMap'
 import UnmappedList from './UnmappedList'
 import PlanPanel, { StatusEditor, STATUS_DOT, type Section } from './PlanPanel'
-import { usePasscode, UnlockForm } from './PlaceEditing'
+import { usePasscode } from './PlaceEditing'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
 import { buildPlan, layerOf, stopNumbers, LAYERS, type Layer } from '@/lib/plan'
 import { haversineKm } from '@/lib/geo'
@@ -101,7 +101,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const [view, setView] = useState<View>(planningStage ? 'plan' : 'trip')
   const [layers, setLayers] = useState<Set<Layer>>(new Set(DEFAULT_LAYERS))
   const [hidden, setHidden] = useState<Set<Section>>(new Set())
-  const { passcode, unlocked, unlock, lock } = usePasscode()
+  const { passcode, lock } = usePasscode()
   const plan = useMemo(() => buildPlan(trip, legRows.ok ? legRows.value : [], items), [trip, legRows, items])
   const planDayNow = view === 'plan' && selectedDate ? plan.days.find(d => d.date === selectedDate) ?? null : null
 
@@ -228,11 +228,33 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const numbers = useMemo(() => (planDayNow ? stopNumbers(planDayNow) : new Map<string, number>()), [planDayNow])
   // On a planned day the map frames her plans; a candidate across the region
   // must not zoom it out to the whole country. A day with no plans frames all.
+  //
+  // With a filter on (Restaurant, a status, a leg, a search), or fewer than two
+  // plans left to frame, the frame widens to this leg's matching ideas too.
+  // Elisa, 2026-10-18: "when i toggle 'restaurant' it does not filter for the
+  // 'considering'" - it did, but the map zoomed onto her two planned cafes and
+  // every Considering restaurant sat off-screen.
   const planFitIds = useMemo(() => {
     if (!planDayNow) return undefined
-    const ids = planDayNow.committed.map(c => c.item).filter(i => i.coordinates).map(i => i.id)
+    const onMap = (i: TripItem) => !!i.coordinates && matches(i)
+    const plans = planDayNow.committed.map(c => c.item).filter(onMap)
+    // Elisa, 2026-10-18: "the zoom should keep the considering on screen".
+    // So with Considering on, this leg's ideas are in the frame - those within
+    // FRAME_KM of the day. One Wachau day-trip idea 70km out would otherwise
+    // zoom a Vienna day out to the whole region.
+    const FRAME_KM = 15
+    const legIdeas = layers.has('considering') ? planDayNow.considering.filter(onMap) : []
+    const anchor = plans.length ? plans : legIdeas
+    const mid = (xs: number[]) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
+    const centre = anchor.length
+      ? { lat: mid(anchor.map(i => i.coordinates!.lat)), lng: mid(anchor.map(i => i.coordinates!.lng)) }
+      : null
+    const ideas = centre
+      ? legIdeas.filter(i => haversineKm(centre.lat, centre.lng, i.coordinates!.lat, i.coordinates!.lng) <= FRAME_KM)
+      : []
+    const ids = [...plans, ...ideas].map(i => i.id)
     return ids.length ? new Set(ids) : undefined
-  }, [planDayNow])
+  }, [planDayNow, matches, layers])
   // Plan tab pins: the day's stops numbered 1, 2, 3 in order; candidates small
   // and faded so they never read as plans.
   const planStyle = useCallback((item: TripItem): MarkerStyle => {
@@ -482,7 +504,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             const count = (planDayNow
               ? [...planDayNow.committed.map(c => c.item), ...liveItems.filter(i => layerOf(i) === 'considering')]
               : liveItems
-            ).filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i && layerOf(item) === id).length
+            ).filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i && layerOf(item) === id && matches(item)).length
             return (
               <button
                 key={id}
@@ -597,7 +619,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           {/* The one-tap Considering switch, on the map itself. */}
           {view === 'plan' && (() => {
             const on = layers.has('considering')
-            const count = liveItems.filter(i => layerOf(i) === 'considering').length
+            const count = liveItems.filter(i => layerOf(i) === 'considering' && matches(i)).length
             return (
               <button
                 onClick={() => { toggleLayer('considering'); setSelected(null) }}
@@ -629,8 +651,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             <>
               {selected && (
                 <div className="px-4 pt-4">
-                  {unlocked ? (
-                    <StatusEditor
+                  <StatusEditor
                       key={selected.id}
                       item={items.find(i => i.id === selected.id) ?? selected}
                       dates={plan.days.map(d => d.date)}
@@ -642,13 +663,6 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
                       }}
                       onClose={() => setSelected(null)}
                     />
-                  ) : (
-                    <div className="space-y-2 rounded-xl border border-white/10 p-3">
-                      <p className="text-sm font-semibold text-white">{selected.name}</p>
-                      <p className="text-xs text-white/45">Unlock to plan, book or drop it from here.</p>
-                      <UnlockForm onUnlock={unlock} />
-                    </div>
-                  )}
                 </div>
               )}
               <PlanPanel
@@ -664,12 +678,21 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
                 onToggleSection={toggleSection}
                 showConsidering={layers.has('considering')}
                 matches={matches}
+                activeStatuses={activeStatuses}
+                onPickStatuses={statuses => {
+                  // A tile is a status filter: tap to show only those on the
+                  // map, tap again to clear. Considering also turns its layer on.
+                  const same = statuses.length === activeStatuses.size && statuses.every(st => activeStatuses.has(st))
+                  setActiveStatuses(same ? new Set() : new Set(statuses))
+                  if (!same && statuses.some(st => st === 'Shortlisted' || st === 'Researching')) {
+                    setLayers(prev => new Set([...prev, 'considering']))
+                  }
+                  setSelected(null)
+                }}
               />
-              {unlocked && (
-                <p className="px-4 pb-2 text-[11px] text-white/30">
-                  Editing on. <button onClick={lock} className="underline">Lock</button>
-                </p>
-              )}
+              <p className="px-4 pb-2 text-[11px] text-white/30">
+                <button onClick={lock} className="underline">Sign out</button> of the travel map on this browser
+              </p>
             </>
           ) : visiblePlans.map(plan => (
             <DaySection key={plan.dateString} plan={plan} onSelect={setSelected} selected={selected} today={today} matches={matches} byLeg={byLeg} />

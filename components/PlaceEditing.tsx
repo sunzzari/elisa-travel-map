@@ -44,18 +44,23 @@ export function usePasscode() {
     return null
   }, [])
 
-  const lock = useCallback(() => {
+  // Signing out of the site is the lock now: the whole map sits behind one
+  // password, and being on this page means this browser is signed in.
+  const lock = useCallback(async () => {
     writeStored(null)
     setPasscode('')
+    await fetch('/api/logout', { method: 'POST' }).catch(() => {})
+    window.location.href = '/login'
   }, [])
 
-  return { passcode, unlocked: passcode !== '', unlock, lock }
+  return { passcode, unlocked: true, unlock, lock }
 }
 
 async function send(path: string, method: string, passcode: string, body?: unknown) {
   const res = await fetch(path, {
     method,
-    headers: { 'content-type': 'application/json', 'x-edit-passcode': passcode },
+    // The site sign-in cookie authorizes; an older stored passcode still works.
+    headers: { 'content-type': 'application/json', ...(passcode ? { 'x-edit-passcode': passcode } : {}) },
     body: body === undefined ? undefined : JSON.stringify(body),
   })
   const json = await res.json().catch(() => ({}))

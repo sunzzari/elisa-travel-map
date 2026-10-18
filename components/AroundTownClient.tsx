@@ -580,7 +580,7 @@ export default function AroundTownClient({
 
               {unlocked && (
                 <button onClick={lock} className="mt-3 text-[11px] text-white/30 hover:text-white/60">
-                  Lock editing on this browser
+                  Sign out of the travel map on this browser
                 </button>
               )}
             </section>
