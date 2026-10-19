@@ -1,0 +1,852 @@
+[
+  {
+    "id": "3fef3cdd-67a4-8172-a2b8-c1cf72c0ff7c",
+    "name": "Steak Döner",
+    "status": "found",
+    "address": "Taborstraße 22, 1020 Vienna, Austria",
+    "sourceUrl": "https://www.swipein.restaurant/de/restaurant/steak-doner-wien",
+    "sourceTitle": "Taborstraße 22, 1020 Wien, Austria",
+    "note": "Aggregator listing; the Falter street food guide gives the same address, matching the list.",
+    "closed": false
+  },
+  {
+    "id": "3fef3cdd-67a4-8144-b065-f6477cf75262",
+    "name": "THEO's Tea Time",
+    "status": "found",
+    "address": "Schottenring 24, 1010 Vienna, Austria",
+    "sourceUrl": "https://conferencehotelgroup.com/img/hotels/files/257/Anantara%20Palais%20Hansen%20Vienna%20Hotel_Factsheet_2024_EN.pdf",
+    "sourceTitle": "Anantara Palais Hansen Vienna Hotel Factsheet 2024 EN",
+    "note": "Served in Theo's Lounge & Bar at Anantara Palais Hansen; hotel factsheet gives Schottenring 24.",
+    "closed": false
+  },
+  {
+    "id": "3fcf3cdd-67a4-81fb-b863-f21e8a635b38",
+    "name": "Rôtisserie Segar",
+    "status": "found",
+    "address": "111 Rue Mouffetard, 75005 Paris, France",
+    "sourceUrl": "https://www.theinfatuation.com/paris/reviews/rotisserie-segar",
+    "sourceTitle": "Rôtisserie Segar",
+    "note": "Confirmed 111 Rue Mouffetard; takeaway-only, Latin Quarter.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8100-9ffc-da5b0feb47fc",
+    "name": "Kunstschatzi",
+    "status": "found",
+    "address": "Maria-Theresien-Platz, 1010 Vienna, Austria",
+    "sourceUrl": "https://khm.at/en/explore/offers/kunstschatzi",
+    "sourceTitle": "Kunstschatzi - Kunsthistorisches Museum Vienna",
+    "note": "Monthly after-work event in the KHM Cupola Hall; the museum gives no house number.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8104-b1b4-e8bcaf61e344",
+    "name": "Brioche & Brösel",
+    "status": "found",
+    "address": "Rotenturmstraße 11, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.falter.at/lokal/13657/brioche-und-broesel",
+    "sourceTitle": "Brioche und Brösel (Falter)",
+    "note": "Confirmed at no. 11, matching the list; no. 21 is the older Figlmüller stand listing.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-810e-bb7d-f5cc594e0ab5",
+    "name": "Volksgarten",
+    "status": "found",
+    "address": "Burgring 1, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.falter.at/location/714/volksgarten-disco",
+    "sourceTitle": "Volksgarten Disco",
+    "note": "This is the Volksgarten club and pavilion inside the park, not the park itself.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-811b-9fa3-fb07bc82bc2b",
+    "name": "Trześniewski",
+    "status": "found",
+    "address": "Dorotheergasse 1, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.falter.at/lokal/3443/trzesniewski",
+    "sourceTitle": "Trzesniewski - Falter",
+    "note": "Flagship shop; Falter and other listings agree.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-811b-b105-d63c32fd048c",
+    "name": "Pearl Club Vienna",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No venue called Pearl Club found; The Grand Pearl event venue at Maysedergasse 2/3 is the nearest match, not confirmed to be the same.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8135-acf2-e104b5096141",
+    "name": "Café Mozart",
+    "status": "found",
+    "address": "Albertinaplatz 2, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.cafe-mozart.at/en/das-cafe.html",
+    "sourceTitle": "Café Mozart official site",
+    "note": "Official site gives Albertinaplatz 2.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8139-98a2-fd3b069f51e9",
+    "name": "Gerstner",
+    "status": "found",
+    "address": "Kärntner Straße 51, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.wien.info/en/gerstner-k-u-k-hofzuckerbaecker-132776",
+    "sourceTitle": "Gerstner K. u. K. Hofzuckerbäcker Shop · Bar · Café-Restaurant",
+    "note": "Palais Todesco location confirmed by Vienna tourism site.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8141-ba73-e37cadf1463a",
+    "name": "Golden Frites",
+    "status": "found",
+    "address": "Neubaugasse 48-50, 1070 Vienna, Austria",
+    "sourceUrl": "https://www.vienna.at/vienna-gets-a-new-fries-hotspot-from-amsterdam/10397732",
+    "sourceTitle": "Vienna Gets a New Fries Hotspot from Amsterdam",
+    "note": "Single press source (vienna.at), first Vienna location; not seen on a second page.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-816b-9e26-d87d748e8c50",
+    "name": "Café Landtmann",
+    "status": "found",
+    "address": "Universitätsring 4, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.landtmann.at/",
+    "sourceTitle": "Café Landtmann official site",
+    "note": "Official site and wien.info agree.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-816f-883b-f9365af50e1d",
+    "name": "Meissl & Schadn",
+    "status": "found",
+    "address": "Schubertring 10-12, 1010 Vienna, Austria",
+    "sourceUrl": "https://meisslundschadn.at/en/meissl-schadn-vienna/",
+    "sourceTitle": "meisslundschadn.at",
+    "note": "Official site and operator 2024 press release both give Schubertring 10-12.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8171-9a9a-ca0eacf6be04",
+    "name": "Skopik & Lohn",
+    "status": "found",
+    "address": "Leopoldsgasse 17, 1020 Vienna, Austria",
+    "sourceUrl": "https://www.co-vienna.com/en/venues/skopik-und-lohn-2",
+    "sourceTitle": "Skopik & Lohn",
+    "note": "Confirmed twice as 1020 Leopoldstadt; a Michelin listing showing 1010 looks like an error.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8178-9ed8-cf4b4236ac4a",
+    "name": "Hannelore",
+    "status": "found",
+    "address": "Dorotheergasse 6-8, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.falstaff.com/en/bars/hannelore",
+    "sourceTitle": "Hannelore (Falstaff Bars)",
+    "note": "Falstaff and Dirty Roots list Dorotheergasse 6-8; Falstaff Bar Guide 2026 lists it as operating.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-817e-bc39-c4f48f9c04d9",
+    "name": "Hotel Sacher",
+    "status": "found",
+    "address": "Philharmonikerstraße 4, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.successfulmeetings.com/Meeting-Event-Venues/Vienna/Convention-Hotel/Hotel-Sacher-p9513412",
+    "sourceTitle": "Hotel Sacher - Vienna, Austria",
+    "note": "Multiple directory listings agree; opposite the State Opera.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8197-833d-df60433bfd9e",
+    "name": "Hotel Imperial",
+    "status": "found",
+    "address": "Kärntner Ring 16, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.virtuoso.com/hotels/6163898/hotel-imperial-a-luxury-collection-hotel-vienna",
+    "sourceTitle": "Hotel Imperial, A Luxury Collection Hotel, Vienna",
+    "note": "Street and number confirmed; sources split on the postcode, both 1010 and 1015 appear.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-81a2-80b9-fd6e8897e34e",
+    "name": "Kleinod",
+    "status": "found",
+    "address": "Singerstraße 7, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.theworlds50best.com/discovery/Establishments/Austria/Vienna/Kleinod-Bar.html",
+    "sourceTitle": "Kleinod Bar",
+    "note": "Cocktail bar branch in the 1st district at Singerstraße 7; the Prater location was not used.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-81be-9878-f6efd678a100",
+    "name": "Bitzinger Würstelstand",
+    "status": "found",
+    "address": "Albertinaplatz 1, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.wien.info/de/bitzingers-wuerstelstand-bei-der-albertina-126468",
+    "sourceTitle": "Bitzingers Würstelstand bei der Albertina",
+    "note": "Wien.info and Muvamo give Albertinaplatz 1; a stand between Opera and Albertina, so the number is approximate.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-81dc-acd1-c33d0f7435ba",
+    "name": "Soul",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No Vienna venue named exactly Soul; nearest are Soula at Schrankgasse 10, 1070 and Soulkitchen at Hintere Zollamtsstraße 2b, 1030.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-81e0-962b-eecefd7c4e37",
+    "name": "Demel",
+    "status": "found",
+    "address": "Kohlmarkt 14, 1010 Vienna, Austria",
+    "sourceUrl": "https://www.falter.at/lokal/1931/k-u-k-hofzuckerbaecker-demel",
+    "sourceTitle": "K.u.K. Hofzuckerbäcker Demel (Falter)",
+    "note": "Falter and Wikipedia both give Kohlmarkt 14.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-81e3-9225-c1477738675c",
+    "name": "Oefferl",
+    "status": "found",
+    "address": "Wollzeile 31, 1010 Vienna, Austria",
+    "sourceUrl": "https://tablejourney.com/austria/vienna/bakeries/oefferl-wollzeile/",
+    "sourceTitle": "oefferl wollzeile",
+    "note": "Wollzeile branch in the 1st district; other branch is Mariahilfer Straße 9, 1060.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-81e5-87d1-eeca51c8badc",
+    "name": "Eden Bar",
+    "status": "found",
+    "address": "Liliengasse 2, 1010 Vienna, Austria",
+    "sourceUrl": "https://austria-forum.org/af/AustriaWiki/Eden_Bar",
+    "sourceTitle": "Eden Bar (Austria-Forum)",
+    "note": "Falter and Austria-Forum give Liliengasse 2; 2017 insolvency but operation was secured, no closure found.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-810d-a688-f8fc91bb0036",
+    "name": "Chez Alain Miam Miam",
+    "status": "found",
+    "address": "26 Rue Charlot, 75003 Paris, France",
+    "sourceUrl": "https://fr.newtable.com/restaurant-chez-alain-miam-miam-4491.php",
+    "sourceTitle": "Retour aux restaurants",
+    "note": "Confirmed; moved from Enfants Rouges market stall to 26 Rue Charlot (Time Out FR still shows market address).",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8185-9497-f43d0e3b5e23",
+    "name": "Bistrot des Tournelles",
+    "status": "found",
+    "address": "6 Rue des Tournelles, 75004 Paris, France",
+    "sourceUrl": "https://www.theinfatuation.com/paris/reviews/bistrot-des-tournelles",
+    "sourceTitle": "Bistrot Des Tournelles",
+    "note": "Confirmed by Infatuation and Time Out; opened late 2022.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-81cd-8bbc-cb4c5f9ef631",
+    "name": "Maison Baroche",
+    "status": "found",
+    "address": "18 Rue Cadet, 75009 Paris, France",
+    "sourceUrl": "https://www.lesrestos.com/decouvrir/actualite/news/maison-baroche-cadet-de-delphine-et-david-baroche",
+    "sourceTitle": "Maison Baroche Cadet de Delphine et David Baroche",
+    "note": "Confirmed 18 rue Cadet (Maison Baroche Cadet); not the Brasserie Baroche at 101 rue de la Boétie.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-8188-b266-f32660693336",
+    "name": "La Renommée",
+    "status": "found",
+    "address": "95 Rue Saint-Honoré, 75001 Paris, France",
+    "sourceUrl": "https://www.pariszigzag.fr/bar-restaurant/restaurant/la-renommee-saint-honore-restaurant/",
+    "sourceTitle": "la renommee saint honore restaurant",
+    "note": "Confirmed; a different La Renommée exists at 37-39 rue Boissière, 16th.",
+    "closed": false
+  },
+  {
+    "id": "3f9f3cdd-67a4-81e2-8864-c7e858003697",
+    "name": "Chapon Chocolaterie",
+    "status": "found",
+    "address": "69 Rue du Bac, 75007 Paris, France",
+    "sourceUrl": "https://fr.gaultmillau.com/artisans/chocolats-chapon",
+    "sourceTitle": "Logo Gault&Millau",
+    "note": "Multiple sources list 69 rue du Bac, 7th arr.",
+    "closed": false
+  },
+  {
+    "id": "3e3f3cdd-67a4-81f6-a1f6-e572f1d2c7c1",
+    "name": "Congee King (Huo Zhou Wang)",
+    "status": "found",
+    "address": "227 W Valley Blvd, Ste 148-B, San Gabriel, CA 91776, USA",
+    "sourceUrl": "https://www.kcrw.com/culture/shows/good-food/jonathan-gold-reviews-huo-zhou-wang",
+    "sourceTitle": "jonathan gold reviews huo zhou wang",
+    "note": "Matched on the row's second name, Huo Zhou Wang; no separate San Gabriel venue called Congee King exists.",
+    "closed": false
+  },
+  {
+    "id": "3d7f3cdd-67a4-812e-9080-cfdfefa504b3",
+    "name": "Dingxing Road Danbingtan",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "Trip.com lists a Dingxing Road egg pancake stand near People's Square (Huangpu) with no street number; no source with a number found, so not-found.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-81f7-b88d-dba268dca4ae",
+    "name": "Ban Tian Te Se Mian",
+    "status": "found",
+    "address": "9-1 Yihuan East Road Section 2, Chenghua District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/en/chengdu-municipality/chengdu/restaurant/ban-tian-te-se-mian",
+    "sourceTitle": "Ban Tian Te Se Mian",
+    "note": "Michelin Guide listing, Bib Gourmand Sichuan noodle shop.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-815d-9726-cde717075bac",
+    "name": "Da Ya Ji",
+    "status": "found",
+    "address": "171 Wende Road, Chenghua District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/mo/en/chengdu-municipality/chengdu/restaurant/da-ya-ji",
+    "sourceTitle": "Da Ya Ji",
+    "note": "Michelin Guide listing, Bib Gourmand Sichuan home-style cooking.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-8146-8544-c1d6a078bc58",
+    "name": "No.37 Lao Yuan Ba Chao Shou",
+    "status": "found",
+    "address": "Building 2, 37 Mawangmiao Street, Qingyang District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/us/en/chengdu-municipality/chengdu/restaurant/no-37-lao-yuan-ba-chao-shou",
+    "sourceTitle": "No.37 Lao Yuan Ba Chao Shou",
+    "note": "Michelin Guide listing, found twice independently; cash only.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-81bd-958b-ff2d13569ac2",
+    "name": "Mao Wu Da Jiu Dian",
+    "status": "found",
+    "address": "2 Ganquan 3rd Alley, Shuangliu District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/se/en/chengdu-municipality/chengdu/restaurant/mao-wu-da-jiu-dian",
+    "sourceTitle": "Mao Wu Da Jiu Dian",
+    "note": "Michelin Guide listing; Shuangliu is an outer district of Chengdu.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-8189-977e-eee4f7678557",
+    "name": "Xiao You Shao Mai (Qionglai / Qiangyang)",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No Qionglai listing found; Michelin lists Xiao You Shao Mai (Qingyang) at 88 and 92 Shuangxin South Road, Qingyang District, which may be the intended branch.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-818b-be83-ef3dc5640dca",
+    "name": "Gui Tian Yuan",
+    "status": "found",
+    "address": "59 Renyi Road, Chenghua District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/is/en/chengdu-municipality/chengdu/restaurant/gui-tian-yuan-zi",
+    "sourceTitle": "Gui Tian Yuan Zi",
+    "note": "Michelin lists the name as Gui Tian Yuan Zi, Zigong home-style; worth confirming it is the same place.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-816a-87f8-e66956e3adf7",
+    "name": "Focus by Bill Yue",
+    "status": "found",
+    "address": "Shop 131A, 1F, M-Cube, 500 Jiaozi Avenue, Wuhou District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/en/chengdu-municipality/chengdu/restaurant/focus-by-bill-yue",
+    "sourceTitle": "Focus by Bill Yue",
+    "note": "Michelin Guide listing, one star, Japanese-French tasting menu.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-8142-b295-d8614b7a9f63",
+    "name": "Zinan",
+    "status": "found",
+    "address": "No. 8-1, Tongzilin South Road, Wuhou District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/us/en/chengdu-municipality/chengdu/restaurant/zinan",
+    "sourceTitle": "Zinan",
+    "note": "Michelin Guide listing confirms the address; Chinese name 梓楠.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-81e2-9b04-dbfb3d031fc2",
+    "name": "Xin Rong Ji (新荣记)",
+    "status": "found",
+    "address": "501, 5th Floor, Chinese Financial Center, 33 Jiaozi Avenue, Wuhou District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/ae-az/en/chengdu-municipality/chengdu/restaurant/xin-rong-ji-1207940",
+    "sourceTitle": "Xin Rong Ji, Michelin Guide Chengdu",
+    "note": "Matches existing address; Michelin adds unit 501; a design-firm page also gives 33 Jiaozi Avenue.",
+    "closed": false
+  },
+  {
+    "id": "3d1f3cdd-67a4-81bc-bf26-c9069888a168",
+    "name": "Ren Ren Shui Jiao (人人水饺)",
+    "status": "found",
+    "address": "24 Ruisheng South Street, Wuhou District, Chengdu, China",
+    "sourceUrl": "https://guide.michelin.com/us/en/chengdu-municipality/chengdu/restaurant/ren-ren-shui-jiao",
+    "sourceTitle": "Ren Ren Shui Jiao",
+    "note": "Michelin Guide listing, Bib Gourmand dumpling shop.",
+    "closed": false
+  },
+  {
+    "id": "37bf3cdd-67a4-8110-8ffa-cbdb465e579f",
+    "name": "La Favorita",
+    "status": "found",
+    "address": "Lungomare Palmasera 30, 08022 Dorgali (Cala Gonone), Italy",
+    "sourceUrl": "https://www.italia.it/en/sardegna/dorgali/where-to-eat/la-favorita-hotel-ristorante",
+    "sourceTitle": "la favorita hotel ristorante",
+    "note": "Hotel-restaurant in Cala Gonone, Dorgali, Sardinia; some booking sites write Viale Palmasera 30.",
+    "closed": false
+  },
+  {
+    "id": "37bf3cdd-67a4-813c-9db4-fa6f4b0647b5",
+    "name": "Ristorante Il Doge",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No Il Doge restaurant in Genova; same-name places are in Rovereto, Trentino and in Frankfurt.",
+    "closed": false
+  },
+  {
+    "id": "37bf3cdd-67a4-817a-a54c-d9e6ba13307f",
+    "name": "Campo del Drago",
+    "status": "found",
+    "address": "Località Castiglion del Bosco, 53024 Montalcino (SI), Italy",
+    "sourceUrl": "https://guide.michelin.com/ch/it/toscana/montalcino/ristorante/campo-del-drago",
+    "sourceTitle": "campo del drago",
+    "note": "Restaurant at Rosewood Castiglion del Bosco; Michelin gives locality only, no street number (estate address).",
+    "closed": false
+  },
+  {
+    "id": "37bf3cdd-67a4-8184-a676-e955c82573d7",
+    "name": "Belo Horizonte",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "A Ristorante Belohorizonte exists in Orosei, Nuoro, Sardinia, but no source gives its street address.",
+    "closed": false
+  },
+  {
+    "id": "37bf3cdd-67a4-81a6-8fd8-f2e572d6091c",
+    "name": "DuEpi",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "A duepi Pizzeria Live Grill is listed in Dorgali, Sardinia, but no source gives its street address.",
+    "closed": false
+  },
+  {
+    "id": "37bf3cdd-67a4-81ed-b2be-c2ebb70a27a8",
+    "name": "La Cave des Arches",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No venue by this name in Beaune; Le Caveau des Arches at 10 Boulevard Perpreuil, 21200 Beaune is the likely intended place.",
+    "closed": false
+  },
+  {
+    "id": "37bf3cdd-67a4-81fc-9cad-dfd1a2c9be89",
+    "name": "Casa Gaja",
+    "status": "found",
+    "address": "Via Quarto 14a, 16148 Genova, Italy",
+    "sourceUrl": "https://www.raisin.digital/en/explore/italy/liguria/venues/casagaja-24095/",
+    "sourceTitle": "CasaGaja",
+    "note": "Listed as CasaGaja, wine bar with a kitchen; one directory source only, current status unconfirmed.",
+    "closed": false
+  },
+  {
+    "id": "330f3cdd-67a4-811f-b299-fa83563f808e",
+    "name": "Osteria Le Panzanelle",
+    "status": "found",
+    "address": "Località Lucarelli 29, 53017 Radda in Chianti (SI), Italy",
+    "sourceUrl": "https://www.gamberorosso.it/notizie/ristoranti/mangiare-chianti-osteria-le-panzanelle/",
+    "sourceTitle": "Ristoranti Toscana",
+    "note": "In Radda in Chianti (hamlet Lucarelli), not Gaiole; Foodle gives the same address.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8148-9209-de5e6f990b1a",
+    "name": "Ans Ice Cream",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No San Diego shop called Ans Ice Cream; the gelato shop An's Dry Cleaning at 3017 Adams Avenue, North Park is the likely intended place.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8117-ae53-da488b2a554f",
+    "name": "Pork Rice Dumpling",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "Dish name, not a stall name; nearest Chinatown Complex match is SohGood Bak Chang at #02-209, a different name.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-811e-aae8-e6088c577fa9",
+    "name": "Hua Sheng Tang Yuan",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No source names this stall in Chinatown Complex Food Centre, 335 Smith Street, Singapore 050335.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8124-8649-c2ca30261eea",
+    "name": "Richmond Night Market",
+    "status": "found",
+    "address": "8351 River Road, Richmond, BC V6X 1Y4, Canada",
+    "sourceUrl": "https://www.richmondnightmarket.com/",
+    "sourceTitle": "Richmond Night Market 2026",
+    "note": "Official site; seasonal market (2026 season ended 20 Sep), next to River Rock Casino.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8141-9ec0-f5f2a6bd0d8f",
+    "name": "Chengdu Spicy",
+    "status": "found",
+    "address": "#6-4300 Kingsway, Burnaby, BC, Canada",
+    "sourceUrl": "https://burnabynow.com/business/burnaby-restaurants-win-top-honours-in-annual-chinese-restaurant-awards-1.23645291",
+    "sourceTitle": "Burnaby restaurants win top honours in annual Chinese restaurant awards",
+    "note": "Listed as Chengdu Spicy Restaurant, Metrotown area, found twice; no source gives a postal code.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8141-a519-d5bf84696826",
+    "name": "Szechuan Spicy",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No venue by this name at Metrotown or on Kingsway; the only nearby match is Chengdu Spicy Restaurant.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-814e-ac0d-eef34c6b16f2",
+    "name": "Mr. Chan",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "Only Hawker Chan at #02-126 turned up; no Chinatown Complex stall called Mr Chan found.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8155-976f-d0dfcd085d7c",
+    "name": "Cafe Medina",
+    "status": "found",
+    "address": "780 Richards Street, Vancouver, BC V6B 3A4, Canada",
+    "sourceUrl": "https://dailyhive.com/vancouver/cafe-medinas-new-location-vancouvers-library-district",
+    "sourceTitle": "Cafe Medina's New Location opening in August in Vancouver's Library District",
+    "note": "Downtown Library District location; also listed by Destination Vancouver and Tourism Vancouver.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b6-8ece-ce544a6fe92a",
+    "name": "HK BBQ Master",
+    "status": "found",
+    "address": "4651 No. 3 Road, Richmond, BC V6X 2C4, Canada",
+    "sourceUrl": "https://dailyhive.com/vancouver/hk-bbq-master-richmond",
+    "sourceTitle": "Beloved Hong Kong-style BBQ joint reopens doors in Metro Vancouver",
+    "note": "In the parkade under the Superstore; Visit Richmond and other listings give the same address; reopened after renovations.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81ec-8d15-dad5e21cb2b6",
+    "name": "Popiah",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "Dish name; the likely intended stall is Ann Chin Handmade Popiah at #02-112, Chinatown Complex.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81ee-ad9e-efe78ec450fc",
+    "name": "Jumbo Seafood",
+    "status": "found",
+    "address": "#01-01/02 Riverside Point, 30 Merchant Road, Singapore 058282, Singapore",
+    "sourceUrl": "https://www.klook.com/en-NZ/activity/18993-jumbo-seafood-ng-ah-sio-singapore/",
+    "sourceTitle": "JUMBO Seafood and NG AH SIO Bak Kut Teh Combo Package in Singapore",
+    "note": "Riverside Point branch, still open. The original East Coast Seafood Centre branch (1206 East Coast Parkway, Singapore 449883) closed 30 Sep 2026 per Malay Mail and Time Out.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8186-be42-ea7d179d54ee",
+    "name": "Datcha",
+    "status": "found",
+    "address": "62 Rue Jean-Pierre Timbaud, 75011 Paris, France",
+    "sourceUrl": "https://guide.michelin.com/be/fr/ile-de-france/paris/restaurant/la-datcha",
+    "sourceTitle": "La Datcha",
+    "note": "Listed as La Datcha in the 11th; Gault et Millau gives 62 bis, Michelin gives 62.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-812e-8898-e3e83ed1c963",
+    "name": "Wowow Lemonade",
+    "status": "found",
+    "address": "1279 S Kihei Rd, Kihei, HI 96753, USA",
+    "sourceUrl": "https://www.toasttab.com/local/order/wowwowlemonademaui",
+    "sourceTitle": "Wow Wow Lemonade Maui (Toast)",
+    "note": "Listed as Wow Wow Lemonade Maui in the Azeka centre, Kihei; the Toast listing adds suite 309.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8133-b4d3-f232cf174e30",
+    "name": "Esther's Fair Prospect",
+    "status": "found",
+    "address": "2050 Main St #1B, Wailuku, HI 96793, USA",
+    "sourceUrl": "https://www.fodors.com/world/north-america/usa/hawaii/maui/things-to-do/nightlife",
+    "sourceTitle": "13 Best Bars in Maui, Hawaii",
+    "note": "Listed as Esters Fair Prospect; Fodor's gives the suite and the Wailuku zip.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8182-8fb4-edb595e87778",
+    "name": "Food Truck Park",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "Name too generic to identify a single venue; searches found several Maui food truck lots (Kahului, Kihei, Lahaina) with no single named one.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8186-9b2f-cfaf7170b8fd",
+    "name": "Sugar Beach Bake Shop",
+    "status": "found",
+    "address": "61 S Kihei Rd, Kihei, HI 96753, USA",
+    "sourceUrl": "https://atmosfy.io/location/kihei/sugar-beach-bake-shop-kihei",
+    "sourceTitle": "See what's inside",
+    "note": "Atmosfy and Foursquare listings agree on address; one review hinted it may have been closed on a visit, check hours.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-818d-b0ec-d0e2e85c1c7b",
+    "name": "Mokbar",
+    "status": "found",
+    "address": "75 9th Ave, New York, NY 10011, USA",
+    "sourceUrl": "https://www.finedininglovers.com/restaurants/mokbar",
+    "sourceTitle": "Mokbar",
+    "note": "Chelsea Market stall, address confirmed twice; no closure reported but no current-year confirmation either.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-819e-92ee-d23cbe5d8141",
+    "name": "Mah-Ze-Dahr",
+    "status": "found",
+    "address": "28 Greenwich Ave, New York, NY 10011, USA",
+    "sourceUrl": "https://timeout.com/newyork/restaurants/mah-ze-dahr",
+    "sourceTitle": "Mah Ze Dahr",
+    "note": "Original West Village bakery on Greenwich Ave (between W 10th and Charles Sts); other NYC branches exist.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b2-8dae-e685bda9aa1f",
+    "name": "South Maui Fish Company",
+    "status": "found",
+    "address": "22 Alahele Pl, Kihei, HI 96753, USA",
+    "sourceUrl": "https://www.theinfatuation.com/maui/reviews/south-maui-fish-company",
+    "sourceTitle": "South Maui Fish Company",
+    "note": "Food truck at Kihei Marketplace lot; Infatuation and mauihawaii.org agree; older listings show 1794 S Kihei Rd (Aloha Open Air Market), so the truck has moved before.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b7-8bf4-d922e69de4a9",
+    "name": "Four Seasons Bar",
+    "status": "found",
+    "address": "3900 Wailea Alanui Dr, Wailea, HI 96753, USA",
+    "sourceUrl": "https://www.meetings-conventions.com/Meeting-Event-Venues/Wailea-HI/Convention-Hotel/Four-Seasons-Resort-Maui-at-Wailea-p2179071",
+    "sourceTitle": "Four Seasons Resort Maui at Wailea - Wailea, HI",
+    "note": "Resort address for Four Seasons Resort Maui at Wailea because no single bar address exists; a specific bar was not identified.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81b8-a6ee-d8275a20ac24",
+    "name": "Da Kitchen",
+    "status": "closed",
+    "address": "425 Koloa St #104, Kahului, HI 96732, USA",
+    "sourceUrl": "https://mauinow.com/?p=334407",
+    "sourceTitle": "Da Kitchen closing Kahului location",
+    "note": "Kahului closed 22 July 2020; a Da Kitchen takeout counter now operates at 1215 S Kihei Rd, Kihei.",
+    "closed": true
+  },
+  {
+    "id": "312f3cdd-67a4-819c-bcff-df0461d56daf",
+    "name": "The Alley",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "No source places The Alley (bubble tea chain) in Culver City; only an Alley Lounge bar at 12223 W Washington Blvd (closed) and branches elsewhere turned up.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-811d-bcf3-fc597c3c1e3a",
+    "name": "Canteen",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "name too generic to identify a single venue",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8126-9704-c9eb8ad0e537",
+    "name": "Sing Kee",
+    "status": "found",
+    "address": "G/F, 82 Stanley Street, Central, Hong Kong",
+    "sourceUrl": "https://www.tatlerasia.com/dining/food/best-dai-pai-dongs-hong-kong",
+    "sourceTitle": "best dai pai dongs hong kong",
+    "note": "Dai pai dong on Stanley Street; Discover Hong Kong and Time Out give the same street address.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8151-8c68-edfafb29f536",
+    "name": "Wolf's Tailor",
+    "status": "found",
+    "address": "4058 Tejon St, Denver, CO 80211, USA",
+    "sourceUrl": "https://www.opentable.com/r/the-wolfs-tailor-reservations-denver",
+    "sourceTitle": "The Wolf's Tailor",
+    "note": "Listed as The Wolf's Tailor in Sunnyside; 2026 sources show it open with Michelin 2 stars, no closure report found.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8151-9eec-f54c2f57f150",
+    "name": "1",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "name too generic to identify a single venue",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8155-8b17-e40319c76fc8",
+    "name": "Pappy and Harriett's",
+    "status": "found",
+    "address": "53688 Pioneertown Rd, Pioneertown, CA 92268, USA",
+    "sourceUrl": "https://www.atlasobscura.com/places/pappy-harriets-pioneertown-palace",
+    "sourceTitle": "Pappy and Harriet's Pioneertown Palace",
+    "note": "In Pioneertown, near Joshua Tree; the venue spells it Harriet's with one t.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8163-96bf-cd360b07a2a2",
+    "name": "Yangna at Hyatt Regency Koh Samui",
+    "status": "found",
+    "address": "99/11 Moo 5, North Chaweng, Koh Samui, Surat Thani 84320, Thailand",
+    "sourceUrl": "https://www.hyatt.com/hyatt-regency/en-US/usmrk-hyatt-regency-koh-samui/yangna-cuisine",
+    "sourceTitle": "Hyatt Regency Koh Samui",
+    "note": "Hotel address for Hyatt Regency Koh Samui; sources split between North Chaweng and Bo Phut, same postcode.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8173-af7b-e1ab8b3a8b4d",
+    "name": "Little Owl Coffee",
+    "status": "found",
+    "address": "1555 Blake St, Denver, CO 80202, USA",
+    "sourceUrl": "https://www.westword.com/food-drink/little-owl-coffee-celebrates-ten-years-16664982/",
+    "sourceTitle": "Little Owl Coffee Celebrates Ten Years",
+    "note": "Original LoDo shop in the SugarCube Building; other branches exist (2731 17th St, LoHi).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8174-9533-f8f3d007462c",
+    "name": "Lin Heung Lau",
+    "status": "found",
+    "address": "Tung Ning Building, 249-251 Des Voeux Road Central, Sheung Wan, Hong Kong",
+    "sourceUrl": "https://thebeat.asia/hong-kong/delish/happenings/lin-heung-lau-relocation",
+    "sourceTitle": "Lin Heung Lau Moves to Sheung Wan, Expands to HK Airport",
+    "note": "Relocated April 2026 from 160-164 Wellington Street; the new address is in Sheung Wan, no floor given.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8184-b725-d19e46a2afc8",
+    "name": "Cafe 60",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "Searched Cafe 60 and Cafe 60 Samui; no Koh Samui venue found (only Cafe 69 in Bophut and a Cafe 60 in Stockholm).",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8191-86fc-dbf580b57e03",
+    "name": "Master Low Key",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "Master Low-key Food Shop found only in Shau Kei Wan (76A Main Street East) and Causeway Bay; no Jordan branch in any source.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-8197-bc95-d1010cf52b18",
+    "name": "Joshua Tree Coffee",
+    "status": "found",
+    "address": "61738 Twentynine Palms Hwy, Joshua Tree, CA 92252, USA",
+    "sourceUrl": "https://www.theinfatuation.com/los-angeles/reviews/joshua-tree-coffee",
+    "sourceTitle": "Joshua Tree Coffee",
+    "note": "Joshua Tree cafe location; a second site exists at 73433 Sullivan Rd, Twentynine Palms (not used); address also on wander.com.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81aa-9708-d1ff7e52091c",
+    "name": "Long Dtai",
+    "status": "found",
+    "address": "24/269 Mu 5, Bo Phut, Koh Samui, Surat Thani 84320, Thailand",
+    "sourceUrl": "https://guide.michelin.com/th/en/cchanghwad-suraasdrthaanii/koh-samui_7770005/restaurant/long-dtai",
+    "sourceTitle": "Long Dtai",
+    "note": "Michelin Guide lists it at Cape Fahn Hotel; address also on foodle.pro.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81bb-8e57-d003d6958223",
+    "name": "Dim Sum in Mong Kok",
+    "status": "not-found",
+    "address": "",
+    "sourceUrl": "",
+    "sourceTitle": "",
+    "note": "name too generic to identify a single venue",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81c8-9d98-d1c6b3f3d49d",
+    "name": "Bar Leone",
+    "status": "found",
+    "address": "11-15 Bridges Street, Central, Hong Kong",
+    "sourceUrl": "https://100toptables.scmp.com/restaurants-profile-2025/bar-leone",
+    "sourceTitle": "bar leone",
+    "note": "SCMP 100 Top Tables gives 11-15 Bridges Street; no shop or floor number, some write the area as Sheung Wan.",
+    "closed": false
+  },
+  {
+    "id": "312f3cdd-67a4-81cf-a0d6-f2f9f0eba179",
+    "name": "Kapi Sator",
+    "status": "found",
+    "address": "25/236 Mu 6, Soi Had Chaweng 5, Tawirat Phakdi Rd, Bo Phut, Koh Samui, Surat Thani 84320, Thailand",
+    "sourceUrl": "https://guide.michelin.com/sg/zh_CN/cchanghwad-suraasdrthaanii/koh-samui_7770005/restaurant/kapi-sator",
+    "sourceTitle": "Kapi Sator",
+    "note": "Michelin Bib Gourmand Southern Thai restaurant, Bo Phut, Koh Samui.",
+    "closed": false
+  }
+]
