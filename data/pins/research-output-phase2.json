@@ -6,7 +6,7 @@
     "address": "Taborstraße 22, 1020 Vienna, Austria",
     "sourceUrl": "https://www.swipein.restaurant/de/restaurant/steak-doner-wien",
     "sourceTitle": "Taborstraße 22, 1020 Wien, Austria",
-    "note": "Aggregator listing; the Falter street food guide gives the same address, matching the list.",
+    "note": "Elisa confirms the Vienna venue; aggregator listing and the Falter street food guide both give this address.",
     "closed": false
   },
   {
@@ -106,7 +106,7 @@
     "address": "Neubaugasse 48-50, 1070 Vienna, Austria",
     "sourceUrl": "https://www.vienna.at/vienna-gets-a-new-fries-hotspot-from-amsterdam/10397732",
     "sourceTitle": "Vienna Gets a New Fries Hotspot from Amsterdam",
-    "note": "Single press source (vienna.at), first Vienna location; not seen on a second page.",
+    "note": "Elisa confirms the Vienna venue; address from a vienna.at report on its first Vienna location.",
     "closed": false
   },
   {
@@ -452,11 +452,11 @@
   {
     "id": "37bf3cdd-67a4-81ed-b2be-c2ebb70a27a8",
     "name": "La Cave des Arches",
-    "status": "not-found",
-    "address": "",
-    "sourceUrl": "",
-    "sourceTitle": "",
-    "note": "No venue by this name in Beaune; Le Caveau des Arches at 10 Boulevard Perpreuil, 21200 Beaune is the likely intended place.",
+    "status": "found",
+    "address": "10 Boulevard Perpreuil, 21200 Beaune, France",
+    "sourceUrl": "https://beaune-tourism.com/organize-your-stay/enjoy-and-savour/restaurants/le-caveau-des-arches-beaune-en-5416889",
+    "sourceTitle": "Le Caveau des Arches",
+    "note": "Elisa confirms the venue is Le Caveau des Arches; address from the Beaune tourist office listing.",
     "closed": false
   },
   {
@@ -486,7 +486,7 @@
     "address": "",
     "sourceUrl": "",
     "sourceTitle": "",
-    "note": "No San Diego shop called Ans Ice Cream; the gelato shop An's Dry Cleaning at 3017 Adams Avenue, North Park is the likely intended place.",
+    "note": "Elisa says drop this row, do not pin it.",
     "closed": false
   },
   {
@@ -576,7 +576,7 @@
     "address": "",
     "sourceUrl": "",
     "sourceTitle": "",
-    "note": "Dish name; the likely intended stall is Ann Chin Handmade Popiah at #02-112, Chinatown Complex.",
+    "note": "Elisa says drop this row, do not pin it.",
     "closed": false
   },
   {
