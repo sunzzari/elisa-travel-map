@@ -193,15 +193,28 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const q = query.trim().toLowerCase()
   const NEAR_KM = 5
 
-  // Every filter but the group, so each group chip can count what it would add.
-  const matchesExceptGroup = useCallback((i: TripItem) => (
+  // The filters that judge an item by what it IS, so they apply whether or not
+  // it has a pin.
+  const passesTypeLegSearch = useCallback((i: TripItem) => (
     !hiddenTypes.has((i.type ?? 'Other') as ItemType) &&
     !hiddenLegs.has(i.legCity) &&
-    (!q || [i.name, i.venue, i.address, i.type ?? '', i.legCity, i.notes].some(f => f.toLowerCase().includes(q))) &&
-    (nearMe !== 'on' || !userLocation || (
+    // Name, venue, address, type, leg and notes.
+    (!q || [i.name, i.venue, i.address, i.type ?? '', i.legCity, i.notes].some(f => f.toLowerCase().includes(q)))
+  ), [hiddenTypes, hiddenLegs, q])
+
+  // Near me is kept apart from the rest because it judges an item by WHERE it
+  // is: an item with no pin has no distance, so this is the one filter that can
+  // hide one. The unmapped list below is built without it.
+  const nearMeKeeps = useCallback((i: TripItem) => (
+    nearMe !== 'on' || !userLocation || (
       !!i.coordinates && haversineKm(userLocation.lat, userLocation.lng, i.coordinates.lat, i.coordinates.lng) <= NEAR_KM
-    ))
-  ), [hiddenTypes, hiddenLegs, q, nearMe, userLocation])
+    )
+  ), [nearMe, userLocation])
+
+  // Every filter but the group, so each group chip can count what it would add.
+  const matchesExceptGroup = useCallback(
+    (i: TripItem) => passesTypeLegSearch(i) && nearMeKeeps(i),
+    [passesTypeLegSearch, nearMeKeeps])
 
   // A search overrides every filter: all items, all days. Elisa, 2026-10-18:
   // "a search should always search ALL TRIP ITEMS ON ALL DAYS. i dont want the
@@ -225,6 +238,17 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     const g = groupOf(i)
     return g !== null && groups.has(g) && matchesExceptGroup(i)
   }, [q, textMatch, groups, matchesExceptGroup])
+
+  // `matches` without Near me, for the unmapped list only. Elisa, 2026-10-19:
+  // "make sure to always include an unmapped section so i dont lose out". With
+  // Near me on, every item with no pin failed the distance test and the whole
+  // "Not on the map" section emptied, which is the only place such an item can
+  // be seen or acted on. Near me still narrows the map and the day lists.
+  const matchesIgnoringNearMe = useCallback((i: TripItem) => {
+    if (q) return textMatch(i)
+    const g = groupOf(i)
+    return g !== null && groups.has(g) && passesTypeLegSearch(i)
+  }, [q, textMatch, groups, passesTypeLegSearch])
 
   // Search results: the list under the search bar, the dates to highlight and
   // the cards on the map. Elisa, 2026-10-18: "as im searching, matching items
@@ -382,7 +406,12 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     ? pool.filter(i => matchedIds.includes(i.id))
     : pool.filter(matches)
   const mapped = shown.filter(i => i.coordinates)
-  const unmapped = shown.length - mapped.length
+  // Taken without Near me, so turning it on cannot empty the list.
+  const unmappedShown = (matchedIds.length > 0
+    ? pool.filter(i => matchedIds.includes(i.id))
+    : pool.filter(matchesIgnoringNearMe)
+  ).filter(i => !i.coordinates)
+  const unmapped = unmappedShown.length
 
   const fitKey = [
     view,
@@ -849,9 +878,10 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           ))}
 
           <UnmappedList
-            items={shown.filter(i => !i.coordinates)}
+            items={unmappedShown}
             onSelect={setSelected}
             dotColor={item => STATUS_DOT[item.status ?? ''] ?? '#8E8E93'}
+            note={nearMe === 'on' ? 'Near me cannot place these, so they are all still here.' : undefined}
             // Say what is missing, so a gap can be closed rather than wondered at.
             subtitle={item => {
               const why = item.type === 'Flight' ? 'needs both airport codes from the booking in Notes'
