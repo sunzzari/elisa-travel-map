@@ -35,6 +35,20 @@ const TYPE_META: Record<string, { glyph: string; color: string }> = {
 const TYPE_ORDER: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Train', 'Ferry', 'Car Rental', 'Other']
 
 type View = 'plan' | 'trip'
+
+/** English search words and the local forms they appear as in place names. */
+const LOCAL_FORMS: Record<string, string[]> = {
+  market: ['markt', 'marché', 'mercato', 'mercado'],
+  markets: ['markt', 'marché', 'mercato', 'mercado'],
+  christmas: ['christkind', 'weihnacht', 'noël', 'natale'],
+  palace: ['schloss', 'palais', 'palazzo', 'palacio'],
+  castle: ['schloss', 'burg', 'château', 'castello'],
+  church: ['kirche', 'dom', 'église', 'chiesa'],
+  station: ['bahnhof', 'gare', 'stazione', 'estación'],
+  garden: ['garten', 'jardin', 'giardino'],
+  coffee: ['kaffee', 'café', 'caffè'],
+  bakery: ['bäckerei', 'boulangerie', 'panificio'],
+}
 // Every group is on by default, Considering included. Elisa, 2026-10-18: "all
 // of the 'considering' should display on the map with easy toggle on/off".
 const SECTIONS: Section[] = ['summary', 'todo', 'coverage', 'days']
@@ -183,9 +197,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const matchesExceptGroup = useCallback((i: TripItem) => (
     !hiddenTypes.has((i.type ?? 'Other') as ItemType) &&
     !hiddenLegs.has(i.legCity) &&
-    // Name, venue, address, type, leg. Not notes: "demel" matched the New
-    // Year's concert because its notes mention brunch at Demel.
-    (!q || [i.name, i.venue, i.address, i.type ?? '', i.legCity].some(f => f.toLowerCase().includes(q))) &&
+    (!q || [i.name, i.venue, i.address, i.type ?? '', i.legCity, i.notes].some(f => f.toLowerCase().includes(q))) &&
     (nearMe !== 'on' || !userLocation || (
       !!i.coordinates && haversineKm(userLocation.lat, userLocation.lng, i.coordinates.lat, i.coordinates.lng) <= NEAR_KM
     ))
@@ -195,8 +207,18 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // "a search should always search ALL TRIP ITEMS ON ALL DAYS. i dont want the
   // filters to be applied. it should override the filters." Clearing the
   // search brings the filters back as they were.
+  // Notes count: "Salzburg Christkindlmarkt" says "market" only in its notes.
+  // Elisa, 2026-10-19: "the name is 'markt' but when i search 'market' it
+  // should come up because that word is in the notes". Name matches list
+  // first; notes-only matches follow, marked "in notes".
+  // An English word also finds its local form in names, so the Salzburg
+  // Christkindlmarkt ranks with the markets, not after passing mentions.
+  const nameMatch = useCallback((i: TripItem) => {
+    const words = [q, ...(LOCAL_FORMS[q] ?? [])]
+    return [i.name, i.venue, i.address, i.type ?? '', i.legCity].some(f => words.some(w => f.toLowerCase().includes(w)))
+  }, [q])
   const textMatch = useCallback((i: TripItem) =>
-    [i.name, i.venue, i.address, i.type ?? '', i.legCity].some(f => f.toLowerCase().includes(q)), [q])
+    nameMatch(i) || i.notes.toLowerCase().includes(q), [q, nameMatch])
 
   const matches = useCallback((i: TripItem) => {
     if (q) return textMatch(i)
@@ -212,8 +234,9 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const searchResults = useMemo(() => {
     if (!q) return []
     const when = (i: TripItem) => i.assignedToDate ?? i.date ?? '9999'
-    return liveItems.filter(matches).sort((a, b) => when(a).localeCompare(when(b)) || a.name.localeCompare(b.name))
-  }, [q, liveItems, matches])
+    const rank = (i: TripItem) => (nameMatch(i) ? 0 : 1)
+    return liveItems.filter(matches).sort((a, b) => rank(a) - rank(b) || when(a).localeCompare(when(b)) || a.name.localeCompare(b.name))
+  }, [q, liveItems, matches, nameMatch])
   const matchDates = useMemo(() => {
     const out = new Set<string>()
     for (const i of searchResults) {
@@ -481,7 +504,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[13px] text-white">{item.name}</span>
                       <span className="block truncate text-[11px] text-white/45">
-                        {[item.type, day ? formatLongDate(day, { weekday: 'short', month: 'short', day: 'numeric' }) : 'No day yet', item.legCity, item.coordinates ? null : 'not on the map'].filter(Boolean).join(' - ')}
+                        {[item.type, day ? formatLongDate(day, { weekday: 'short', month: 'short', day: 'numeric' }) : 'No day yet', item.legCity, nameMatch(item) ? null : 'in notes', item.coordinates ? null : 'not on the map'].filter(Boolean).join(' - ')}
                       </span>
                     </span>
                   </button>

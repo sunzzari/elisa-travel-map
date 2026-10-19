@@ -4,6 +4,8 @@ Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.m
 
 ## 2026-10-19
 
+- `6:05am` **Search reads notes again, and knows Markt is a market** - Elisa: "when i search market only 2 things come up ... what about the salzburg markets? ... the name is 'markt' but when i search 'market' it should come up because that word is in the notes". Notes are searched again (they were dropped earlier today to quiet one noisy match, which was the wrong call). Results that match a name list first, then notes-only matches marked "in notes". An English word also matches its local form in names (market/Markt, Christmas/Christkindl/Weihnacht, palace/Schloss and a few more, `LOCAL_FORMS`), so on Vienna 2026 "market" now lists all six markets first, Salzburg's included, then six passing mentions.
+
 - `5:48am` **Calendar beside the map on a laptop** - Elisa: "its still very clunky when i have the calendar open and the map. i cant read the card on the map. its blocked". With the calendar on, a laptop now shows the calendar in the right column and the map at full height on the left, so a pin's popup is never cut off. A phone keeps the calendar above the map.
 
 ## 2026-10-18
