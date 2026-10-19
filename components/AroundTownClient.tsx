@@ -172,12 +172,15 @@ export default function AroundTownClient({
     [userLocation]
   )
 
-  const { shown, nearMeWidened } = useMemo(() => {
+  const { shown, unmapped, nearMeWidened } = useMemo(() => {
     const rank = search ? new Map(search.ids.map((id, n) => [id, n])) : null
     let list = items.filter(item => {
       const m = meta[placeIdOf(item.id)]
       if (!m) return false
-      if (region && m.region !== region) return false
+      // An area choice cannot judge a place with no pin: its region is unknown,
+      // which is not the same as being somewhere else. It stays on the page, in
+      // the unmapped list, so picking an area never buries it.
+      if (region && m.region !== region && !(m.region === null && !item.coordinates)) return false
       if (kind && m.kind !== kind) return false
       if (wantToTryOnly && !m.thinkingAbout) return false
       if (hideBeenThere && m.done) return false
@@ -188,9 +191,15 @@ export default function AroundTownClient({
     })
     // Best match first: a match on the name outranks one in the notes.
     if (rank) list = [...list].sort((a, b) => rank.get(a.id)! - rank.get(b.id)!)
-    if (!nearMeOn) return { shown: list, nearMeWidened: false }
+    // The unmapped list is taken BEFORE near me. Near me ranks by a distance a
+    // place with no pin does not have, so `nearest` drops every one of them,
+    // and the section used to vanish with the filter on. Elisa, 2026-10-19:
+    // "make sure to always include an unmapped section so i dont lose out".
+    // Near me narrows the map, never this list.
+    const noPin = list.filter(i => !i.coordinates)
+    if (!nearMeOn) return { shown: list, unmapped: noPin, nearMeWidened: false }
     const near = nearest(list, distanceKm)
-    return { shown: near.items, nearMeWidened: near.widened }
+    return { shown: near.items, unmapped: noPin, nearMeWidened: near.widened }
   }, [items, meta, region, kind, wantToTryOnly, hideBeenThere, beenThereOnly, hideBad, search, nearMeOn, distanceKm])
 
   const mapped = shown.filter(i => i.coordinates)
@@ -214,7 +223,6 @@ export default function AroundTownClient({
       !hidden.has(pin.id) &&
       (!near || haversineKm(near.from.lat, near.from.lng, pin.lat, pin.lng) <= near.reach + 0.01)
   }, [search, nearMeOn, userLocation, nearMeWidened, shown, distanceKm])
-  const unmapped = shown.filter(i => !i.coordinates)
 
   // The ONE area a fit may span. Elisa, 2026-09-14: "id never want to fit all
   // between sf and la. id fit all within one area but not all areas." Her
@@ -333,6 +341,17 @@ export default function AroundTownClient({
     </section>
   )
 
+  // Says why the list can hold more than the filters above would suggest: with
+  // near me or an area on, the places with no pin are kept rather than dropped.
+  const unmappedNote = [
+    'No pin yet.',
+    nearMeOn ? 'Near me cannot place these.' : null,
+    region ? 'Ones with no area yet are kept here too.' : null,
+    'Find it gives it a pin; or search it in Maps, or open its Notion row.',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   const unmappedList = (
     <UnmappedList
       items={unmapped}
@@ -345,7 +364,7 @@ export default function AroundTownClient({
           .join(' - ')
       }}
       title={search ? `${unmapped.length} with no pin yet` : undefined}
-      note="No pin yet. Find it gives it one; or search it in Maps, or open its Notion row."
+      note={unmappedNote}
       onFind={item => {
         setAdding(false)
         setSelected(item)
