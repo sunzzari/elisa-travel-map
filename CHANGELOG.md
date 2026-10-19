@@ -2,7 +2,13 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-10-19
+
+- `5:48am` **Calendar beside the map on a laptop** - Elisa: "its still very clunky when i have the calendar open and the map. i cant read the card on the map. its blocked". With the calendar on, a laptop now shows the calendar in the right column and the map at full height on the left, so a pin's popup is never cut off. A phone keeps the calendar above the map.
+
 ## 2026-10-18
+
+- `11:51am` **Search: results list, highlighted dates, cards on the map, overrides every filter, one-tap clear** - Elisa: "as im searching, matching items should come up below the search bar. and if the thing is assigned to a date that date should be highlighted. and the white cards on the map for the results should come up ... all the dates should be highlighted, and all the map cards should come up if not too crowded", "a search should always search ALL TRIP ITEMS ON ALL DAYS ... it should override the filters", "there should be an easy x button on the search to clear". A results list drops down under the search box (name, type, day, leg; tap to open it on the map). Every date with a match lights up in the date bar and the calendar. Each result gets a small white card on the map, up to 8, skipping any that would sit on top of another at the current zoom (`TripMap` `cards`). While searching, every filter (groups, types, legs, Near me, the picked day) is paused and a banner says so; clearing the search brings them back. Search matches name, venue, address, type and leg, no longer notes. An ✕ in the box clears it.
 
 - `11:44am` **Search works with a popup open** - Elisa: "the search does not work at all when something is clicked. everything bugs out and i can only type one letter at a time and no results come up". Each keystroke redrew the open popup and Google's popup took keyboard focus every time it was redrawn, so the search box lost focus after one letter. The popup no longer takes focus (`shouldFocus={false}`), and typing in search closes it so the results show.
 

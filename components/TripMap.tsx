@@ -143,6 +143,7 @@ function MapContent({
   pinFilter,
   bubblesTakePinColour = false,
   popupExtra,
+  cards,
 }: {
   items: TripItem[]
   selected: TripItem | null
@@ -168,6 +169,9 @@ function MapContent({
   /** Replaces the status pill in a pin's popup. The trip Plan tab puts its
       Idea / Planned / Booked dropdown here, so it works straight from the map. */
   popupExtra?: (item: TripItem) => React.ReactNode
+  /** Search results: a small white card on each, skipping any that would land
+      on top of one already shown at this zoom. */
+  cards?: TripItem[]
 }) {
   const map = useMap()
   const markerLib = useMapsLibrary('marker')
@@ -229,6 +233,32 @@ function MapContent({
   })
   const mappedRef = useRef(mapped)
   mappedRef.current = mapped
+
+  // Cards for search results, at most 8, never crowded: a card is dropped
+  // when its pin sits within a card's footprint of one already kept.
+  const [zoom, setZoom] = useState<number | null>(null)
+  useEffect(() => {
+    if (!map) return
+    setZoom(map.getZoom() ?? null)
+    const l = map.addListener('zoom_changed', () => setZoom(map.getZoom() ?? null))
+    return () => l.remove()
+  }, [map])
+  const shownCards = useMemo(() => {
+    if (!cards?.length || zoom === null) return []
+    const scale = (256 * Math.pow(2, zoom)) / 360
+    const kept: TripItem[] = []
+    for (const c of cards) {
+      if (!c.coordinates || c.id === selected?.id) continue
+      const clash = kept.some(k => {
+        const dx = Math.abs(k.coordinates!.lng - c.coordinates!.lng) * scale
+        const dy = Math.abs(k.coordinates!.lat - c.coordinates!.lat) * scale / Math.cos((c.coordinates!.lat * Math.PI) / 180)
+        return dx < 190 && dy < 70
+      })
+      if (!clash) kept.push(c)
+      if (kept.length >= 8) break
+    }
+    return kept
+  }, [cards, zoom, selected])
   useEffect(() => () => { if (hoverTimer.current) clearTimeout(hoverTimer.current) }, [])
 
   const fitBounds = useCallback((includeUser: boolean) => {
@@ -469,6 +499,28 @@ function MapContent({
         </AdvancedMarker>
       )}
 
+      {shownCards.map(card => (
+        <InfoWindow
+          key={card.id}
+          position={card.coordinates!}
+          pixelOffset={[0, -20]}
+          disableAutoPan
+          shouldFocus={false}
+          headerDisabled
+        >
+          <button
+            onClick={() => onSelect({ ...card, branches: undefined })}
+            style={{ display: 'block', maxWidth: 200, textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+              fontFamily: 'var(--font-body), system-ui, sans-serif' }}
+          >
+            <span style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#111', lineHeight: 1.25 }}>{card.name}</span>
+            <span style={{ display: 'block', fontSize: 11, color: '#6b7280', marginTop: 2 }}>
+              {[card.type, card.status, card.assignedToDate ?? card.date].filter(Boolean).join(' · ')}
+            </span>
+          </button>
+        </InfoWindow>
+      ))}
+
       {/* InfoWindow */}
       {selected && selected.coordinates && (
         <InfoWindow
@@ -598,9 +650,10 @@ interface Props {
   pinFilter?: (pin: { id: string; lat: number; lng: number }) => boolean
   bubblesTakePinColour?: boolean
   popupExtra?: (item: TripItem) => React.ReactNode
+  cards?: TripItem[]
 }
 
-export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour, popupExtra }: Props) {
+export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour, popupExtra, cards }: Props) {
   const mapped = items.filter(i => i.coordinates)
 
   const center = userLocation ?? (mapped.length > 0
@@ -627,7 +680,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         clickableIcons={false}
         onClick={() => onSelect(null)}
       >
-        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} popupExtra={popupExtra} />
+        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} popupExtra={popupExtra} cards={cards} />
       </Map>
     </APIProvider>
   )

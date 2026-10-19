@@ -41,9 +41,11 @@ interface Props {
   selected: TripItem | null
   onSelectItem: (item: TripItem, date: string) => void
   today: string
+  /** Days holding a search match, lit up while searching. */
+  highlightDates?: Set<string>
 }
 
-export default function TripCalendar({ plan, matches, selectedDate, onSelectDate, selected, onSelectItem, today }: Props) {
+export default function TripCalendar({ plan, matches, selectedDate, onSelectDate, selected, onSelectItem, today, highlightDates }: Props) {
   if (plan.days.length === 0) {
     return <p className="px-4 py-6 text-sm text-white/40">This trip has no dates yet, so there is no calendar to draw.</p>
   }
@@ -66,7 +68,7 @@ export default function TripCalendar({ plan, matches, selectedDate, onSelectDate
             <button
               key={d.date}
               onClick={() => onSelectDate(on ? null : d.date)}
-              className={`px-2 py-1.5 text-left transition-colors ${on ? 'bg-amber-400 text-gray-950' : 'bg-gray-900 hover:bg-gray-800'} ${d.date < today && !on ? 'opacity-50' : ''}`}
+              className={`px-2 py-1.5 text-left transition-colors ${on ? 'bg-amber-400 text-gray-950' : highlightDates?.has(d.date) ? 'bg-amber-400/25 ring-2 ring-inset ring-amber-300' : 'bg-gray-900 hover:bg-gray-800'} ${d.date < today && !on && !highlightDates?.has(d.date) ? 'opacity-50' : ''}`}
             >
               <span className={`block text-[10px] uppercase ${on ? 'text-gray-950/70' : 'text-white/40'}`}>
                 {formatLongDate(d.date, { weekday: 'short' })} - Day {d.dayNumber}

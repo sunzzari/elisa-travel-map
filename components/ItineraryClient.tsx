@@ -150,6 +150,8 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // never reach the map. Elisa, 2026-09-08: "the whole map should be visible no
   // matter if things are or not assigned."
   const pool = useMemo(() => {
+    // A search looks across the whole trip, whatever day is picked.
+    if (query.trim()) return liveItems
     // Plan and Calendar draw the map the same way; only their side differs.
     if (view !== 'trip') {
       // A day shows its own plans plus EVERY Considering item on the trip, not
@@ -165,7 +167,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
     if (!effectiveSelected) return liveItems
     const list = visiblePlans.flatMap(p => [...p.timeline.map(x => x.item), ...p.anytime.map(x => x.item), ...p.options])
     return list.filter((item, i, arr) => arr.findIndex(c => c.id === item.id) === i)
-  }, [view, planDayNow, effectiveSelected, liveItems, visiblePlans])
+  }, [query, view, planDayNow, effectiveSelected, liveItems, visiblePlans])
 
   const presentTypes = useMemo(
     () => TYPE_ORDER.filter(t => pool.some(i => (i.type ?? 'Other') === t)),
@@ -181,16 +183,50 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   const matchesExceptGroup = useCallback((i: TripItem) => (
     !hiddenTypes.has((i.type ?? 'Other') as ItemType) &&
     !hiddenLegs.has(i.legCity) &&
-    (!q || i.name.toLowerCase().includes(q) || i.venue.toLowerCase().includes(q) || i.notes.toLowerCase().includes(q)) &&
+    // Name, venue, address, type, leg. Not notes: "demel" matched the New
+    // Year's concert because its notes mention brunch at Demel.
+    (!q || [i.name, i.venue, i.address, i.type ?? '', i.legCity].some(f => f.toLowerCase().includes(q))) &&
     (nearMe !== 'on' || !userLocation || (
       !!i.coordinates && haversineKm(userLocation.lat, userLocation.lng, i.coordinates.lat, i.coordinates.lng) <= NEAR_KM
     ))
   ), [hiddenTypes, hiddenLegs, q, nearMe, userLocation])
 
+  // A search overrides every filter: all items, all days. Elisa, 2026-10-18:
+  // "a search should always search ALL TRIP ITEMS ON ALL DAYS. i dont want the
+  // filters to be applied. it should override the filters." Clearing the
+  // search brings the filters back as they were.
+  const textMatch = useCallback((i: TripItem) =>
+    [i.name, i.venue, i.address, i.type ?? '', i.legCity].some(f => f.toLowerCase().includes(q)), [q])
+
   const matches = useCallback((i: TripItem) => {
+    if (q) return textMatch(i)
     const g = groupOf(i)
     return g !== null && groups.has(g) && matchesExceptGroup(i)
-  }, [groups, matchesExceptGroup])
+  }, [q, textMatch, groups, matchesExceptGroup])
+
+  // Search results: the list under the search bar, the dates to highlight and
+  // the cards on the map. Elisa, 2026-10-18: "as im searching, matching items
+  // should come up below the search bar. and if the thing is assigned to a
+  // date that date should be highlighted. and the white cards on the map for
+  // the results should come up."
+  const searchResults = useMemo(() => {
+    if (!q) return []
+    const when = (i: TripItem) => i.assignedToDate ?? i.date ?? '9999'
+    return liveItems.filter(matches).sort((a, b) => when(a).localeCompare(when(b)) || a.name.localeCompare(b.name))
+  }, [q, liveItems, matches])
+  const matchDates = useMemo(() => {
+    const out = new Set<string>()
+    for (const i of searchResults) {
+      const start = i.assignedToDate ?? i.date
+      if (!start) continue
+      const end = i.assignedToDateEnd ?? i.dateEnd
+      if (i.type === 'Hotel' && end && end > start) {
+        for (let d = start; d < end; d = new Date(Date.parse(`${d}T00:00:00Z`) + 86400000).toISOString().slice(0, 10)) out.add(d)
+      } else out.add(start)
+    }
+    return out
+  }, [searchResults])
+  const [searchOpen, setSearchOpen] = useState(false)
 
   const legs = useMemo(
     () => Array.from(new Set(items.map(i => i.legCity).filter(Boolean))).sort(),
@@ -403,14 +439,57 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             Calendar
           </button>
         )}
-        <input
-          value={query}
-          // Typing closes any open popup so the results show (Elisa, 2026-10-18:
-          // "the search does not work at all when something is clicked").
-          onChange={e => { setQuery(e.target.value); setSelected(null) }}
-          placeholder="Search"
-          className="hidden w-40 flex-shrink-0 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white placeholder:text-white/35 focus:border-amber-400/40 focus:outline-none sm:block"
-        />
+        <div className="relative hidden flex-shrink-0 sm:block">
+          <input
+            value={query}
+            // Typing closes any open popup so the results show (Elisa, 2026-10-18:
+            // "the search does not work at all when something is clicked").
+            onChange={e => { setQuery(e.target.value); setSelected(null); setSearchOpen(true) }}
+            onFocus={() => setSearchOpen(true)}
+            onBlur={() => setTimeout(() => setSearchOpen(false), 150)}
+            onKeyDown={e => { if (e.key === 'Escape') { setQuery(''); setSearchOpen(false) } }}
+            placeholder="Search"
+            className="w-48 rounded-full border border-white/15 bg-white/10 py-1 pl-3 pr-7 text-xs text-white placeholder:text-white/35 focus:border-amber-400/40 focus:outline-none"
+          />
+          {query && (
+            // One tap clears the search and brings the filters back.
+            <button
+              onMouseDown={e => e.preventDefault()}
+              onClick={() => { setQuery(''); setSearchOpen(false); setSelected(null) }}
+              aria-label="Clear search"
+              className="absolute right-1.5 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-[11px] text-white/80 hover:bg-white/25"
+            >
+              ✕
+            </button>
+          )}
+          {searchOpen && q && (
+            <div className="absolute right-0 top-full z-30 mt-1.5 max-h-[60vh] w-80 overflow-y-auto rounded-xl border border-white/10 bg-gray-900 py-1 shadow-2xl">
+              <p className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-white/35">
+                {searchResults.length} match{searchResults.length === 1 ? '' : 'es'}
+              </p>
+              {searchResults.length === 0 && <p className="px-3 pb-2 text-xs text-white/45">Nothing on this trip matches.</p>}
+              {searchResults.map(item => {
+                const day = item.assignedToDate ?? item.date
+                return (
+                  <button
+                    key={item.id}
+                    onMouseDown={e => e.preventDefault()}
+                    onClick={() => { setSelected(item); setSearchOpen(false) }}
+                    className="flex w-full items-start gap-2 px-3 py-1.5 text-left hover:bg-white/5"
+                  >
+                    <span className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full" style={{ background: STATUS_DOT[item.status ?? ''] ?? '#8E8E93' }} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[13px] text-white">{item.name}</span>
+                      <span className="block truncate text-[11px] text-white/45">
+                        {[item.type, day ? formatLongDate(day, { weekday: 'short', month: 'short', day: 'numeric' }) : 'No day yet', item.legCity, item.coordinates ? null : 'not on the map'].filter(Boolean).join(' - ')}
+                      </span>
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
         {/* Near me is for standing in the city; the Plan tab gives its room to the trip name. */}
         {view === 'trip' && <button
           onClick={requestNearMe}
@@ -508,7 +587,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
               onClick={() => { setSelectedDate(plan.dateString); setSelected(null) }}
               className={`flex-shrink-0 rounded-xl px-3 py-1 text-center transition-colors ${
                 active ? 'bg-amber-400 text-gray-950' : past ? 'bg-white/5 text-white/35 hover:bg-white/10' : 'bg-white/10 text-white/70 hover:bg-white/15'
-              } ${isToday && !active ? 'ring-1 ring-amber-400/50' : ''}`}
+              } ${matchDates.has(plan.dateString) && !active ? 'bg-amber-400/25 text-amber-100 ring-2 ring-amber-300' : isToday && !active ? 'ring-1 ring-amber-400/50' : ''}`}
             >
               {chipByLeg ? (
                 <span className="block px-1 text-sm font-semibold leading-tight">{plan.dateString}</span>
@@ -532,7 +611,13 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           same four. The map's own Considering switch was removed as a second
           control for the same thing (Elisa, 2026-10-18: "that is redundant"). Replaced a layer row and a status row
           (audit H1, 2026-10-18). Same row on both tabs. */}
-      <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
+      {q && (
+        <div className="flex-shrink-0 border-b border-amber-400/20 bg-amber-400/10 px-4 py-1.5 text-xs text-amber-200">
+          Searching every item on every day; filters are paused.{' '}
+          <button onClick={() => setQuery('')} className="underline">Clear search</button>
+        </div>
+      )}
+      <div className={`flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2 ${q ? 'pointer-events-none opacity-35' : ''}`} style={{ scrollbarWidth: 'none' }}>
         {GROUPS.map(({ id, label, statuses }) => {
           const on = groups.has(id)
           const color = STATUS_DOT[statuses[0]] ?? '#8E8E93'
@@ -562,7 +647,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
 
       {/* Type chips. Only the types actually present, so a Ferry toggle never
           shows up on a Utah ski weekend. */}
-      <div className="flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2" style={{ scrollbarWidth: 'none' }}>
+      <div className={`flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2 ${q ? '[&>button]:pointer-events-none [&>button]:opacity-35' : ''}`} style={{ scrollbarWidth: 'none' }}>
         {presentTypes.map(type => {
           const on = !hiddenTypes.has(type)
           const meta = TYPE_META[type] ?? TYPE_META.Other
@@ -615,8 +700,12 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
 
       {/* Map is the page. On a laptop it sits beside the plan; on a phone the
           plan scrolls underneath it. */}
+      {/* Phone: the calendar sits above the map. Laptop: it takes the right
+          column and the map keeps the full height, so a pin's popup is never
+          cut off. Elisa, 2026-10-18: "its still very clunky when i have the
+          calendar open and the map. i cant read the card on the map." */}
       {showCalendar && (
-        <div className="max-h-[45vh] flex-shrink-0 overflow-auto border-b border-white/10 bg-gray-950">
+        <div className="max-h-[45vh] flex-shrink-0 overflow-auto border-b border-white/10 bg-gray-950 lg:hidden">
           <TripCalendar
             plan={plan}
             matches={matches}
@@ -624,13 +713,14 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             onSelectDate={date => { setSelectedDate(date); setSelected(null) }}
             selected={selected}
             onSelectItem={(item, date) => { setSelectedDate(date); setSelected(item) }}
+            highlightDates={matchDates}
             today={today}
           />
         </div>
       )}
 
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <div className={showCalendar ? 'relative min-h-[220px] flex-1' : 'relative h-[45vh] flex-shrink-0 lg:h-auto lg:flex-1'}>
+        <div className={showCalendar ? 'relative min-h-[260px] flex-1' : 'relative h-[45vh] flex-shrink-0 lg:h-auto lg:flex-1'}>
           <TripMap
             items={shown}
             apiKey={apiKey}
@@ -640,7 +730,8 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             onRecenterReady={onRecenterReady}
             fitKey={fitKey}
             styleFor={view !== 'trip' ? planStyle : undefined}
-            fitScopeIds={view !== 'trip' ? planFitIds : effectiveSelected ? undefined : allDaysFitIds}
+            cards={q ? searchResults : undefined}
+            fitScopeIds={q ? undefined : view !== 'trip' ? planFitIds : effectiveSelected ? undefined : allDaysFitIds}
             popupExtra={view !== 'trip' ? item => (
               // Plan, book or drop right from the pin. Elisa, 2026-10-18:
               // "theres no way for me to toggle, confirm, or assign to date in
@@ -671,7 +762,21 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10">
+        {showCalendar && (
+          <div className="hidden min-h-0 overflow-auto border-l border-white/10 bg-gray-950 lg:block lg:w-[58%] lg:flex-shrink-0">
+              <TripCalendar
+            plan={plan}
+            matches={matches}
+            selectedDate={selectedDate}
+            onSelectDate={date => { setSelectedDate(date); setSelected(null) }}
+            selected={selected}
+            onSelectItem={(item, date) => { setSelectedDate(date); setSelected(item) }}
+            highlightDates={matchDates}
+            today={today}
+          />
+          </div>
+        )}
+        <div className={`min-h-0 flex-1 overflow-y-auto lg:max-w-[420px] lg:border-l lg:border-white/10 ${showCalendar ? 'lg:hidden' : ''}`}>
           {view === 'plan' ? (
             <>
               {/* The map popup carries the editor for anything with a pin; the
