@@ -432,21 +432,21 @@
   {
     "id": "37bf3cdd-67a4-8184-a676-e955c82573d7",
     "name": "Belo Horizonte",
-    "status": "not-found",
-    "address": "",
-    "sourceUrl": "",
-    "sourceTitle": "",
-    "note": "A Ristorante Belohorizonte exists in Orosei, Nuoro, Sardinia, but no source gives its street address.",
+    "status": "found",
+    "address": "Via Giuseppe Dessì 25, 08028 Orosei (NU), Italy",
+    "sourceUrl": "https://weur-cdn.piatti.menu/storage/media/companies_menu_pdf/71375050/belohorizonte-orosei-menu.pdf",
+    "sourceTitle": "Menu Belohorizonte, Via Giuseppe Dessì 25, 08028 Orosei NU",
+    "note": "Elisa confirms Orosei; listed as Ristorante Belohorizonte, street, number and postcode all sourced.",
     "closed": false
   },
   {
     "id": "37bf3cdd-67a4-81a6-8fd8-f2e572d6091c",
     "name": "DuEpi",
-    "status": "not-found",
-    "address": "",
-    "sourceUrl": "",
-    "sourceTitle": "",
-    "note": "A duepi Pizzeria Live Grill is listed in Dorgali, Sardinia, but no source gives its street address.",
+    "status": "found",
+    "address": "Via Vasco de Gama 7, 08022 Cala Gonone, Dorgali (NU), Italy",
+    "sourceUrl": "https://www.tripadvisor.com/Restaurant_Review-g608907-d3486512-Reviews-DuePi_Pizzeria_Ristorante_Live_Grill-Cala_Gonone_Dorgali_Province_of_Nuoro_Sardin.html",
+    "sourceTitle": "DuePi Pizzeria Ristorante Live Grill, Cala Gonone",
+    "note": "Elisa confirms Dorgali; listings now name duepi at this address in Cala Gonone, the coastal part of Dorgali.",
     "closed": false
   },
   {
@@ -536,7 +536,7 @@
     "address": "",
     "sourceUrl": "",
     "sourceTitle": "",
-    "note": "No venue by this name at Metrotown or on Kingsway; the only nearby match is Chengdu Spicy Restaurant.",
+    "note": "Elisa thinks it is in San Francisco; no venue of this name found in SF, Millbrae, San Mateo or Daly City, and none substituted.",
     "closed": false
   },
   {
@@ -692,12 +692,12 @@
   {
     "id": "312f3cdd-67a4-819c-bcff-df0461d56daf",
     "name": "The Alley",
-    "status": "not-found",
-    "address": "",
-    "sourceUrl": "",
-    "sourceTitle": "",
-    "note": "No source places The Alley (bubble tea chain) in Culver City; only an Alley Lounge bar at 12223 W Washington Blvd (closed) and branches elsewhere turned up.",
-    "closed": false
+    "status": "closed",
+    "address": "12223 W Washington Blvd, Culver City, CA, USA",
+    "sourceUrl": "https://www.timeout.com/los-angeles/bars/alley-lounge",
+    "sourceTitle": "Alley Lounge",
+    "note": "Elisa says it closed; Time Out marks Alley Lounge at this address closed, no zip and no closing date in sources.",
+    "closed": true
   },
   {
     "id": "312f3cdd-67a4-811d-bcf3-fc597c3c1e3a",
@@ -782,21 +782,21 @@
   {
     "id": "312f3cdd-67a4-8184-b725-d19e46a2afc8",
     "name": "Cafe 60",
-    "status": "not-found",
-    "address": "",
-    "sourceUrl": "",
-    "sourceTitle": "",
-    "note": "Searched Cafe 60 and Cafe 60 Samui; no Koh Samui venue found (only Cafe 69 in Bophut and a Cafe 60 in Stockholm).",
+    "status": "found",
+    "address": "157/52, Bophut, Koh Samui, Surat Thani 84320, Thailand",
+    "sourceUrl": "https://wanderlog.com/place/details/1137474/cafe-69",
+    "sourceTitle": "Cafe 69",
+    "note": "Elisa confirms the venue is Cafe 69 in Bophut; no street or moo name in any source, it sits on the ring road opposite Samui Go-Kart.",
     "closed": false
   },
   {
     "id": "312f3cdd-67a4-8191-86fc-dbf580b57e03",
     "name": "Master Low Key",
-    "status": "not-found",
-    "address": "",
-    "sourceUrl": "",
-    "sourceTitle": "",
-    "note": "Master Low-key Food Shop found only in Shau Kei Wan (76A Main Street East) and Causeway Bay; no Jordan branch in any source.",
+    "status": "found",
+    "address": "Shop B3, G/F, 76A Shau Kei Wan Main Street East, Shau Kei Wan, Hong Kong",
+    "sourceUrl": "https://tasteatlas.com/MasterLowKeyFoodShop",
+    "sourceTitle": "Master Low Key Food Shop",
+    "note": "Elisa confirms the Hong Kong venue; only the Shau Kei Wan shop exists in sources, so the row's Jordan label is wrong.",
     "closed": false
   },
   {
