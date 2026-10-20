@@ -16,17 +16,6 @@ import type { TripItem } from '@/lib/types'
 import { branchId } from '@/lib/saved-pins'
 import type { UserLocation } from '@/lib/geo'
 
-const TYPE_GLYPHS: Record<string, string> = {
-  Hotel: '🏨',
-  Restaurant: '🍽️',
-  Activity: '⚡',
-  Flight: '✈️',
-  Train: '🚅',
-  Ferry: '⛴️',
-  'Car Rental': '🚗',
-  default: '📍',
-}
-
 const PRIORITY_COLORS: Record<string, string> = {
   Must:     '#ef4444',
   High:     '#f97316',
@@ -42,23 +31,46 @@ const STATUS_COLORS: Record<string, string> = {
   Cancelled:   '#ef4444',
 }
 
+/** Type colours: the same ones the type chips use, so a pin's fill says what it is. */
+export const TYPE_META: Record<string, { glyph: string; color: string }> = {
+  Hotel: { glyph: '🏨', color: '#3B82F6' },
+  Restaurant: { glyph: '🍽️', color: '#EF4444' },
+  Activity: { glyph: '⚡', color: '#10B981' },
+  Flight: { glyph: '✈️', color: '#8B5CF6' },
+  Train: { glyph: '🚅', color: '#F59E0B' },
+  Ferry: { glyph: '⛴️', color: '#06B6D4' },
+  'Car Rental': { glyph: '🚗', color: '#F97316' },
+  Other: { glyph: '📍', color: '#6B7280' },
+}
+
 export interface MarkerStyle {
   bg: string
   border: string
   glyph: string
+  /** Default '2px solid'. The trip map draws status as the ring: solid, dashed, none. */
+  ring?: string
   /** Pin diameter in px. Default 32. The Plan tab draws candidates smaller. */
   size?: number
   /** Default 1. The Plan tab fades candidates so they never read as plans. */
   opacity?: number
 }
 
-/** The trip rule: colour by status, glyph by type. */
+/**
+ * Pins on a trip: the FILL is the type (restaurant red, activity green), the
+ * RING is her Notion status. Elisa, 2026-10-19: "booked or planned overcome
+ * the restaurant/activity so you cant tell whats a restaurant/activity".
+ *   Confirmed               thick solid white ring
+ *   Assigned / Res. Pending thick dashed white ring
+ *   Shortlisted / Researching  no ring, faded
+ */
 export function markerStyle(item: TripItem): MarkerStyle {
-  const bg = STATUS_COLORS[item.status ?? ''] ?? '#9ca3af'
-  return {
-    bg,
-    border: bg,
-    glyph: TYPE_GLYPHS[item.type ?? 'default'] ?? TYPE_GLYPHS.default,
+  const meta = TYPE_META[item.type ?? 'Other'] ?? TYPE_META.Other
+  const base = { bg: meta.color, border: '#ffffff', glyph: meta.glyph }
+  switch (item.status) {
+    case 'Confirmed': return { ...base, ring: '3px solid' }
+    case 'Assigned':
+    case 'Reservation Pending': return { ...base, ring: '3px dashed' }
+    default: return { ...base, border: meta.color, ring: '2px solid', opacity: 0.6, size: 26 }
   }
 }
 
@@ -236,19 +248,63 @@ function MapContent({
 
   // Cards for search results, at most 8, never crowded: a card is dropped
   // when its pin sits within a card's footprint of one already kept.
+  // Chosen from what is ON SCREEN, re-chosen whenever the map settles. It was
+  // the first 8 across the whole trip, so zoomed into Vienna every slot could
+  // sit on a Salzburg pin and no card showed. Elisa, 2026-10-19: "sometimes
+  // the white cards don't show up if you zoom".
   const [zoom, setZoom] = useState<number | null>(null)
+  const [view, setView] = useState<google.maps.LatLngBounds | null>(null)
   useEffect(() => {
     if (!map) return
-    setZoom(map.getZoom() ?? null)
-    const l = map.addListener('zoom_changed', () => setZoom(map.getZoom() ?? null))
+    const settle = () => { setZoom(map.getZoom() ?? null); setView(map.getBounds() ?? null) }
+    settle()
+    const l = map.addListener('idle', settle)
     return () => l.remove()
   }, [map])
+  // A pinch on the map zooms the map, never the page. Elisa, 2026-10-19:
+  // "sometimes it zooms inside the map, but sometimes zooms the whole page".
+  // Google only takes the pinch when it starts on bare map; started on a pin
+  // or a white card it fell through to the browser. Trackpads send a pinch as
+  // ctrl+wheel (Chrome) or gesture events (Safari); phones as touches.
+  useEffect(() => {
+    if (!map) return
+    const div = map.getDiv()
+    const onCard = (t: EventTarget | null) =>
+      t instanceof Element && !!t.closest('.gm-style-iw, .gm-style-iw-c, [role="dialog"], gmp-advanced-marker')
+    // Bare map: Google zooms. Over a pin or card, Google ignored it (the card
+    // swallowed the wheel), so zoom here, by about the same feel.
+    const wheel = (e: WheelEvent) => {
+      if (!onCard(e.target)) return
+      e.preventDefault()
+      e.stopPropagation()
+      const step = Math.max(-1, Math.min(1, -e.deltaY * (e.ctrlKey ? 0.02 : 0.005)))
+      map.setZoom((map.getZoom() ?? 10) + step)
+    }
+    let startZoom = 10
+    const gestureStart = (e: Event) => { e.preventDefault(); startZoom = map.getZoom() ?? 10 }
+    const gestureChange = (e: Event) => {
+      e.preventDefault()
+      const scale = (e as Event & { scale?: number }).scale
+      if (onCard(e.target) && scale) map.setZoom(startZoom + Math.log2(scale))
+    }
+    div.style.touchAction = 'none'
+    div.addEventListener('wheel', wheel, { passive: false, capture: true })
+    div.addEventListener('gesturestart', gestureStart, { passive: false })
+    div.addEventListener('gesturechange', gestureChange, { passive: false })
+    return () => {
+      div.removeEventListener('wheel', wheel, { capture: true })
+      div.removeEventListener('gesturestart', gestureStart)
+      div.removeEventListener('gesturechange', gestureChange)
+    }
+  }, [map])
+
   const shownCards = useMemo(() => {
     if (!cards?.length || zoom === null) return []
     const scale = (256 * Math.pow(2, zoom)) / 360
     const kept: TripItem[] = []
     for (const c of cards) {
       if (!c.coordinates || c.id === selected?.id) continue
+      if (view && !view.contains(c.coordinates)) continue
       const clash = kept.some(k => {
         const dx = Math.abs(k.coordinates!.lng - c.coordinates!.lng) * scale
         const dy = Math.abs(k.coordinates!.lat - c.coordinates!.lat) * scale / Math.cos((c.coordinates!.lat * Math.PI) / 180)
@@ -258,7 +314,7 @@ function MapContent({
       if (kept.length >= 8) break
     }
     return kept
-  }, [cards, zoom, selected])
+  }, [cards, zoom, view, selected])
   useEffect(() => () => { if (hoverTimer.current) clearTimeout(hoverTimer.current) }, [])
 
   const fitBounds = useCallback((includeUser: boolean) => {
@@ -417,7 +473,7 @@ function MapContent({
       const style = styleFor(item)
       const pin = document.createElement('div')
       pin.style.cssText = `
-        background: ${style.bg}; border: 2px solid ${style.border};
+        background: ${style.bg}; border: ${style.ring ?? '2px solid'} ${style.border};
         border-radius: 50%; width: 32px; height: 32px;
         display: flex; align-items: center; justify-content: center;
         font-size: 14px; font-weight: 700; color: #0b0b0d; cursor: pointer;
@@ -462,7 +518,7 @@ function MapContent({
       el.textContent = style.glyph
       el.style.opacity = String(isSelected ? 1 : style.opacity ?? 1)
       pinColours.set(marker, style.bg)
-      el.style.border = `2px solid ${isSelected ? '#fff' : style.border}`
+      el.style.border = `${style.ring ?? '2px solid'} ${isSelected ? '#fff' : style.border}`
       el.style.width = `${size}px`
       el.style.height = `${size}px`
       el.style.fontSize = `${Math.round(size * 0.44)}px`

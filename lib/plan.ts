@@ -35,11 +35,13 @@ export function isConsidering(item: TripItem): boolean {
 // between considering, planned, to book, booked ... can we clean up the
 // choices?" -> Idea / Planned / Booked. A legacy Reservation Pending row
 // counts as Planned (on a day, not booked yet). The id stays 'considering'.
+// Labels are her Notion statuses, Elisa 2026-10-19: "booked and planned are
+// overlapping so thats very confusing phrasing. use what i use on my notion".
 export type Group = 'booked' | 'planned' | 'considering'
 export const GROUPS: { id: Group; label: string; statuses: string[] }[] = [
-  { id: 'booked', label: 'Booked', statuses: ['Confirmed'] },
-  { id: 'planned', label: 'Planned', statuses: ['Assigned', 'Reservation Pending'] },
-  { id: 'considering', label: 'Idea', statuses: ['Shortlisted', 'Researching'] },
+  { id: 'booked', label: 'Confirmed', statuses: ['Confirmed'] },
+  { id: 'planned', label: 'Assigned', statuses: ['Assigned', 'Reservation Pending'] },
+  { id: 'considering', label: 'Shortlisted', statuses: ['Shortlisted', 'Researching'] },
 ]
 export const ALL_GROUPS: Group[] = GROUPS.map(g => g.id)
 

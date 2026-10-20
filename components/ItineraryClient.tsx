@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import TripMap, { markerStyle, type MarkerStyle } from './TripMap'
+import TripMap, { markerStyle, TYPE_META, type MarkerStyle } from './TripMap'
 import UnmappedList from './UnmappedList'
 import PlanPanel, { StatusEditor, StatusControl, STATUS_DOT, type Section } from './PlanPanel'
 import TripCalendar from './TripCalendar'
@@ -20,17 +20,6 @@ import type { UserLocation } from '@/lib/geo'
 // gone: the iOS app now has its own native Today screen with its own map and
 // its own disk cache, so it no longer leans on this page for offline. This page
 // is the laptop surface, where there is wifi, and it can be a real map.
-
-const TYPE_META: Record<string, { glyph: string; color: string }> = {
-  Hotel: { glyph: '🏨', color: '#3B82F6' },
-  Restaurant: { glyph: '🍽️', color: '#EF4444' },
-  Activity: { glyph: '⚡', color: '#10B981' },
-  Flight: { glyph: '✈️', color: '#8B5CF6' },
-  Train: { glyph: '🚅', color: '#F59E0B' },
-  Ferry: { glyph: '⛴️', color: '#06B6D4' },
-  'Car Rental': { glyph: '🚗', color: '#F97316' },
-  Other: { glyph: '📍', color: '#6B7280' },
-}
 
 const TYPE_ORDER: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Train', 'Ferry', 'Car Rental', 'Other']
 
@@ -360,7 +349,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   // and faded so they never read as plans.
   const planStyle = useCallback((item: TripItem): MarkerStyle => {
     const base = markerStyle(item)
-    if (groupOf(item) === 'considering') return { ...base, size: 24, opacity: 0.6 }
+    if (groupOf(item) === 'considering') return { ...base, size: 24 }
     const n = numbers.get(item.id)
     return n ? { ...base, glyph: String(n) } : base
   }, [numbers])
@@ -670,24 +659,24 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
         </div>
       )}
       <div className={`flex flex-shrink-0 items-center gap-1.5 overflow-x-auto border-b border-white/10 bg-gray-900 px-4 py-2 ${q ? 'pointer-events-none opacity-35' : ''}`} style={{ scrollbarWidth: 'none' }}>
-        {GROUPS.map(({ id, label, statuses }) => {
+        {GROUPS.map(({ id, label }) => {
           const on = groups.has(id)
-          const color = STATUS_DOT[statuses[0]] ?? '#8E8E93'
           const count = pool.filter(i => groupOf(i) === id && matchesExceptGroup(i)).length
+          // Status chips are white, not coloured: colour on the map means type.
+          // The swatch is the pin's ring for that status (TripMap markerStyle).
+          // Off is unmistakable: struck through and dimmed, with "hidden".
+          const ring = id === 'booked' ? '2px solid #fff' : id === 'planned' ? '2px dashed #fff' : '1.5px solid rgba(255,255,255,0.5)'
           return (
             <button
               key={id}
               onClick={() => toggleGroup(id)}
               aria-pressed={on}
-              className={`flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${on ? '' : 'border-dashed'}`}
-              style={{
-                background: on ? color : 'transparent',
-                borderColor: on ? color : 'rgba(255,255,255,0.2)',
-                color: on ? '#0b0b0d' : 'rgba(255,255,255,0.55)',
-              }}
+              className={`flex flex-shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
+                on ? 'border-white bg-white text-gray-950' : 'border-dashed border-white/25 text-white/40'
+              }`}
             >
-              <span className="h-1.5 w-1.5 rounded-full" style={{ background: on ? '#0b0b0d' : color }} />
-              {label} <span className="opacity-60">{count}</span>
+              <span className="h-3 w-3 rounded-full bg-gray-500" style={{ border: on ? ring.replace('#fff', '#111') : ring, opacity: id === 'considering' ? 0.6 : 1 }} />
+              <span className={on ? '' : 'line-through'}>{label}</span> <span className="opacity-60">{on ? count : 'hidden'}</span>
             </button>
           )
         })}

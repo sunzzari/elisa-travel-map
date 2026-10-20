@@ -127,9 +127,9 @@ function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hi
         {!hidden.has('summary') && (
           <div className="mt-1 grid grid-cols-3 gap-1.5">
             {([
-              ['booked', 'Booked', plan.counts.booked, STATUS_DOT.Confirmed],
-              ['planned', 'Planned', plan.counts.planned, STATUS_DOT.Assigned],
-              ['considering', 'Idea', plan.counts.considering, STATUS_DOT.Shortlisted],
+              ['booked', 'Confirmed', plan.counts.booked, STATUS_DOT.Confirmed],
+              ['planned', 'Assigned', plan.counts.planned, STATUS_DOT.Assigned],
+              ['considering', 'Shortlisted', plan.counts.considering, STATUS_DOT.Shortlisted],
             ] as [Group, string, number, string][]).map(([id, label, n, color]) => {
               // Tap a tile to show only that group (same four as the chip row);
               // tap it again to show all.
@@ -261,7 +261,7 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
       )}
 
       <section>
-        <p className="px-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/50">Planned</p>
+        <p className="px-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/50">Confirmed and Assigned</p>
         {committed.filter(c => c.item.type !== 'Hotel').map(({ item, time }) => (
           <ItemRow key={item.id} item={item} number={numbers.get(item.id)} selected={selected?.id === item.id} onSelect={onSelect}
             sub={[time.label, item.type, item.status].filter(Boolean).join(' - ')} />
@@ -270,13 +270,13 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
           const all = day.committed.filter(c => c.item.type !== 'Hotel').length
           return all > 0
             ? <div className="px-1.5"><Hidden count={all} onClear={onClearFilters} /></div>
-            : <p className="px-1.5 text-xs text-white/35">Nothing planned yet.</p>
+            : <p className="px-1.5 text-xs text-white/35">Nothing assigned yet.</p>
         })()}
       </section>
 
       <section>
         <p className="px-1.5 text-[10px] font-semibold uppercase tracking-wider text-white/50">
-          Ideas{day.leg ? ` in ${day.leg}` : ''} <span className="text-white/30">{considering.length}</span>
+          Shortlisted{day.leg ? ` in ${day.leg}` : ''} <span className="text-white/30">{considering.length}</span>
           {!showConsidering && <span className="ml-1 normal-case tracking-normal text-white/30">(switched off)</span>}
         </p>
         {shownConsidering.map(item => (
@@ -296,9 +296,9 @@ function DayView({ plan, day, numbers, onSelectDate, selected, onSelect, showCon
 // Status editor. Her click is her word: this is how a candidate becomes a plan.
 
 const CHOICES: { status: EditableStatus; label: string }[] = [
-  { status: 'Shortlisted', label: 'Idea' },
-  { status: 'Assigned', label: 'Planned' },
-  { status: 'Confirmed', label: 'Booked' },
+  { status: 'Shortlisted', label: 'Shortlisted' },
+  { status: 'Assigned', label: 'Assigned' },
+  { status: 'Confirmed', label: 'Confirmed' },
   { status: 'Cancelled', label: 'Drop' },
 ]
 const DATED = new Set(['Assigned', 'Reservation Pending', 'Confirmed'])
@@ -487,9 +487,9 @@ export function StatusControl({ item, dates, defaultDate, passcode, onSaved }: {
         style={{ fontSize: 11, fontWeight: 600, padding: '2px 6px', borderRadius: 12, border: 'none', cursor: 'pointer',
           background: CHOICE_COLOR[choice], color: choice === 'idea' ? '#111' : '#fff' }}
       >
-        <option value="idea">Idea</option>
-        <option value="planned">Planned</option>
-        <option value="booked">Booked</option>
+        <option value="idea">Shortlisted</option>
+        <option value="planned">Assigned</option>
+        <option value="booked">Confirmed</option>
       </select>
       {dirty && (
         <div style={{ width: '100%', display: 'grid', gap: 6, marginTop: 4 }}>
