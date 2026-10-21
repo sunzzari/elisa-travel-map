@@ -4,6 +4,8 @@ Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.m
 
 ## 2026-10-21
 
+- `3:20pm` **Hover popup no longer flickers** - Elisa: "the hover is still very glitchy ... do it over carousel bakery when zoomed like this its flickering". Reproduced locally on Carrusel Bakery: a moment after a hover popup opened, its tail slid over the top of the pin. That read as leaving the pin, so the popup closed, the pin was under the pointer again, it reopened, and so on. Now any part of the popup (content, frame, X, tail) counts as still hovering; leaving both the pin and the popup closes it. Shared `TripMap`, so trips and Around Town both get it. Nothing on the phone changes.
+
 - `2:51pm` **Pinch over pins, a click that keeps your zoom, hover popups that close** - Elisa: "when im on the around town one i cant use to fingers on the trackpad to zoom", "when i click on an entry it zooms very close and i dont always want that", "the preview ... doesnt go away when i [hover] away". (1) A trackpad pinch over a pin or bubble sends many tiny zoom steps; each was rounded away, so on Around Town, where the pointer is nearly always over a pin, a pinch did nothing. The steps now add up. (2) Clicking a pin or list entry keeps the current zoom and only pans if the place is off screen; from far out (zoom under 11) it zooms to city level, never street level. (3) A popup opened by hovering closes shortly after the pointer leaves the pin, unless it moves onto the popup. A clicked popup still stays open. All three are in the shared `TripMap`, so trips and Around Town both get them. No API route changed, so nothing on the phone changes.
 
 ## 2026-10-19

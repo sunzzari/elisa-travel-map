@@ -121,6 +121,11 @@ function isLight(hex: string): boolean {
   return 0.299 * r + 0.587 * g + 0.114 * b > 160
 }
 
+/** Any part of a Google popup: content, frame, close button or tail. */
+function inPopup(t: EventTarget | null): boolean {
+  return t instanceof Element && !!t.closest('.gm-style-iw-a')
+}
+
 class BubblesWhenCrowded extends SuperClusterAlgorithm {
   private crowded: boolean | null = null
 
@@ -228,6 +233,11 @@ function MapContent({
   // usable) or onto the next pin, which replaces it without a gap. Elisa,
   // 2026-10-21: "it doesnt go away when i [hover] away". A clicked popup
   // still stays until the map is clicked or its X.
+  // The WHOLE popup counts, Google's frame and tail included, not just our
+  // content: its tail slides over the top of the pin a moment after opening,
+  // which read as leaving the pin, closed it, re-hovered the pin and reopened
+  // it, over and over. Elisa, 2026-10-21: "do it over carousel bakery when
+  // zoomed like this its flickering".
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const quietSelectRef = useRef(false)
@@ -236,7 +246,6 @@ function MapContent({
   openedByHoverRef.current = openedByHover
   const selectedIdRef = useRef<string | null>(null)
   selectedIdRef.current = selected?.id ?? null
-  const keepHoverPopup = () => { if (closeTimer.current) clearTimeout(closeTimer.current) }
   const leaveHoverPopup = useRef(() => {
     if (closeTimer.current) clearTimeout(closeTimer.current)
     if (!openedByHoverRef.current) return
@@ -342,6 +351,24 @@ function MapContent({
     }
     return kept
   }, [cards, zoom, view, selected])
+  // Pointer onto any part of a popup keeps it; off it (and not onto its pin,
+  // whose own enter handles that) starts the close.
+  useEffect(() => {
+    if (!map) return
+    const div = map.getDiv()
+    const over = (e: MouseEvent) => {
+      if (inPopup(e.target) && closeTimer.current) clearTimeout(closeTimer.current)
+    }
+    const out = (e: MouseEvent) => {
+      if (inPopup(e.target) && !inPopup(e.relatedTarget)) leaveHoverPopup.current()
+    }
+    div.addEventListener('mouseover', over)
+    div.addEventListener('mouseout', out)
+    return () => {
+      div.removeEventListener('mouseover', over)
+      div.removeEventListener('mouseout', out)
+    }
+  }, [map])
   useEffect(() => () => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current)
     if (closeTimer.current) clearTimeout(closeTimer.current)
@@ -533,7 +560,10 @@ function MapContent({
         onSelectRef.current({ ...item, branches: undefined })
       })
       pin.addEventListener('mouseenter', () => hoverRef.current(item.id))
-      pin.addEventListener('mouseleave', () => hoverRef.current(null))
+      pin.addEventListener('mouseleave', e => {
+        if (inPopup(e.relatedTarget)) return
+        hoverRef.current(null)
+      })
       pinColours.set(marker, style.bg)
       prev.set(item.id, marker)
       newMarkers.push(marker)
@@ -629,11 +659,7 @@ function MapContent({
           // was pulling focus out of the search box after every letter.
           shouldFocus={false}
         >
-          <div
-            onMouseEnter={keepHoverPopup}
-            onMouseLeave={() => leaveHoverPopup.current()}
-            style={{ maxWidth: 290, fontFamily: 'var(--font-body), system-ui, sans-serif', padding: '2px 0' }}
-          >
+          <div style={{ maxWidth: 290, fontFamily: 'var(--font-body), system-ui, sans-serif', padding: '2px 0' }}>
             {selected.priority && (
               <div style={{
                 height: 3, borderRadius: 2, width: 36, marginBottom: 10,
