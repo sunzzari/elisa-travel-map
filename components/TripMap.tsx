@@ -219,21 +219,35 @@ function MapContent({
   // Hover opens the pin's own popup, no separate card. Elisa, 2026-10-18: "i
   // dont want you making a separate card. i want you just to have this open
   // when i hover. but if there are too many close to each other, it flickers."
-  // Two causes of flicker, both removed:
-  //   - closing on mouse-out: the popup now stays until another pin is
-  //     rested on, the map is clicked, or its X;
-  //   - the map moving: a hover-opened popup never pans or zooms the map, so
-  //     no other pin slides under the pointer.
-  // A short rest is needed before a hover opens anything, so sweeping across
-  // a cluster does not open every pin on the way.
+  // Flicker came from the map moving: a hover-opened popup never pans or
+  // zooms the map, so no other pin slides under the pointer. A short rest is
+  // needed before a hover opens anything, so sweeping across a cluster does
+  // not open every pin on the way.
+  // A hover-opened popup closes when the pointer leaves the pin, after a
+  // grace period long enough to move onto the popup itself (its buttons stay
+  // usable) or onto the next pin, which replaces it without a gap. Elisa,
+  // 2026-10-21: "it doesnt go away when i [hover] away". A clicked popup
+  // still stays until the map is clicked or its X.
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const quietSelectRef = useRef(false)
   const [openedByHover, setOpenedByHover] = useState(false)
+  const openedByHoverRef = useRef(false)
+  openedByHoverRef.current = openedByHover
   const selectedIdRef = useRef<string | null>(null)
   selectedIdRef.current = selected?.id ?? null
+  const keepHoverPopup = () => { if (closeTimer.current) clearTimeout(closeTimer.current) }
+  const leaveHoverPopup = useRef(() => {
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+    if (!openedByHoverRef.current) return
+    closeTimer.current = setTimeout(() => {
+      if (openedByHoverRef.current) onSelectRef.current(null)
+    }, 350)
+  })
   const hoverRef = useRef((id: string | null) => {
     if (hoverTimer.current) clearTimeout(hoverTimer.current)
-    if (!id) return
+    if (!id) { leaveHoverPopup.current(); return }
+    if (closeTimer.current) clearTimeout(closeTimer.current)
     hoverTimer.current = setTimeout(() => {
       if (selectedIdRef.current === id) return
       const item = mappedRef.current.find(i => i.id === id)
@@ -273,25 +287,38 @@ function MapContent({
       t instanceof Element && !!t.closest('.gm-style-iw, .gm-style-iw-c, [role="dialog"], gmp-advanced-marker')
     // Bare map: Google zooms. Over a pin or card, Google ignored it (the card
     // swallowed the wheel), so zoom here, by about the same feel.
+    // A pinch sends many tiny steps. Each was added to getZoom() and rounded
+    // away, so over a pin a pinch did nothing; Around Town is dense enough that
+    // the pointer is nearly always over one. Elisa, 2026-10-21: "when im on the
+    // around town one i cant use to fingers on the trackpad to zoom". The steps
+    // now add up in `target` until the gesture pauses.
+    let target: number | null = null
+    let resetTarget: ReturnType<typeof setTimeout> | null = null
+    const zoomBy = (step: number) => {
+      target = Math.max(3, Math.min(20, (target ?? map.getZoom() ?? 10) + step))
+      map.setZoom(target)
+      if (resetTarget) clearTimeout(resetTarget)
+      resetTarget = setTimeout(() => { target = null }, 250)
+    }
     const wheel = (e: WheelEvent) => {
       if (!onCard(e.target)) return
       e.preventDefault()
       e.stopPropagation()
-      const step = Math.max(-1, Math.min(1, -e.deltaY * (e.ctrlKey ? 0.02 : 0.005)))
-      map.setZoom((map.getZoom() ?? 10) + step)
+      zoomBy(Math.max(-1, Math.min(1, -e.deltaY * (e.ctrlKey ? 0.02 : 0.005))))
     }
     let startZoom = 10
     const gestureStart = (e: Event) => { e.preventDefault(); startZoom = map.getZoom() ?? 10 }
     const gestureChange = (e: Event) => {
       e.preventDefault()
       const scale = (e as Event & { scale?: number }).scale
-      if (onCard(e.target) && scale) map.setZoom(startZoom + Math.log2(scale))
+      if (onCard(e.target) && scale) map.setZoom(Math.max(3, Math.min(20, startZoom + Math.log2(scale))))
     }
     div.style.touchAction = 'none'
     div.addEventListener('wheel', wheel, { passive: false, capture: true })
     div.addEventListener('gesturestart', gestureStart, { passive: false })
     div.addEventListener('gesturechange', gestureChange, { passive: false })
     return () => {
+      if (resetTarget) clearTimeout(resetTarget)
       div.removeEventListener('wheel', wheel, { capture: true })
       div.removeEventListener('gesturestart', gestureStart)
       div.removeEventListener('gesturechange', gestureChange)
@@ -315,7 +342,10 @@ function MapContent({
     }
     return kept
   }, [cards, zoom, view, selected])
-  useEffect(() => () => { if (hoverTimer.current) clearTimeout(hoverTimer.current) }, [])
+  useEffect(() => () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current)
+    if (closeTimer.current) clearTimeout(closeTimer.current)
+  }, [])
 
   const fitBounds = useCallback((includeUser: boolean) => {
     if (!map) return
@@ -379,10 +409,19 @@ function MapContent({
     if (!selected?.coordinates || !map) return
     // Opened by hover: leave the map exactly where it is.
     if (quietSelectRef.current) { quietSelectRef.current = false; return }
+    // Chosen from a list or card: a click, so mouse-out must not close it.
+    openedByHoverRef.current = false
+    setOpenedByHover(false)
     const pins = [selected.coordinates, ...(selected.branches ?? [])]
+    // One spot: keep her zoom. It went to street level (15) on every click and
+    // she had to zoom back out to see the rest. Elisa, 2026-10-21: "when i click
+    // on an entry it zooms very close and i dont always want that". Pan only if
+    // the pin is off screen; zoom in only from far out, and only to city level.
     if (pins.length === 1) {
-      map.panTo(selected.coordinates)
-      map.setZoom(15)
+      const farOut = (map.getZoom() ?? 0) < 11
+      const view = map.getBounds()
+      if (farOut || !view || !view.contains(selected.coordinates)) map.panTo(selected.coordinates)
+      if (farOut) map.setZoom(12)
       return
     }
     const lats = pins.map(p => p.lat)
@@ -488,6 +527,8 @@ function MapContent({
       // Without `branches`: a tapped pin is one spot, and zooms to itself.
       marker.addListener('gmp-click', () => {
         if (hoverTimer.current) clearTimeout(hoverTimer.current)
+        if (closeTimer.current) clearTimeout(closeTimer.current)
+        openedByHoverRef.current = false
         setOpenedByHover(false)
         onSelectRef.current({ ...item, branches: undefined })
       })
@@ -588,7 +629,11 @@ function MapContent({
           // was pulling focus out of the search box after every letter.
           shouldFocus={false}
         >
-          <div style={{ maxWidth: 290, fontFamily: 'var(--font-body), system-ui, sans-serif', padding: '2px 0' }}>
+          <div
+            onMouseEnter={keepHoverPopup}
+            onMouseLeave={() => leaveHoverPopup.current()}
+            style={{ maxWidth: 290, fontFamily: 'var(--font-body), system-ui, sans-serif', padding: '2px 0' }}
+          >
             {selected.priority && (
               <div style={{
                 height: 3, borderRadius: 2, width: 36, marginBottom: 10,
