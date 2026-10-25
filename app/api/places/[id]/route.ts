@@ -34,5 +34,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   // places for up to five minutes after its own save.
   revalidatePath('/around-town')
   revalidatePath('/api/around-town')
+  revalidatePath('/api/around-town/world')
   return NextResponse.json({ ok: true, location })
 }

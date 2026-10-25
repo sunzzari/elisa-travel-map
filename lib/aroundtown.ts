@@ -10,12 +10,18 @@ import {
   regionFromCoords,
   colorFor,
   fitAreaContains,
+  areaFromText,
+  areaFromCoords,
+  inAwayArea,
+  mapAreas,
+  isHomeArea,
 } from './aroundtown-shared'
 import type {
   AroundTownKind,
   AroundTownRegion,
   AroundTownMeta,
   AroundTownData,
+  MapArea,
 } from './aroundtown-shared'
 
 export type { AroundTownKind, AroundTownRegion, AroundTownMeta, AroundTownData }
@@ -109,7 +115,8 @@ interface Raw {
   url: string
   name: string
   kind: AroundTownKind
-  region: AroundTownRegion | null
+  /** LA, the Bay, or a travel area ("vienna"). */
+  region: MapArea | null
   neighborhood: string
   locationText: string
   preference: string | null
@@ -130,7 +137,9 @@ function rawRestaurants(pages: any[]): Raw[] {
     if (!name) continue
     const locationText = getText(p['Location'])
     const neighborhood = getText(p['Neighborhood'])
-    const region = regionFromText(locationText)
+    // A travel Location ("Vienna") is an area of Elisa's Map; the default
+    // answer leaves those out again (`fetchAroundTown`).
+    const region = areaFromText(locationText)
     // A blank Location is still a candidate IF the neighborhood itself reads as
     // LA or the Bay ("Rokusho", blank Location, Neighborhood "Hollywood"). It is
     // not a candidate just because a neighborhood exists: 11 rows carry a blank
@@ -175,7 +184,7 @@ function rawActivities(pages: any[]): Raw[] {
     const name = getText(p['Name'])
     if (!name) continue
     const locationText = getText(p['Location'])
-    const region = regionFromText(locationText)
+    const region = areaFromText(locationText)
     // A blank location is still a candidate; the geocode is validated against
     // the two boxes, so "Sushi making" is counted as having no map location
     // rather than disappearing.
@@ -241,15 +250,17 @@ const MAX_PINS_PER_READ = 5
  */
 async function pinAddressedRows(raws: Raw[]): Promise<void> {
   const now = Date.now()
+  // LA and the Bay only: a travel row is pinned when it is saved, or by the
+  // sweep, where its own area check runs.
   const waiting = raws.filter(r =>
-    r.address.trim() !== '' && !r.saved.coordinates && r.region !== null &&
+    r.address.trim() !== '' && !r.saved.coordinates && isHomeArea(r.region) &&
     now - (unpinnable.get(r.id + '|' + r.address) ?? 0) > RETRY_AFTER_MS
   ).slice(0, MAX_PINS_PER_READ)
 
   for (const raw of waiting) {
     try {
       const area = await areaFor(raw.kind, raw.neighborhood, raw.locationText)
-        ?? areaForRegion(raw.kind, raw.region!, raw.neighborhood)
+        ?? areaForRegion(raw.kind, raw.region as AroundTownRegion, raw.neighborhood)
       const found = await pinAddress(area, raw.address)
       if (!found) {
         unpinnable.set(raw.id + '|' + raw.address, now)
@@ -267,13 +278,18 @@ async function pinAddressedRows(raws: Raw[]): Promise<void> {
   }
 }
 
-export async function fetchAroundTown(): Promise<AroundTownData> {
+/**
+ * `world` adds every travel area (Elisa's Map). Without it the answer is LA and
+ * the Bay only, exactly as before, which is what phones on an older build read.
+ */
+export async function fetchAroundTown(opts: { world?: boolean } = {}): Promise<AroundTownData> {
   const [restaurantPages, activityPages] = await Promise.all([
     queryAll(RESTAURANT_GUIDE_DB),
     queryAll(ACTIVITIES_DB),
   ])
 
   const raws = [...rawRestaurants(restaurantPages), ...rawActivities(activityPages)]
+    .filter(r => opts.world || r.region === null || isHomeArea(r.region))
   await pinAddressedRows(raws)
 
   const items: TripItem[] = []
@@ -286,17 +302,23 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
     // The pin saved in Notion wins (free sources, area-checked when saved).
     // The saved table is only a fallback for rows that have none; neither is
     // a network call.
+    // A travel row uses its saved pin only: the table and the venue lookup
+    // are LA and Bay sources, and asked about "Demel" they would answer in LA.
+    const away = raw.region !== null && !isHomeArea(raw.region)
     const primary = geoCity(raw)
     const fallback = geoCityFallback(raw)
-    let coords = raw.saved.coordinates ?? await geocodeVenue(raw.name, primary)
-    if (!coords && fallback !== primary) {
+    let coords = raw.saved.coordinates ?? (away ? null : await geocodeVenue(raw.name, primary))
+    if (!coords && !away && fallback !== primary) {
       coords = await geocodeVenue(raw.name, fallback)
     }
 
-    // A coordinate outside LA and the Bay is a bad lookup, not a place. It is
+    // A coordinate outside its area is a bad lookup, not a place. It is
     // dropped to no-coordinate, which puts the row in the not-on-the-map list
-    // rather than on a pin that lies.
-    const placedRegion = coords ? regionFromCoords(coords.lat, coords.lng) : null
+    // rather than on a pin that lies. LA and the Bay by their boxes; a travel
+    // row by its own area's reach.
+    const placedRegion = !coords ? null
+      : away ? (inAwayArea(raw.region!, coords.lat, coords.lng) ? raw.region : null)
+      : regionFromCoords(coords.lat, coords.lng)
     const usable = placedRegion ? coords : null
 
     meta[raw.id] = {
@@ -341,7 +363,7 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
       // Every branch of a chain gets a pin (Elisa, 2026-09-30), with the same
       // reject as the main pin.
       ...(usable && raw.saved.branches.length
-        ? { branches: raw.saved.branches.filter(b => regionFromCoords(b.lat, b.lng) !== null) }
+        ? { branches: raw.saved.branches.filter(b => areaFromCoords(b.lat, b.lng) !== null) }
         : {}),
     })
   }
@@ -349,18 +371,23 @@ export async function fetchAroundTown(): Promise<AroundTownData> {
   return { items, meta }
 }
 
-// Which area's "fit all" frame a pin belongs to (LA proper or the Bay), or null
-// for a pin that stays on the map but never stretches the frame (San Diego).
-const fitArea = (c: { lat: number; lng: number }) =>
-  fitAreaContains('la', c.lat, c.lng) ? 'la' : fitAreaContains('sfBay', c.lat, c.lng) ? 'sfBay' : null
+// Which area's "fit all" frame a pin belongs to (LA proper, the Bay, or a
+// travel area), or null for a pin that stays on the map but never stretches the
+// frame (San Diego).
+const fitArea = (c: { lat: number; lng: number }): MapArea | null => {
+  if (fitAreaContains('la', c.lat, c.lng)) return 'la'
+  if (fitAreaContains('sfBay', c.lat, c.lng)) return 'sfBay'
+  const area = areaFromCoords(c.lat, c.lng)
+  return area && !isHomeArea(area) ? area : null
+}
 
 /**
  * Around Town as the Sunzzari app reads it: the same places, pins, branches,
  * colours and areas the /around-town page draws, flattened to one list. Built
  * here once so the cached route and the live route cannot answer differently.
  */
-export async function aroundTownPlaces() {
-  const { items, meta } = await fetchAroundTown()
+export async function aroundTownPlaces(opts: { world?: boolean } = {}) {
+  const { items, meta } = await fetchAroundTown(opts)
   const places = items.map(item => {
     const m = meta[item.id]
     const c = item.coordinates
@@ -389,9 +416,11 @@ export async function aroundTownPlaces() {
       // `region` is the wide area (LA includes Orange County and San Diego),
       // which is what a search frames; `fitArea` is LA proper.
       branches: (item.branches ?? []).map(b => ({
-        address: b.address, lat: b.lat, lng: b.lng, fitArea: fitArea(b), region: regionFromCoords(b.lat, b.lng),
+        address: b.address, lat: b.lat, lng: b.lng, fitArea: fitArea(b),
+        region: opts.world ? areaFromCoords(b.lat, b.lng) : regionFromCoords(b.lat, b.lng),
       })),
     }
   })
-  return { generatedAt: new Date().toISOString(), places }
+  if (!opts.world) return { generatedAt: new Date().toISOString(), places }
+  return { generatedAt: new Date().toISOString(), places, areas: mapAreas(places) }
 }

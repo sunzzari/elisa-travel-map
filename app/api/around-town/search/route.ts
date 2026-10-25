@@ -9,6 +9,11 @@ import { searchPlaces, type SearchablePlace } from '@/lib/place-search'
  * never comes here) and the been / want / rated words (the phone's own copy of
  * those ticks is newer than this one).
  *
+ * `&world=1` searches Elisa's Map, every area. With `&area=la` it also answers
+ * `elsewhere`: how many matches are outside that area, which is what the
+ * "Search everywhere" button counts. Elisa, 2026-10-25: "it should be harder
+ * to expalnd my search but it should be possible".
+ *
  * The rule itself is `lib/place-search.ts`, the same code the website's search
  * box runs. No Claude call, no paid lookup, no Notion read per search: it
  * searches the cached `/api/around-town`, which every save refreshes.
@@ -23,10 +28,12 @@ export async function GET(request: Request) {
   const url = new URL(request.url)
   const q = (url.searchParams.get('q') ?? '').trim().slice(0, 200)
   if (!q) return NextResponse.json({ error: 'Type something to search for.' }, { status: 400 })
+  const world = url.searchParams.get('world') === '1'
+  const area = url.searchParams.get('area')
 
   let places: CachedPlace[]
   try {
-    const response = await fetch(new URL('/api/around-town', url.origin), { cache: 'no-store' })
+    const response = await fetch(new URL(world ? '/api/around-town/world' : '/api/around-town', url.origin), { cache: 'no-store' })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     places = (await response.json()).places
   } catch (err) {
@@ -39,5 +46,8 @@ export async function GET(request: Request) {
     places.map(p => ({ ...p, branchAddresses: p.branches.map(b => b.address) })),
     { applyStatus: false }
   )
-  return NextResponse.json(result, { headers: { 'Cache-Control': 'no-store' } })
+  if (!world || !area) return NextResponse.json(result, { headers: { 'Cache-Control': 'no-store' } })
+  const regionOf = new Map(places.map(p => [p.id, p.region]))
+  const elsewhere = result.ids.filter(id => regionOf.get(id) !== area).length
+  return NextResponse.json({ ...result, elsewhere }, { headers: { 'Cache-Control': 'no-store' } })
 }

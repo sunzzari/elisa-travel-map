@@ -161,6 +161,7 @@ function MapContent({
   bubblesTakePinColour = false,
   popupExtra,
   cards,
+  onIdle,
 }: {
   items: TripItem[]
   selected: TripItem | null
@@ -168,6 +169,8 @@ function MapContent({
   userLocation: UserLocation | null
   onRecenterReady?: (fn: () => void) => void
   fitKey?: string
+  /** Where the map settled after a pan or zoom. Elisa's Map uses it for "Show places here". */
+  onIdle?: (center: { lat: number; lng: number }) => void
   /** Overrides how a pin is coloured. Around Town rides on this same map and
       colours by how much Elisa liked the place, not by a trip status. */
   styleFor?: (item: TripItem) => MarkerStyle
@@ -275,11 +278,18 @@ function MapContent({
   // the first 8 across the whole trip, so zoomed into Vienna every slot could
   // sit on a Salzburg pin and no card showed. Elisa, 2026-10-19: "sometimes
   // the white cards don't show up if you zoom".
+  const onIdleRef = useRef(onIdle)
+  onIdleRef.current = onIdle
   const [zoom, setZoom] = useState<number | null>(null)
   const [view, setView] = useState<google.maps.LatLngBounds | null>(null)
   useEffect(() => {
     if (!map) return
-    const settle = () => { setZoom(map.getZoom() ?? null); setView(map.getBounds() ?? null) }
+    const settle = () => {
+      setZoom(map.getZoom() ?? null)
+      setView(map.getBounds() ?? null)
+      const c = map.getCenter()
+      if (c) onIdleRef.current?.({ lat: c.lat(), lng: c.lng() })
+    }
     settle()
     const l = map.addListener('idle', settle)
     return () => l.remove()
@@ -778,9 +788,10 @@ interface Props {
   bubblesTakePinColour?: boolean
   popupExtra?: (item: TripItem) => React.ReactNode
   cards?: TripItem[]
+  onIdle?: (center: { lat: number; lng: number }) => void
 }
 
-export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour, popupExtra, cards }: Props) {
+export default function TripMap({ items, apiKey, selected, onSelect, userLocation, onRecenterReady, fitKey, styleFor, defaultCenter, fitScopeIds, pinFilter, bubblesTakePinColour, popupExtra, cards, onIdle }: Props) {
   const mapped = items.filter(i => i.coordinates)
 
   const center = userLocation ?? (mapped.length > 0
@@ -807,7 +818,7 @@ export default function TripMap({ items, apiKey, selected, onSelect, userLocatio
         clickableIcons={false}
         onClick={() => onSelect(null)}
       >
-        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} popupExtra={popupExtra} cards={cards} />
+        <MapContent items={items} selected={selected} onSelect={onSelect} userLocation={userLocation} onRecenterReady={onRecenterReady} fitKey={fitKey} styleFor={styleFor} fitScopeIds={fitScopeIds} pinFilter={pinFilter} bubblesTakePinColour={bubblesTakePinColour} popupExtra={popupExtra} cards={cards} onIdle={onIdle} />
       </Map>
     </APIProvider>
   )

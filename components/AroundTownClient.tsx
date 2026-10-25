@@ -13,21 +13,31 @@ import { branchId, placeIdOf } from '@/lib/saved-pins'
 // From the shared module, never from `lib/aroundtown` - that one imports the
 // geocoder, which reads the coordinate table off disk, and a client component
 // importing it drags node:fs into the browser bundle.
-import type { AroundTownMeta, AroundTownKind, AroundTownRegion } from '@/lib/aroundtown-shared'
+import type { AroundTownMeta, AroundTownKind, MapArea } from '@/lib/aroundtown-shared'
 import {
   WANT_TO_TRY_COLOR,
   HAVENT_TRIED_COLOR,
   TRIED_COLOR,
-  regionFromCoords,
   colorFor,
-  fitAreaContains,
+  areaFromCoords,
+  areaFitContains,
+  areaLabel,
+  areaAtCenter,
+  isHomeArea,
+  mapAreas,
 } from '@/lib/aroundtown-shared'
 
 /**
- * Around Town, on the trips' own map.
+ * Elisa's Map (was Around Town), on the trips' own map.
  *
- * No days anywhere: an Around Town place is never assigned to a date, so the
- * only axes are where it is, what it is, and whether we have been.
+ * No days anywhere: a place here is never assigned to a date, so the only axes
+ * are where it is, what it is, and whether we have been.
+ *
+ * Elisa, 2026-10-25: "maybe around town should be changed to "Elisa's Map" but
+ * default filter to LA. then i can pan to wherever. but hong kong restaurants
+ * should not come up for if im in LA. it should be harder to expalnd my search
+ * but it should be possible". So it opens on LA; the area menu, "Search
+ * everywhere" and "Show places here" are the only ways out of the area.
  */
 
 const LEGEND: Array<{ color: string; label: string }> = [
@@ -35,8 +45,6 @@ const LEGEND: Array<{ color: string; label: string }> = [
   { color: HAVENT_TRIED_COLOR, label: "Haven't Tried" },
   { color: TRIED_COLOR, label: 'Tried' },
 ]
-
-const REGION_LABEL: Record<AroundTownRegion, string> = { la: 'LA', sfBay: 'SF Bay' }
 
 function Chip({
   label,
@@ -92,7 +100,13 @@ export default function AroundTownClient({
     if (locationChanged) router.refresh()
   }, [router])
 
-  const [region, setRegion] = useState<AroundTownRegion | null>(null)
+  // The area on show. Opens on LA, every time; null is Everywhere, reached only
+  // from the area menu or "Search everywhere".
+  const [region, setRegion] = useState<MapArea | null>('la')
+  // The area the map is looking at after a pan, for "Show places here".
+  const [viewArea, setViewArea] = useState<MapArea | null>(null)
+  const onIdle = useCallback((c: { lat: number; lng: number }) => setViewArea(areaAtCenter(c.lat, c.lng)), [])
+  const areas = useMemo(() => mapAreas(Object.values(initialMeta)), [initialMeta])
   const [kind, setKind] = useState<AroundTownKind | null>(null)
   const [wantToTryOnly, setWantToTryOnly] = useState(false)
   const [hideBeenThere, setHideBeenThere] = useState(false)
@@ -172,21 +186,29 @@ export default function AroundTownClient({
     [userLocation]
   )
 
-  const { shown, unmapped, nearMeWidened } = useMemo(() => {
+  const { shown, unmapped, nearMeWidened, elsewhere } = useMemo(() => {
     const rank = search ? new Map(search.ids.map((id, n) => [id, n])) : null
+    // Near me goes by distance from where she is, whatever the area: in Vienna
+    // with near me on, Vienna is what shows.
+    const area = nearMeOn ? null : region
+    // An area choice cannot judge a place with no pin and no area: its region is
+    // unknown, which is not the same as being somewhere else. It stays on the
+    // page, in the unmapped list, so picking an area never buries it. Those
+    // rows are home rows (a blank Location), so they stay with LA and the Bay
+    // and do not crowd a travel area's list.
+    const inArea = (item: TripItem, m: AroundTownMeta) =>
+      !area || m.region === area || (m.region === null && !item.coordinates && isHomeArea(area))
+    let outside = 0
     let list = items.filter(item => {
       const m = meta[placeIdOf(item.id)]
       if (!m) return false
-      // An area choice cannot judge a place with no pin: its region is unknown,
-      // which is not the same as being somewhere else. It stays on the page, in
-      // the unmapped list, so picking an area never buries it.
-      if (region && m.region !== region && !(m.region === null && !item.coordinates)) return false
       if (kind && m.kind !== kind) return false
       if (wantToTryOnly && !m.thinkingAbout) return false
       if (hideBeenThere && m.done) return false
       if (beenThereOnly && !m.done) return false
       if (hideBad && m.preference === 'Bad') return false
       if (rank && !rank.has(item.id)) return false
+      if (!inArea(item, m)) { outside += 1; return false }
       return true
     })
     // Best match first: a match on the name outranks one in the notes.
@@ -197,9 +219,11 @@ export default function AroundTownClient({
     // "make sure to always include an unmapped section so i dont lose out".
     // Near me narrows the map, never this list.
     const noPin = list.filter(i => !i.coordinates)
-    if (!nearMeOn) return { shown: list, unmapped: noPin, nearMeWidened: false }
+    // Matches the area is hiding: what "Search everywhere" would add.
+    const elsewhere = rank ? outside : 0
+    if (!nearMeOn) return { shown: list, unmapped: noPin, nearMeWidened: false, elsewhere }
     const near = nearest(list, distanceKm)
-    return { shown: near.items, unmapped: noPin, nearMeWidened: near.widened }
+    return { shown: near.items, unmapped: noPin, nearMeWidened: near.widened, elsewhere }
   }, [items, meta, region, kind, wantToTryOnly, hideBeenThere, beenThereOnly, hideBad, search, nearMeOn, distanceKm])
 
   const mapped = shown.filter(i => i.coordinates)
@@ -233,17 +257,21 @@ export default function AroundTownClient({
   // The vote uses the WIDE box on purpose - it is choosing LA vs the Bay, not
   // drawing the frame. The frame uses `fitAreaContains`, which is LA County
   // only, so San Diego and Orange County never stretch it.
-  const fitRegion: AroundTownRegion = useMemo(() => {
-    if (region) return region
-    let la = 0
-    let sf = 0
+  //
+  // Everywhere is the same rule across the world: the frame is the one area
+  // holding the most pins on show, never Hong Kong to LA.
+  const fitRegion: MapArea = useMemo(() => {
+    if (region && !nearMeOn) return region
+    const votes = new Map<MapArea, number>()
     for (const item of mapped) {
-      const r = regionFromCoords(item.coordinates!.lat, item.coordinates!.lng)
-      if (r === 'la') la += 1
-      else if (r === 'sfBay') sf += 1
+      const r = areaFromCoords(item.coordinates!.lat, item.coordinates!.lng)
+      if (r) votes.set(r, (votes.get(r) ?? 0) + 1)
     }
-    return sf > la ? 'sfBay' : 'la'
-  }, [region, mapped])
+    let best: MapArea = 'la'
+    let most = 0
+    for (const [r, n] of votes) if (n > most || (n === most && r === 'la')) { best = r; most = n }
+    return best
+  }, [region, nearMeOn, mapped])
 
   // A chain's branches are framed by the same rule as any pin: inside the fit
   // area they count, outside it (a San Diego branch) they stay on the map and
@@ -256,7 +284,7 @@ export default function AroundTownClient({
     // is in Costa Mesa). Her LA-proper frame is for browsing, not for answers.
     const searching = search !== null
     const inFrame = (lat: number, lng: number) =>
-      searching ? regionFromCoords(lat, lng) === fitRegion : fitAreaContains(fitRegion, lat, lng)
+      searching ? areaFromCoords(lat, lng) === fitRegion : areaFitContains(fitRegion, lat, lng)
     const drawn = (id: string, pin: { lat: number; lng: number }) => !pinFilter || pinFilter({ id, ...pin })
     for (const i of mapped) {
       if (drawn(i.id, i.coordinates!) && inFrame(i.coordinates!.lat, i.coordinates!.lng)) ids.add(i.id)
@@ -288,10 +316,10 @@ export default function AroundTownClient({
   )
 
   const hasFilters =
-    region !== null || kind !== null || wantToTryOnly || hideBeenThere || beenThereOnly || !hideBad || query !== '' || nearMe !== 'off'
+    region !== 'la' || kind !== null || wantToTryOnly || hideBeenThere || beenThereOnly || !hideBad || query !== '' || nearMe !== 'off'
 
   function clearAll() {
-    setRegion(null)
+    setRegion('la')
     setKind(null)
     setWantToTryOnly(false)
     setHideBeenThere(false)
@@ -387,24 +415,30 @@ export default function AroundTownClient({
           <Link href="/" className="text-xs text-white/30 transition-colors hover:text-amber-400">
             Trip Maps
           </Link>
-          <h1 className="font-display text-2xl leading-tight text-white">Around Town</h1>
+          <h1 className="font-display text-2xl leading-tight text-white">Elisa&apos;s Map</h1>
           <span className="text-xs text-white/30">no dates, just places</span>
         </div>
       </div>
 
       <div className="flex flex-shrink-0 flex-wrap items-center gap-1.5 px-4 pb-3">
-        {(['la', 'sfBay'] as AroundTownRegion[]).map(r => (
-          <Chip
-            key={r}
-            label={REGION_LABEL[r]}
-            on={region === r}
-            tone="indigo"
-            onClick={() => {
-              setRegion(region === r ? null : r)
+        {/* One menu, not a chip per area: leaving LA is a deliberate step. */}
+        <label className="flex-shrink-0">
+          <span className="sr-only">Area</span>
+          <select
+            id="map-area"
+            value={region ?? 'everywhere'}
+            onChange={e => {
+              setRegion(e.target.value === 'everywhere' ? null : e.target.value)
               setSelected(null)
             }}
-          />
-        ))}
+            className="rounded-full border border-indigo-400 bg-indigo-500 px-2.5 py-1 text-xs font-medium text-white focus:outline-none"
+          >
+            {areas.map(a => (
+              <option key={a.id} value={a.id}>{a.label} ({a.count})</option>
+            ))}
+            <option value="everywhere">Everywhere</option>
+          </select>
+        </label>
 
         <span className="mx-1 h-4 w-px flex-shrink-0 bg-white/15" />
 
@@ -510,7 +544,19 @@ export default function AroundTownClient({
 
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
         <div className="relative h-[45vh] flex-shrink-0 lg:h-auto lg:flex-1">
+          {region !== null && !nearMeOn && viewArea && viewArea !== region && areas.some(a => a.id === viewArea) && (
+            <button
+              onClick={() => {
+                setRegion(viewArea)
+                setSelected(null)
+              }}
+              className="absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-full border border-indigo-400 bg-indigo-500 px-3 py-1.5 text-xs font-medium text-white shadow-lg"
+            >
+              Show places in {areaLabel(viewArea)}
+            </button>
+          )}
           <TripMap
+            onIdle={onIdle}
             items={shown}
             apiKey={apiKey}
             selected={selected}
@@ -608,9 +654,23 @@ export default function AroundTownClient({
           {search && (
             <p className="border-b border-white/10 px-4 py-3 text-sm text-white">
               {shown.length === 0
-                ? 'No saved place matches.'
-                : `${shown.length} match${shown.length === 1 ? '' : 'es'}`}
+                ? (elsewhere > 0 && region ? `None in ${areaLabel(region)}` : 'No saved place matches.')
+                : `${shown.length} match${shown.length === 1 ? '' : 'es'}${region && !nearMeOn ? ` in ${areaLabel(region)}` : ''}`}
               <span className="text-white/40"> for "{query.trim()}"</span>
+              {elsewhere > 0 && (
+                <>
+                  <span className="text-white/40"> · {elsewhere} elsewhere </span>
+                  <button
+                    onClick={() => {
+                      setRegion(null)
+                      setSelected(null)
+                    }}
+                    className="ml-1 rounded-full border border-amber-400/40 px-2 py-0.5 text-xs font-medium text-amber-300 hover:bg-white/5"
+                  >
+                    Search everywhere
+                  </button>
+                </>
+              )}
             </p>
           )}
 

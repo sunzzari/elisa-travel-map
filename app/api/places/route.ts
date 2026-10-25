@@ -22,6 +22,7 @@ export async function POST(request: Request) {
     // old places for up to five minutes after its own save.
     revalidatePath('/around-town')
     revalidatePath('/api/around-town')
+    revalidatePath('/api/around-town/world')
     return NextResponse.json({ ok: true, id, location })
   } catch (err) {
     if (err instanceof PlaceInputError) return NextResponse.json({ error: err.message }, { status: 400 })

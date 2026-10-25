@@ -20,7 +20,8 @@ export interface SearchablePlace {
   id: string
   name: string
   kind: 'restaurant' | 'activity'
-  region: 'la' | 'sfBay' | null
+  /** LA, the Bay, or a travel area ("vienna"); see MapArea in aroundtown-shared. */
+  region: string | null
   neighborhood: string
   location: string
   goodFor: string[]

@@ -19,5 +19,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: Request) {
   const refused = await refuseWithoutPasscode(request)
   if (refused) return refused
-  return NextResponse.json(await aroundTownPlaces(), { headers: { 'Cache-Control': 'no-store' } })
+  // `?world=1`: Elisa's Map, every area (see /api/around-town/world).
+  const world = new URL(request.url).searchParams.get('world') === '1'
+  return NextResponse.json(await aroundTownPlaces({ world }), { headers: { 'Cache-Control': 'no-store' } })
 }

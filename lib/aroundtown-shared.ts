@@ -9,13 +9,17 @@
  */
 
 import type { TripItem } from './types'
+import { AWAY_AREAS } from './place-areas'
 
 export type AroundTownKind = 'restaurant' | 'activity'
+/** The two home areas Around Town always had. */
 export type AroundTownRegion = 'la' | 'sfBay'
+/** Any area on Elisa's Map: a home area, or an `AWAY_AREAS` key ("hong kong", "vienna"). */
+export type MapArea = string
 
 export interface AroundTownMeta {
   kind: AroundTownKind
-  region: AroundTownRegion | null
+  region: MapArea | null
   neighborhood: string
   locationText: string
   preference: string | null
@@ -151,4 +155,102 @@ export function fitAreaContains(
     return lat >= 33.7 && lat <= 34.45 && lng >= -118.95 && lng <= -117.95
   }
   return regionFromCoords(lat, lng) === 'sfBay'
+}
+
+// MARK: - Elisa's Map: every area, home and away
+//
+// Elisa, 2026-10-25: "maybe around town should be changed to "Elisa's Map" but
+// default filter to LA. then i can pan to wherever. but hong kong restaurants
+// should not come up for if im in LA. it should be harder to expalnd my search
+// but it should be possible". LA and the Bay keep their own rules above; a
+// travel Location ("Vienna", "Hong Kong") is an area too, sized by `AWAY_AREAS`.
+
+export const HOME_AREAS: AroundTownRegion[] = ['la', 'sfBay']
+
+export const isHomeArea = (area: MapArea | null): area is AroundTownRegion =>
+  area === 'la' || area === 'sfBay'
+
+/** Centre and reach of every area, for the area menu and "Show places here". */
+export interface MapAreaInfo { id: MapArea; label: string; lat: number; lng: number; radiusKm: number }
+
+const HOME_INFO: Record<AroundTownRegion, MapAreaInfo> = {
+  la: { id: 'la', label: 'LA', lat: 34.05, lng: -118.25, radiusKm: 120 },
+  sfBay: { id: 'sfBay', label: 'SF Bay', lat: 37.77, lng: -122.42, radiusKm: 110 },
+}
+
+/** The travel area a Location names, as its `AWAY_AREAS` key, or null. */
+export function awayAreaIdFor(location: string): MapArea | null {
+  for (const part of location.split('/')) {
+    const key = part.trim().toLowerCase()
+    if (key && AWAY_AREAS[key]) return key
+  }
+  return null
+}
+
+/** The area a Location belongs to: home first ("LA / SF" is LA), then travel. */
+export function areaFromText(location: string): MapArea | null {
+  return regionFromText(location) ?? awayAreaIdFor(location)
+}
+
+function km(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const rad = Math.PI / 180
+  const dLat = (bLat - aLat) * rad
+  const dLng = (bLng - aLng) * rad
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(aLat * rad) * Math.cos(bLat * rad) * Math.sin(dLng / 2) ** 2
+  return 2 * 6371 * Math.asin(Math.sqrt(h))
+}
+
+/** Whether a pin is inside a travel area's reach. */
+export function inAwayArea(area: MapArea, lat: number, lng: number): boolean {
+  const a = AWAY_AREAS[area]
+  return !!a && km(a.lat, a.lng, lat, lng) <= a.radiusKm
+}
+
+/** The area a coordinate is in: LA or the Bay by their boxes, else the nearest travel area that reaches it. */
+export function areaFromCoords(lat: number, lng: number): MapArea | null {
+  const home = regionFromCoords(lat, lng)
+  if (home) return home
+  let best: MapArea | null = null
+  let bestKm = Infinity
+  for (const [id, a] of Object.entries(AWAY_AREAS)) {
+    const d = km(a.lat, a.lng, lat, lng)
+    if (d <= a.radiusKm && d < bestKm) { best = id; bestKm = d }
+  }
+  return best
+}
+
+/** The fit frame for any area: LA proper and the Bay as above, a travel area by its reach. */
+export function areaFitContains(area: MapArea, lat: number, lng: number): boolean {
+  return isHomeArea(area) ? fitAreaContains(area, lat, lng) : inAwayArea(area, lat, lng)
+}
+
+/** Her own spelling of the area, from the Notion Location options ("Koh Samui", "NYC"). */
+export function areaLabel(area: MapArea): string {
+  if (isHomeArea(area)) return HOME_INFO[area].label
+  return RESTAURANT_LOCATIONS.find(l => l.toLowerCase() === area) ?? AWAY_AREAS[area]?.city.split(',')[0] ?? area
+}
+
+export function areaInfo(area: MapArea): MapAreaInfo | null {
+  if (isHomeArea(area)) return HOME_INFO[area]
+  const a = AWAY_AREAS[area]
+  return a ? { id: area, label: areaLabel(area), lat: a.lat, lng: a.lng, radiusKm: a.radiusKm } : null
+}
+
+/** The area a map view's centre is in, for "Show places here". Same rule as a pin. */
+export const areaAtCenter = areaFromCoords
+
+/**
+ * The areas of Elisa's Map that have places, for the area menu: LA and the Bay
+ * first, then travel areas by how many places they hold.
+ */
+export function mapAreas(places: Array<{ region: MapArea | null }>): Array<MapAreaInfo & { count: number }> {
+  const counts = new Map<MapArea, number>()
+  for (const p of places) if (p.region) counts.set(p.region, (counts.get(p.region) ?? 0) + 1)
+  const out: Array<MapAreaInfo & { count: number }> = []
+  for (const [id, count] of counts) {
+    const info = areaInfo(id)
+    if (info) out.push({ ...info, label: areaLabel(id), count })
+  }
+  const homeFirst = (a: MapAreaInfo) => (a.id === 'la' ? 0 : a.id === 'sfBay' ? 1 : 2)
+  return out.sort((a, b) => homeFirst(a) - homeFirst(b) || b.count - a.count || a.label.localeCompare(b.label))
 }

@@ -79,9 +79,9 @@ export default async function Home() {
           className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 transition-colors hover:bg-white/[0.06]"
         >
           <div className="flex-1">
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/30">Home turf</p>
-            <h2 className="font-display text-xl leading-tight text-white">Around Town</h2>
-            <p className="mt-1 text-xs text-white/40">Every LA and SF Bay place we have logged</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/30">Every place, opens on LA</p>
+            <h2 className="font-display text-xl leading-tight text-white">Elisa&apos;s Map</h2>
+            <p className="mt-1 text-xs text-white/40">Every place we have logged, LA to Vienna</p>
           </div>
           <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white/10 text-white/60 transition-transform group-hover:translate-x-0.5 group-hover:text-amber-400">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
