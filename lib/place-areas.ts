@@ -219,6 +219,9 @@ export const AWAY_AREAS: Record<string, AwayArea> = {
   'joshua tree': { city: 'Joshua Tree, CA', lat: 34.13, lng: -116.31, radiusKm: 45 },
   'chengdu': { city: 'Chengdu, China', lat: 30.66, lng: 104.07, radiusKm: 90 },
   'shanghai': { city: 'Shanghai, China', lat: 31.23, lng: 121.47, radiusKm: 40 },
+  // Vienna was added in Notion for the 2026 trip without a row here, so its 22
+  // places could never be pinned (found 2026-10-25).
+  'vienna': { city: 'Vienna, Austria', lat: 48.208, lng: 16.373, radiusKm: 25 },
 }
 
 /** The travel area a Location names, or null (LA and Bay Locations are not travel areas). */

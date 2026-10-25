@@ -2,6 +2,10 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-10-25
+
+- **Vienna places can be pinned** - Elisa asked for Gemini to find Google Maps links for the places that only needed a pin. 19 Vienna links checked out against a free map (all within 60 m of their address) but the server refused every one: Vienna was added as a Restaurant Guide Location for the 2026 trip without a row in `AWAY_AREAS` (`lib/place-areas.ts`) or `RESTAURANT_LOCATIONS` (`lib/aroundtown-shared.ts`), so no Vienna place had an area to check a pin against and none could ever be pinned. Both now list Vienna (25 km around the centre). Nothing on the phone changes.
+
 ## 2026-10-21
 
 - `3:20pm` **Hover popup no longer flickers** - Elisa: "the hover is still very glitchy ... do it over carousel bakery when zoomed like this its flickering". Reproduced locally on Carrusel Bakery: a moment after a hover popup opened, its tail slid over the top of the pin. That read as leaving the pin, so the popup closed, the pin was under the pointer again, it reopened, and so on. Now any part of the popup (content, frame, X, tail) counts as still hovering; leaving both the pin and the popup closes it. Shared `TripMap`, so trips and Around Town both get it. Nothing on the phone changes.
