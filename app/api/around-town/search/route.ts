@@ -33,7 +33,17 @@ export async function GET(request: Request) {
 
   let places: CachedPlace[]
   try {
-    const response = await fetch(new URL(world ? '/api/around-town/world' : '/api/around-town', url.origin), { cache: 'no-store' })
+    // The world answer sits behind the site password (proxy.ts); this route
+    // is a server, so it passes the password itself. The target is this
+    // deployment's own fixed address, never one taken from the request's Host
+    // header, so the password can only ever go to us.
+    const self = process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : `http://localhost:${process.env.PORT ?? 3000}`
+    const response = await fetch(new URL(world ? '/api/around-town/world' : '/api/around-town', world ? self : url.origin), {
+      cache: 'no-store',
+      headers: world ? { 'x-edit-passcode': process.env.AROUND_TOWN_PASSCODE ?? '' } : undefined,
+    })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     places = (await response.json()).places
   } catch (err) {
