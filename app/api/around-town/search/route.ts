@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { searchPlaces, type SearchablePlace } from '@/lib/place-search'
+import { refuseWithoutPasscode } from '@/lib/edit-auth'
 
 /**
  * Around Town search for the Sunzzari app: `?q=jian bing in rowland heights`.
@@ -30,6 +31,13 @@ export async function GET(request: Request) {
   if (!q) return NextResponse.json({ error: 'Type something to search for.' }, { status: 400 })
   const world = url.searchParams.get('world') === '1'
   const area = url.searchParams.get('area')
+  // The world list is behind the site password, so a world search asks for the
+  // same proof: the phone's Notion key, the site cookie, or the password. Only
+  // then does this route use its own password to read the list.
+  if (world) {
+    const refused = await refuseWithoutPasscode(request)
+    if (refused) return refused
+  }
 
   let places: CachedPlace[]
   try {
