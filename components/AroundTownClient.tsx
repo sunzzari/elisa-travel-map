@@ -90,6 +90,11 @@ export default function AroundTownClient({
 
   const router = useRouter()
   const panelRef = useRef<HTMLDivElement | null>(null)
+  // Where she was in the list when she opened a place, so Back returns there.
+  // Elisa, 2026-10-26: "there should be a back button for the right side list
+  // because when i click on one it stays on that results. i want to be able to
+  // click and go back very easily".
+  const listScroll = useRef(0)
 
   // Fresh places from the server (after a pin changed) replace the local copy.
   useEffect(() => setMeta(initialMeta), [initialMeta])
@@ -116,6 +121,31 @@ export default function AroundTownClient({
   const [hideBad, setHideBad] = useState(true)
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<TripItem | null>(null)
+  const openPlace = useCallback((item: TripItem | null) => {
+    if (item) listScroll.current = panelRef.current?.scrollTop ?? 0
+    setSelected(item)
+  }, [])
+  // The place opens at the top of the panel, wherever in the list she tapped
+  // it. After the render, or the browser keeps the tapped row in view instead.
+  // Back puts her where she was in the list, also after the render.
+  useEffect(() => {
+    if (selected) panelRef.current?.scrollTo({ top: 0 })
+    else if (goingBack.current) {
+      goingBack.current = false
+      panelRef.current?.scrollTo({ top: listScroll.current })
+    }
+  }, [selected?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  const goingBack = useRef(false)
+  const backToList = useCallback(() => {
+    goingBack.current = true
+    setSelected(null)
+  }, [])
+  useEffect(() => {
+    if (!selected) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') backToList() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [selected, backToList])
 
   // After a refresh the open place must be the fresh copy, or its pin and
   // callout stay where they were before the save.
@@ -341,7 +371,7 @@ export default function AroundTownClient({
         return (
           <button
             key={item.id}
-            onClick={() => setSelected(item)}
+            onClick={() => openPlace(item)}
             className={`flex w-full gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-white/5 ${
               selected?.id === item.id ? 'bg-white/5' : ''
             }`}
@@ -383,7 +413,7 @@ export default function AroundTownClient({
   const unmappedList = (
     <UnmappedList
       items={unmapped}
-      onSelect={setSelected}
+      onSelect={openPlace}
       dotColor={item => meta[placeIdOf(item.id)]?.color ?? HAVENT_TRIED_COLOR}
       subtitle={item => {
         const m = meta[placeIdOf(item.id)]
@@ -395,7 +425,7 @@ export default function AroundTownClient({
       note={unmappedNote}
       onFind={item => {
         setAdding(false)
-        setSelected(item)
+        openPlace(item)
         panelRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
       }}
       searchContext={item => {
@@ -560,7 +590,7 @@ export default function AroundTownClient({
             items={shown}
             apiKey={apiKey}
             selected={selected}
-            onSelect={setSelected}
+            onSelect={openPlace}
             userLocation={nearMeOn ? userLocation : null}
             onRecenterReady={onRecenterReady}
             fitKey={fitKey}
@@ -615,6 +645,12 @@ export default function AroundTownClient({
                 <h2 className="mb-3 text-sm font-semibold text-white">Add a place</h2>
               ) : (
                 <div className="mb-3">
+                  <button
+                    onClick={backToList}
+                    className="mb-3 flex items-center gap-1.5 rounded-full border border-amber-400/50 px-3 py-1.5 text-sm font-medium text-amber-300 hover:bg-white/5"
+                  >
+                    <span aria-hidden="true">‹</span> Back to list <span className="text-white/30 text-xs">Esc</span>
+                  </button>
                   <h2 className="text-sm font-semibold text-white">{selected!.name}</h2>
                   <p className="text-xs text-white/40">
                     {[meta[placeIdOf(selected!.id)]?.address || meta[placeIdOf(selected!.id)]?.neighborhood || meta[placeIdOf(selected!.id)]?.locationText]

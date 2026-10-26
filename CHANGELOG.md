@@ -2,6 +2,10 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-10-26
+
+- **Back to list on Elisa's Map** - Elisa: "there should be a back button for the right side list because when i click on one it stays on that results. i want to be able to click and go back very easily". A place opened from the list, a pin or Find it now opens at the top of the panel with a **Back to list** button (or Esc), which closes it and puts the list back exactly where she was. Website only; the phone opens places in a sheet she swipes away.
+
 ## 2026-10-25
 
 - **Phone search reaches every area** - the new world list is behind the site password, so `/api/around-town/search?world=1` (which the phone calls without a key) could not read it. The search route now asks this deployment's own fixed address (`VERCEL_PROJECT_PRODUCTION_URL`, never the request's Host header) and passes the site password itself, server side only. A world search itself now needs the same proof as the world list (the phone's Notion key, the site cookie or the password); the plain search the current phone build uses is unchanged.
