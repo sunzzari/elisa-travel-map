@@ -5,6 +5,7 @@ import { readSavedPin } from './saved-pins'
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 
 const TRAVEL_PLANNING_DB = '72792a7e-eb9e-468a-a376-fd1e7284401c'
+export const TRAVEL_PLANNING_DATABASE_ID = TRAVEL_PLANNING_DB
 const TRIP_ITEMS_DB = '9947ef07-3483-472b-b452-f2ebc23edabe'
 const TRIP_LEGS_DB = 'fee283c0-9ee7-46ff-8758-fbc58fba496d'
 // REST database ids, not the MCP data-source ids in STRUCTURE.md (the two differ).

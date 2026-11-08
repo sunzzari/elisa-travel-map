@@ -558,7 +558,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
 
       {view === 'pack' ? (
         <div className="min-h-0 flex-1 overflow-y-auto">
-          <PackingSection packing={packing} passcode={passcode} />
+          <PackingSection packing={packing} passcode={passcode} tripId={trip.id} />
         </div>
       ) : <>
       {askOpen && (

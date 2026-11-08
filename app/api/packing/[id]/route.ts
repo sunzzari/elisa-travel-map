@@ -5,6 +5,7 @@ import { notionFor } from '@/lib/places-write'
 import { parsePackingItem, TRIP_PACKING_DATABASE_ID } from '@/lib/notion'
 
 const norm = (id: string) => id.replace(/-/g, '')
+const BAGS = ['Backpack', 'Carry-On', 'Lole', 'Checked Bag', 'Wear']
 
 /** The Trip Packing page with this id, or null when it is not one. */
 async function packingPage(notion: any, id: string): Promise<any | null> {
@@ -72,6 +73,22 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     } catch (err) {
       console.error('Packing restore failed:', err)
       return NextResponse.json({ error: 'Notion did not restore this. It is in Notion Trash.' }, { status: 502 })
+    }
+  }
+
+  // Change the bag. Elisa, 2026-11-08: "or select/change a bag".
+  if (Array.isArray(body?.compartments)) {
+    const bags: string[] = body.compartments
+    if (bags.some(b => !BAGS.includes(b))) return NextResponse.json({ error: 'Unknown bag' }, { status: 400 })
+    const page = await packingPage(notion, id)
+    if (!page) return NextResponse.json({ error: 'Not a packing item' }, { status: 404 })
+    try {
+      const updated = await notion.pages.update({ page_id: id, properties: { Compartment: { multi_select: bags.map(b => ({ name: b })) } } } as any)
+      revalidateTrips(page)
+      return NextResponse.json({ ok: true, item: parsePackingItem(updated) })
+    } catch (err) {
+      console.error('Packing bag change failed:', err)
+      return NextResponse.json({ error: 'Notion did not save the bag.' }, { status: 502 })
     }
   }
 

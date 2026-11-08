@@ -32,6 +32,7 @@ const DEFAULT_PREFS: ViewPrefs = { status: 'all', who: 'all', category: 'all', c
 // Notion's own order for the Compartment options; an item with none reads "Not set".
 const COMPARTMENT_ORDER = ['Backpack', 'Carry-On', 'Lole', 'Checked Bag', 'Wear']
 const NO_COMPARTMENT = 'none'
+const ADD_CATEGORIES = ['Clothes', 'Tech', 'Toiletries', 'Liquids', 'First Aid', 'Misc', 'Family', 'Wedding']
 // Each person's view lives in their own browser, so changing it never
 // changes anyone else's. Elisa, 2026-11-08: "one person changing the view
 // should only change thiers."
@@ -79,7 +80,7 @@ function Box({ on, label, disabled, onClick }: { on: boolean; label: string; dis
   )
 }
 
-export default function PackingSection({ packing, passcode }: { packing: Loaded<PackingItem[]>; passcode: string }) {
+export default function PackingSection({ packing, passcode, tripId }: { packing: Loaded<PackingItem[]>; passcode: string; tripId: string }) {
   const [items, setItems] = useState<PackingItem[]>(packing.ok ? packing.value : [])
   const [saving, setSaving] = useState<Set<string>>(new Set())
   const [error, setError] = useState<string | null>(null)
@@ -95,6 +96,12 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
   // goes (to Notion Trash); the Master Packing List is never touched.
   const [confirming, setConfirming] = useState<string | null>(null)
   const [removed, setRemoved] = useState<PackingItem | null>(null)
+  // Add an item to this trip only. Elisa, 2026-11-08: "also make an option to
+  // add something". Who has no default: whose an item is gets asked, never guessed.
+  const [adding, setAdding] = useState(false)
+  const [draft, setDraft] = useState({ name: '', category: '', who: '', bag: '' })
+  const [addError, setAddError] = useState<string | null>(null)
+  const [addBusy, setAddBusy] = useState(false)
 
   const wrap = (children: ReactNode) => <div className="mx-auto max-w-3xl px-4 py-5" data-section="packing">{children}</div>
 
@@ -161,6 +168,69 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
     }
   }
 
+  async function changeBag(item: PackingItem, value: string) {
+    const compartments = value ? value.split(', ') : []
+    const before = item
+    setError(null)
+    setSaving(s => new Set(s).add(item.id))
+    setSticky(s => new Set(s).add(item.id))
+    setItems(list => list.map(i => (i.id === item.id ? { ...i, compartments } : i)))
+    try {
+      const res = await fetch(`/api/packing/${item.id}`, { method: 'PATCH', headers, body: JSON.stringify({ compartments }) })
+      const body = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(body.error ?? 'Notion did not save the bag')
+      setItems(list => list.map(i => (i.id === item.id ? body.item : i)))
+    } catch (err) {
+      setItems(list => list.map(i => (i.id === item.id ? before : i)))
+      setError(`${item.name}: ${err instanceof Error ? err.message : 'bag not saved'}`)
+    } finally {
+      setSaving(s => { const n = new Set(s); n.delete(item.id); return n })
+    }
+  }
+
+  // One dropdown per row. An item already in two bags (e.g. Wear, Carry-On)
+  // keeps that pair as its own choice so opening the menu changes nothing.
+  const bagSelect = (item: PackingItem, extra = '') => {
+    const current = item.compartments.join(', ')
+    return (
+      <select
+        aria-label={`Bag for ${item.name}`}
+        value={current}
+        disabled={saving.has(item.id)}
+        onChange={e => changeBag(item, e.target.value)}
+        className={`rounded border border-transparent bg-transparent py-0.5 text-[11px] hover:border-white/20 focus:border-amber-400/50 focus:outline-none ${current ? 'text-white/70' : 'text-white/30'} ${extra}`}
+      >
+        <option value="">Not set</option>
+        {COMPARTMENT_ORDER.map(c => <option key={c} value={c}>{c}</option>)}
+        {item.compartments.length > 1 && <option value={current}>{current}</option>}
+      </select>
+    )
+  }
+
+  async function add() {
+    setAddError(null)
+    if (!draft.name.trim()) return setAddError('Give it a name')
+    if (!draft.who) return setAddError('Say who packs it')
+    if (!draft.category) return setAddError('Pick a category')
+    setAddBusy(true)
+    try {
+      const res = await fetch('/api/packing', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ tripId, name: draft.name.trim(), category: draft.category, who: draft.who, compartments: draft.bag ? [draft.bag] : [] }),
+      })
+      const body = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(body.error ?? 'Notion did not save this item')
+      setItems(list => [...list, body.item])
+      setSticky(s => new Set(s).add(body.item.id))
+      setDraft({ name: '', category: draft.category, who: draft.who, bag: draft.bag })
+    } catch (err) {
+      setAddError(err instanceof Error ? err.message : 'Not saved')
+    } finally {
+      setAddBusy(false)
+    }
+  }
+
   const setPrefs = (patch: Partial<ViewPrefs>) => {
     const next = { ...prefs, ...patch }
     setPrefsState(next)
@@ -217,6 +287,32 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
           )
         })}
         <span className="text-white/45">{done} of {items.length} done</span>
+      </div>
+
+      <div className="mb-3">
+        {!adding ? (
+          <button onClick={() => setAdding(true)} className="rounded-full bg-amber-400 px-3 py-1 text-xs font-semibold text-gray-950 hover:bg-amber-300">+ Add an item</button>
+        ) : (
+          <form onSubmit={e => { e.preventDefault(); add() }} className="flex flex-wrap items-center gap-2 rounded-lg bg-white/5 p-2">
+            <input autoFocus value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} placeholder="Item name" className={`${select} w-40`} />
+            <select aria-label="New item who" value={draft.who} onChange={e => setDraft({ ...draft, who: e.target.value })} className={select}>
+              <option value="">Who packs it?</option>
+              {WHO_ORDER.map(k => <option key={k} value={k}>{WHO[k].label}</option>)}
+            </select>
+            <select aria-label="New item category" value={draft.category} onChange={e => setDraft({ ...draft, category: e.target.value })} className={select}>
+              <option value="">Category</option>
+              {ADD_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <select aria-label="New item bag" value={draft.bag} onChange={e => setDraft({ ...draft, bag: e.target.value })} className={select}>
+              <option value="">Bag (optional)</option>
+              {COMPARTMENT_ORDER.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <button type="submit" disabled={addBusy} className="rounded-md bg-amber-400 px-3 py-1 text-xs font-semibold text-gray-950 disabled:opacity-50">{addBusy ? 'Adding...' : 'Add'}</button>
+            <button type="button" onClick={() => { setAdding(false); setAddError(null) }} className="text-xs text-white/50 hover:text-white">Done</button>
+            {addError && <span className="w-full text-xs text-red-300">{addError}</span>}
+            <span className="w-full text-[10px] text-white/35">Adds to this trip only. Your master packing list is not changed.</span>
+          </form>
+        )}
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -296,12 +392,12 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
                     <td className="py-1.5 pl-1">
                       <span className={finished ? 'text-white/35 line-through' : 'text-white/90'}>{item.name}</span>
                       <span className={`ml-2 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ring-1 sm:hidden ${w.className}`}>{w.label}</span>
-                      {item.compartments.length > 0 && <span className="block text-[10px] text-white/40 md:hidden">{item.compartments.join(', ')}</span>}
+                      <span className="block md:hidden">{bagSelect(item, '-ml-0.5')}</span>
                     </td>
                     <td className="hidden py-1.5 sm:table-cell">
                       <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ${w.className}`}>{w.label}</span>
                     </td>
-                    <td className="hidden py-1.5 text-[11px] text-white/55 md:table-cell">{item.compartments.join(', ') || <span className="text-white/25">Not set</span>}</td>
+                    <td className="hidden py-1.5 md:table-cell">{bagSelect(item)}</td>
                     {PEOPLE.map(person => {
                       const own = person === 'Elisa' ? item.elisaPacked : item.cathyPacked
                       const other = person === 'Elisa' ? item.cathyPacked : item.elisaPacked
