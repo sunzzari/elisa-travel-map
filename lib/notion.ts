@@ -1,5 +1,5 @@
 import { Client } from '@notionhq/client'
-import type { Trip, TripItem, ItemType, ItemPriority, ItemStatus, TripStatus, TripLeg, TripTask, Loaded } from './types'
+import type { Trip, TripItem, ItemType, ItemPriority, ItemStatus, TripStatus, TripLeg, TripTask, PackingItem, Loaded } from './types'
 import { readSavedPin } from './saved-pins'
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
@@ -10,6 +10,9 @@ const TRIP_LEGS_DB = 'fee283c0-9ee7-46ff-8758-fbc58fba496d'
 // REST database ids, not the MCP data-source ids in STRUCTURE.md (the two differ).
 const MASTER_PROJECTS_DB = '763924d2-f70a-4249-b058-8f9a2c2989be'
 const CENTRAL_TASKS_DB = '8a4e5b6d-8645-4cf3-bf25-fb806d88bc4a'
+const TRIP_PACKING_DB = 'c602e697-0876-45cf-b6e5-c5979adcef79'
+
+export const TRIP_PACKING_DATABASE_ID = TRIP_PACKING_DB
 
 export const TRIP_ITEMS_DATABASE_ID = TRIP_ITEMS_DB
 
@@ -224,5 +227,46 @@ export async function fetchTripTasks(tripId: string): Promise<Loaded<TripTask[]>
     return { ok: true, value: tasks }
   } catch (err) {
     return failure('the trip tasks', err)
+  }
+}
+
+const WHO = new Set(['Each', 'Shared', 'Elisa', 'Cathy'])
+
+/** One Trip Packing page. The list read and the write read-back share it. */
+export function parsePackingItem(page: any): PackingItem {
+  const p = page.properties ?? {}
+  const who = getText(p['Who'])
+  return {
+    id: page.id,
+    name: getText(p['Item Name']),
+    category: getText(p['Category']) || 'Other',
+    who: (WHO.has(who) ? who : '') as PackingItem['who'],
+    elisaPacked: getCheckbox(p['Elisa packed']),
+    cathyPacked: getCheckbox(p['Cathy packed']),
+  }
+}
+
+/**
+ * The trip's packing list: its Trip Packing rows. Read only here; the rows are
+ * made by /notion-trip-packing and only the two packed boxes are ever written
+ * from the app (app/api/packing/[id]).
+ */
+export async function fetchTripPacking(tripId: string): Promise<Loaded<PackingItem[]>> {
+  try {
+    const items: PackingItem[] = []
+    let cursor: string | undefined
+    do {
+      const response: any = await notion.databases.query({
+        database_id: TRIP_PACKING_DB,
+        start_cursor: cursor,
+        filter: { property: 'Trip', relation: { contains: tripId } },
+      })
+      for (const page of response.results as any[]) items.push(parsePackingItem(page))
+      cursor = response.next_cursor ?? undefined
+    } while (cursor)
+    items.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
+    return { ok: true, value: items }
+  } catch (err) {
+    return failure('the packing list', err)
   }
 }

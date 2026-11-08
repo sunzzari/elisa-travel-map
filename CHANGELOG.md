@@ -2,6 +2,10 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-11-07
+
+- `2:54pm` **Packing on the Plan tab** - Elisa: "where is the packing dashboard", then "Yes, build it". New **Packing** section in the Plan tab's side panel (under To do, folds away like the others) showing the trip's Notion Trip Packing rows: **Mine / Cathy / All**, grouped by category. Mine and Cathy show only what that person still has to pack, using the same rule as the Notion per-person boards (`lib/packing.ts`). Ticking a box saves `Elisa packed` or `Cathy packed` in Notion through the new `PATCH /api/packing/[id]` (same password as status edits; writes only that one checkbox, never creates or deletes a row). Web only; the Sunzzari app has no packing screen.
+
 ## 2026-10-26
 
 - **Back to list on Elisa's Map** - Elisa: "there should be a back button for the right side list because when i click on one it stays on that results. i want to be able to click and go back very easily". A place opened from the list, a pin or Find it now opens at the top of the panel with a **Back to list** button (or Esc), which closes it and puts the list back exactly where she was. Website only; the phone opens places in a sheet she swipes away.

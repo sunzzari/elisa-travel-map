@@ -10,7 +10,7 @@ import { usePasscode } from './PlaceEditing'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
 import { buildPlan, groupOf, stopNumbers, GROUPS, ALL_GROUPS, type Group } from '@/lib/plan'
 import { haversineKm } from '@/lib/geo'
-import type { Trip, TripItem, ItemType, TripLeg, TripTask, Loaded } from '@/lib/types'
+import type { Trip, TripItem, ItemType, TripLeg, TripTask, PackingItem, Loaded } from '@/lib/types'
 import type { UserLocation } from '@/lib/geo'
 
 // Map-first day view.
@@ -40,7 +40,7 @@ const LOCAL_FORMS: Record<string, string[]> = {
 }
 // Every group is on by default, Considering included. Elisa, 2026-10-18: "all
 // of the 'considering' should display on the map with easy toggle on/off".
-const SECTIONS: Section[] = ['summary', 'todo', 'coverage', 'days']
+const SECTIONS: Section[] = ['summary', 'todo', 'packing', 'coverage', 'days']
 
 // Every setting the views are made of lives in the URL, so any view can be
 // bookmarked and reopens the same. Elisa, 2026-10-18: "i want this map to be
@@ -64,10 +64,11 @@ interface Props {
   items: TripItem[]
   legs: Loaded<TripLeg[]>
   tasks: Loaded<TripTask[]>
+  packing: Loaded<PackingItem[]>
   apiKey: string
 }
 
-export default function ItineraryClient({ trip, items: loadedItems, legs: legRows, tasks, apiKey }: Props) {
+export default function ItineraryClient({ trip, items: loadedItems, legs: legRows, tasks, packing, apiKey }: Props) {
   // A status saved from the Plan tab shows at once; the page itself catches up
   // on its next 60s refresh. The saved row keeps the pin the page already had.
   const [saved, setSaved] = useState<Record<string, TripItem>>({})
@@ -841,6 +842,8 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
               <PlanPanel
                 plan={plan}
                 tasks={tasks}
+                packing={packing}
+                passcode={passcode}
                 legsError={legRows.ok ? null : legRows.error}
                 day={planDayNow}
                 numbers={numbers}
