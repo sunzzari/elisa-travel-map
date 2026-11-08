@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { Loaded, PackingItem } from '@/lib/types'
 import { groupByCategory, isDone, stillToPack, type Packer } from '@/lib/packing'
 
@@ -13,13 +13,38 @@ import { groupByCategory, isDone, stillToPack, type Packer } from '@/lib/packing
 //   "you should have toggles for show unpacked items, show all, etc"
 //   "a one page view that cathy and elisa both look at. like item then column
 //    cathy elisa"
+//   "get rid of the legend. also add some sorting and filtration capabilities.
+//    add an easy way for elisa to see her remining things and cathy to see her
+//    remaining things. ... one person changing the view should only change
+//    thiers. instead of the show toggles just make filters and sort"
 //
 // One shared table: item, who, an Elisa column and a Cathy column. The rows
 // are the Notion Trip Packing copies /notion-trip-packing made; here you only
 // tick `Elisa packed` / `Cathy packed`. Done-ness uses the same rule as the
 // Notion boards (lib/packing.ts).
 
-type Show = 'unpacked' | 'packed' | 'all'
+// Status filter. "Elisa left" / "Cathy left" are each person's remaining
+// items, the same rule as the Notion per-person boards.
+type Status = 'all' | 'unpacked' | 'packed' | 'elisa-left' | 'cathy-left'
+type Sort = 'category' | 'name' | 'who' | 'unpacked-first'
+interface ViewPrefs { status: Status; who: string; category: string; sort: Sort; q: string }
+const DEFAULT_PREFS: ViewPrefs = { status: 'all', who: 'all', category: 'all', sort: 'category', q: '' }
+// Each person's view lives in their own browser, so changing it never
+// changes anyone else's. Elisa, 2026-11-08: "one person changing the view
+// should only change thiers."
+const PREFS_KEY = 'packing-view-v1'
+function readPrefs(): ViewPrefs {
+  try {
+    const raw = localStorage.getItem(PREFS_KEY)
+    return raw ? { ...DEFAULT_PREFS, ...JSON.parse(raw) } : DEFAULT_PREFS
+  } catch {
+    return DEFAULT_PREFS
+  }
+}
+function writePrefs(p: ViewPrefs) {
+  try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)) } catch {}
+}
+const WHO_ORDER = ['Each', 'Shared', 'Elisa', 'Cathy']
 const PEOPLE: Packer[] = ['Elisa', 'Cathy']
 
 // One label per Notion `Who` value, in plain words. Colours match the Notion
@@ -55,10 +80,10 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
   const [items, setItems] = useState<PackingItem[]>(packing.ok ? packing.value : [])
   const [saving, setSaving] = useState<Set<string>>(new Set())
   const [error, setError] = useState<string | null>(null)
-  // All by default, so a checked item never vanishes on its own.
-  const [show, setShow] = useState<Show>('all')
-  // Which Who kinds to show; empty means every kind. The key chips toggle it.
-  const [whoFilter, setWhoFilter] = useState<Set<string>>(new Set())
+  // Filters and sort. All items by default, so a checked item never vanishes
+  // on its own. Saved per browser (readPrefs), never shared.
+  const [prefs, setPrefsState] = useState<ViewPrefs>(DEFAULT_PREFS)
+  useEffect(() => setPrefsState(readPrefs()), [])
   // Rows ticked since the filters last changed stay put even under Unpacked,
   // so a tick never makes the row jump away under her finger.
   const [sticky, setSticky] = useState<Set<string>>(new Set())
@@ -97,60 +122,96 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
     }
   }
 
-  const resetSticky = () => setSticky(new Set())
+  const setPrefs = (patch: Partial<ViewPrefs>) => {
+    const next = { ...prefs, ...patch }
+    setPrefsState(next)
+    writePrefs(next)
+    setSticky(new Set())
+  }
   const left = { Elisa: items.filter(i => stillToPack(i, 'Elisa')).length, Cathy: items.filter(i => stillToPack(i, 'Cathy')).length }
   const done = items.filter(isDone).length
-  const shown = items
-    .filter(i => whoFilter.size === 0 || whoFilter.has(whoKey(i)))
-    .filter(i => show === 'all' || sticky.has(i.id) || (show === 'packed' ? isDone(i) : !isDone(i)))
-
-  function toggleWho(key: string) {
-    const next = new Set(whoFilter)
-    if (next.has(key)) next.delete(key); else next.add(key)
-    setWhoFilter(next.size === Object.keys(WHO).length ? new Set() : next)
-    resetSticky()
+  const categories = Array.from(new Set(items.map(i => i.category))).sort()
+  const q = prefs.q.trim().toLowerCase()
+  const statusOk = (i: PackingItem) => {
+    switch (prefs.status) {
+      case 'unpacked': return !isDone(i)
+      case 'packed': return isDone(i)
+      case 'elisa-left': return stillToPack(i, 'Elisa')
+      case 'cathy-left': return stillToPack(i, 'Cathy')
+      default: return true
+    }
   }
+  const shown = items
+    .filter(i => prefs.who === 'all' || whoKey(i) === prefs.who)
+    .filter(i => prefs.category === 'all' || i.category === prefs.category)
+    .filter(i => !q || i.name.toLowerCase().includes(q))
+    .filter(i => sticky.has(i.id) || statusOk(i))
+  const byName = (a: PackingItem, b: PackingItem) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+  const sorted = [...shown].sort((a, b) => {
+    if (prefs.sort === 'who') return WHO_ORDER.indexOf(whoKey(a)) - WHO_ORDER.indexOf(whoKey(b)) || byName(a, b)
+    if (prefs.sort === 'unpacked-first') return Number(isDone(a)) - Number(isDone(b)) || byName(a, b)
+    return byName(a, b)
+  })
+  // Category sort keeps the category headings; the others are one flat list.
+  const sections: [string, PackingItem[]][] = prefs.sort === 'category' ? groupByCategory(sorted) : [['', sorted]]
+  const filtered = prefs.status !== 'all' || prefs.who !== 'all' || prefs.category !== 'all' || !!q
+  const select = 'rounded-md border border-white/15 bg-gray-900 px-2 py-1 text-xs text-white/80 focus:border-amber-400/50 focus:outline-none'
 
   return wrap(
     <>
-      <div className="mb-3 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
-        <span className="text-white/80"><span className="font-semibold text-violet-300">Elisa</span> {left.Elisa} left</span>
-        <span className="text-white/80"><span className="font-semibold text-orange-300">Cathy</span> {left.Cathy} left</span>
+      <div className="mb-3 flex flex-wrap items-center gap-2 text-sm">
+        {([['elisa-left', 'Elisa', left.Elisa, 'text-violet-300'], ['cathy-left', 'Cathy', left.Cathy, 'text-orange-300']] as [Status, string, number, string][]).map(([id, name, n, color]) => {
+          const on = prefs.status === id
+          return (
+            <button
+              key={id}
+              onClick={() => setPrefs({ status: on ? 'all' : id })}
+              aria-pressed={on}
+              title={on ? 'Show everything again' : `Show only what ${name} still has to pack`}
+              className={`rounded-full px-3 py-1 transition-colors ${on ? 'bg-white/15 ring-1 ring-white/30' : 'bg-white/5 hover:bg-white/10'}`}
+            >
+              <span className={`font-semibold ${color}`}>{name}</span> <span className="text-white/80">{n} left</span>
+            </button>
+          )
+        })}
         <span className="text-white/45">{done} of {items.length} done</span>
       </div>
 
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className="text-[11px] text-white/40">Show</span>
-        {([['unpacked', 'Unpacked'], ['packed', 'Packed'], ['all', 'All items']] as [Show, string][]).map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => { setShow(id); resetSticky() }}
-            aria-pressed={show === id}
-            className={`rounded-full px-3 py-1 text-xs transition-colors ${show === id ? 'bg-amber-400 font-semibold text-gray-950' : 'bg-white/5 text-white/70 hover:bg-white/10'}`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-lg bg-white/5 px-3 py-2">
-        {Object.entries(WHO).map(([key, w]) => (
-          <button
-            key={key}
-            onClick={() => toggleWho(key)}
-            aria-pressed={whoFilter.has(key)}
-            title="Tap to show only this kind"
-            className={`flex items-center gap-1.5 text-left text-[11px] text-white/60 transition-opacity ${whoFilter.size === 0 || whoFilter.has(key) ? '' : 'opacity-35'}`}
-          >
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ${w.className}`}>{w.label}</span>
-            {w.long}
-          </button>
-        ))}
-        {whoFilter.size > 0 && <button onClick={() => { setWhoFilter(new Set()); resetSticky() }} className="text-[11px] text-amber-400 underline">Show every kind</button>}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <input
+          value={prefs.q}
+          onChange={e => setPrefs({ q: e.target.value })}
+          placeholder="Find an item"
+          className={`${select} w-36`}
+        />
+        <select aria-label="Status" value={prefs.status} onChange={e => setPrefs({ status: e.target.value as Status })} className={select}>
+          <option value="all">Any status</option>
+          <option value="unpacked">Not done</option>
+          <option value="packed">Done</option>
+          <option value="elisa-left">Elisa still to pack</option>
+          <option value="cathy-left">Cathy still to pack</option>
+        </select>
+        <select aria-label="Who" value={prefs.who} onChange={e => setPrefs({ who: e.target.value })} className={select}>
+          <option value="all">Anyone</option>
+          {WHO_ORDER.map(k => <option key={k} value={k}>{WHO[k].label}</option>)}
+        </select>
+        <select aria-label="Category" value={prefs.category} onChange={e => setPrefs({ category: e.target.value })} className={select}>
+          <option value="all">All categories</option>
+          {categories.map(c => <option key={c} value={c}>{c}</option>)}
+        </select>
+        <span className="ml-1 text-[11px] text-white/40">Sort</span>
+        <select aria-label="Sort" value={prefs.sort} onChange={e => setPrefs({ sort: e.target.value as Sort })} className={select}>
+          <option value="category">By category</option>
+          <option value="name">A to Z</option>
+          <option value="who">By who</option>
+          <option value="unpacked-first">Not done first</option>
+        </select>
+        {filtered && <button onClick={() => setPrefs({ status: 'all', who: 'all', category: 'all', q: '' })} className="text-[11px] text-amber-400 underline">Clear filters</button>}
+        {filtered && <span className="text-[11px] text-white/40">{shown.length} shown</span>}
       </div>
 
       {error && <p className="mb-3 rounded-md bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>}
-      {shown.length === 0 && <p className="text-sm text-white/50">{show === 'unpacked' ? 'Nothing left to pack here.' : 'Nothing matches these filters.'}</p>}
+      {shown.length === 0 && <p className="text-sm text-white/50">{prefs.status === 'elisa-left' || prefs.status === 'cathy-left' || prefs.status === 'unpacked' ? 'Nothing left to pack here.' : 'Nothing matches these filters.'}</p>}
 
       {shown.length > 0 && (
         <table className="w-full border-collapse text-sm">
@@ -162,13 +223,13 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
               <th className="w-16 py-2 text-center font-semibold text-orange-300">Cathy</th>
             </tr>
           </thead>
-          {groupByCategory(shown).map(([category, list]) => (
-            <tbody key={category}>
-              <tr>
+          {sections.map(([category, list]) => (
+            <tbody key={category || 'all'}>
+              {category && <tr>
                 <td colSpan={4} className="pb-1 pl-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-white/40">
                   {category} <span className="font-normal text-white/25">{list.length}</span>
                 </td>
-              </tr>
+              </tr>}
               {list.map(item => {
                 const busy = saving.has(item.id)
                 const finished = isDone(item)
