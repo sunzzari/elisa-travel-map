@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from 'react'
 import type { Loaded, PackingItem } from '@/lib/types'
-import { groupByCategory, isDone, stillToPack, type Packer } from '@/lib/packing'
+import { groupByCategory, isDone, onListOf, stillToPack, type Packer } from '@/lib/packing'
 
 // The trip's packing list, its own mode beside Plan and Trip (no map). Elisa,
 // 2026-11-07: "where is the packing dashboard"; 2026-11-08: "packing should be
@@ -86,7 +86,9 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
   }
 
   const left = { Elisa: items.filter(i => stillToPack(i, 'Elisa')).length, Cathy: items.filter(i => stillToPack(i, 'Cathy')).length }
-  const shown = view === 'All' ? items : items.filter(i => stillToPack(i, view))
+  // Checked items stay on the list, ticked and struck through. Elisa,
+  // 2026-11-08: "i dont want you to get rid of the item once ive checked it".
+  const shown = view === 'All' ? items : items.filter(i => onListOf(i, view))
   const done = items.filter(isDone).length
 
   // Which boxes a row gets in All: one per person who could pack it.
@@ -118,7 +120,6 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
       </div>
 
       {error && <p className="mb-3 rounded-md bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>}
-      {view !== 'All' && shown.length === 0 && <p className="text-sm text-white/50">All packed.</p>}
 
       <div className="gap-6 md:columns-2">
         {groupByCategory(shown).map(([category, list]) => (
@@ -137,7 +138,10 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
                   ) : (
                     <Box on={view === 'Elisa' ? item.elisaPacked : item.cathyPacked} label={`${view} packed ${item.name}`} disabled={busy} onClick={() => tick(item, view)} />
                   )}
-                  <span className={`min-w-0 flex-1 truncate text-sm ${view === 'All' && isDone(item) ? 'text-white/35 line-through' : 'text-white/90'}`}>{item.name}</span>
+                  <span className={`min-w-0 flex-1 truncate text-sm ${(view === 'All' ? isDone(item) : !stillToPack(item, view)) ? 'text-white/35 line-through' : 'text-white/90'}`}>{item.name}</span>
+                  {view !== 'All' && (item.who === 'Shared' || !item.who) && (view === 'Elisa' ? item.cathyPacked && !item.elisaPacked : item.elisaPacked && !item.cathyPacked) && (
+                    <span className="flex-shrink-0 text-[10px] text-emerald-300/80">{view === 'Elisa' ? 'Cathy' : 'Elisa'} packed it</span>
+                  )}
                   <WhoTag item={item} />
                 </div>
               )

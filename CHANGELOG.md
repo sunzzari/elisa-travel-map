@@ -4,6 +4,7 @@ Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.m
 
 ## 2026-11-08
 
+- `8:10am` **Checked items stay on the list** - Elisa: "i dont want you to get rid of the item once ive checked it". Mine and Cathy now show every item on that person's list; a checked one stays in place, ticked and struck through, and the count says how many are left. A One of us item the other person packed shows "Cathy packed it" / "Elisa packed it".
 - `8:06am` **Packing is its own mode** - Elisa: "packing should be a separate mode. you dont need to see the map while youre packing. it can be next to plan and trip toggles. also there should be a way to mark clearly the items that are shared that only one of us needs to pack vs. the ones that we both need to pack vs the ones that are individual that only one of us needs to pack". New **Packing** toggle beside Plan and Trip (`?view=pack`): full-page list, no map, no filter rows, no search. The Packing section left the Plan panel. Every item carries a plain label from its Notion `Who`: **We both pack** (Each), **One of us** (Shared), **Elisa only**, **Cathy only**, with a key at the top. In All, each row has one box per person who could pack it (E and C, or just the owner's).
 
 ## 2026-11-07
