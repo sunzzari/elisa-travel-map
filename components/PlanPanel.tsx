@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { formatLongDate } from '@/lib/day'
 import type { TripPlan, PlanDay, Gap, Group } from '@/lib/plan'
-import type { Loaded, PackingItem, TripItem, TripTask } from '@/lib/types'
-import PackingSection from './PackingSection'
+import type { Loaded, TripItem, TripTask } from '@/lib/types'
 import type { EditableStatus } from '@/lib/trip-item-write'
 
 // The Plan tab's side panel. Same map, same filters as the Trip tab; this only
@@ -23,7 +22,7 @@ export const STATUS_DOT: Record<string, string> = {
   Researching: '#8E8E93',
 }
 
-export type Section = 'summary' | 'todo' | 'packing' | 'coverage' | 'days'
+export type Section = 'summary' | 'todo' | 'coverage' | 'days'
 
 function shortDate(d: string | null): string {
   return d ? formatLongDate(d, { month: 'short', day: 'numeric' }) : ''
@@ -77,8 +76,6 @@ function GapRow({ gap, withDate }: { gap: Gap; withDate: boolean }) {
 interface Props {
   plan: TripPlan
   tasks: Loaded<TripTask[]>
-  packing: Loaded<PackingItem[]>
-  passcode: string
   legsError: string | null
   day: PlanDay | null
   numbers: Map<string, number>
@@ -120,7 +117,7 @@ export default function PlanPanel(props: Props) {
   return day ? <DayView {...props} day={day} /> : <TripView {...props} />
 }
 
-function TripView({ plan, tasks, packing, passcode, legsError, onSelectDate, selected, onSelect, hidden, onToggleSection, matches, groups, onPickGroup, onClearFilters }: Props) {
+function TripView({ plan, tasks, legsError, onSelectDate, selected, onSelect, hidden, onToggleSection, matches, groups, onPickGroup, onClearFilters }: Props) {
   const openTasks = tasks.ok ? tasks.value : []
   const todoCount = openTasks.length + plan.toBook.length
   return (
@@ -177,11 +174,6 @@ function TripView({ plan, tasks, packing, passcode, legsError, onSelectDate, sel
             {tasks.ok && todoCount === 0 && <p className="px-1.5 text-xs text-white/35">Nothing open.</p>}
           </div>
         )}
-      </section>
-
-      <section>
-        <Heading id="packing" title="Packing" count={packing.ok ? packing.value.length : undefined} hidden={hidden} onToggle={onToggleSection} />
-        {!hidden.has('packing') && <PackingSection packing={packing} passcode={passcode} />}
       </section>
 
       <section>

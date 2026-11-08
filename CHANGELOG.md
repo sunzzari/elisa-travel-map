@@ -2,6 +2,10 @@
 
 Newest entries at the top. Every push to `master` adds one - see [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## 2026-11-08
+
+- `8:06am` **Packing is its own mode** - Elisa: "packing should be a separate mode. you dont need to see the map while youre packing. it can be next to plan and trip toggles. also there should be a way to mark clearly the items that are shared that only one of us needs to pack vs. the ones that we both need to pack vs the ones that are individual that only one of us needs to pack". New **Packing** toggle beside Plan and Trip (`?view=pack`): full-page list, no map, no filter rows, no search. The Packing section left the Plan panel. Every item carries a plain label from its Notion `Who`: **We both pack** (Each), **One of us** (Shared), **Elisa only**, **Cathy only**, with a key at the top. In All, each row has one box per person who could pack it (E and C, or just the owner's).
+
 ## 2026-11-07
 
 - `2:54pm` **Packing on the Plan tab** - Elisa: "where is the packing dashboard", then "Yes, build it". New **Packing** section in the Plan tab's side panel (under To do, folds away like the others) showing the trip's Notion Trip Packing rows: **Mine / Cathy / All**, grouped by category. Mine and Cathy show only what that person still has to pack, using the same rule as the Notion per-person boards (`lib/packing.ts`). Ticking a box saves `Elisa packed` or `Cathy packed` in Notion through the new `PATCH /api/packing/[id]` (same password as status edits; writes only that one checkbox, never creates or deletes a row). Web only; the Sunzzari app has no packing screen.

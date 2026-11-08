@@ -6,6 +6,7 @@ import TripMap, { markerStyle, TYPE_META, type MarkerStyle } from './TripMap'
 import UnmappedList from './UnmappedList'
 import PlanPanel, { StatusEditor, StatusControl, STATUS_DOT, type Section } from './PlanPanel'
 import TripCalendar from './TripCalendar'
+import PackingSection from './PackingSection'
 import { usePasscode } from './PlaceEditing'
 import { groupDays, groupLegs, planDay, formatLongDate, todayInZone, isDone, type DayPlan, type PlannedItem } from '@/lib/day'
 import { buildPlan, groupOf, stopNumbers, GROUPS, ALL_GROUPS, type Group } from '@/lib/plan'
@@ -23,7 +24,9 @@ import type { UserLocation } from '@/lib/geo'
 
 const TYPE_ORDER: ItemType[] = ['Hotel', 'Restaurant', 'Activity', 'Flight', 'Train', 'Ferry', 'Car Rental', 'Other']
 
-type View = 'plan' | 'trip'
+// Pack is its own mode with no map. Elisa, 2026-11-08: "packing should be a
+// separate mode. you dont need to see the map while youre packing".
+type View = 'plan' | 'trip' | 'pack'
 
 /** English search words and the local forms they appear as in place names. */
 const LOCAL_FORMS: Record<string, string[]> = {
@@ -40,7 +43,7 @@ const LOCAL_FORMS: Record<string, string[]> = {
 }
 // Every group is on by default, Considering included. Elisa, 2026-10-18: "all
 // of the 'considering' should display on the map with easy toggle on/off".
-const SECTIONS: Section[] = ['summary', 'todo', 'packing', 'coverage', 'days']
+const SECTIONS: Section[] = ['summary', 'todo', 'coverage', 'days']
 
 // Every setting the views are made of lives in the URL, so any view can be
 // bookmarked and reopens the same. Elisa, 2026-10-18: "i want this map to be
@@ -275,7 +278,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const v = params.get('view')
-    if (v === 'plan' || v === 'trip') setView(v)
+    if (v === 'plan' || v === 'trip' || v === 'pack') setView(v)
     if (v === 'calendar') { setView('plan'); setCalendarOn(true) } // an earlier bookmark
     if (params.get('cal') === '1') setCalendarOn(true)
     const day = params.get('day')
@@ -456,7 +459,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           <p className="truncate text-xs text-white/40">{trip.location}</p>
         </div>
         <div className="flex flex-shrink-0 rounded-full border border-white/15 p-0.5 text-xs font-semibold">
-          {(['plan', 'trip'] as View[]).map(v => (
+          {(['plan', 'trip', 'pack'] as View[]).map(v => (
             <button
               key={v}
               onClick={() => {
@@ -466,7 +469,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
               }}
               className={`rounded-full px-2.5 py-1 transition-colors sm:px-3 ${view === v ? 'bg-amber-400 text-gray-950' : 'text-white/60 hover:text-white'}`}
             >
-              {v === 'plan' ? 'Plan' : 'Trip'}
+              {v === 'plan' ? 'Plan' : v === 'trip' ? 'Trip' : 'Packing'}
             </button>
           ))}
         </div>
@@ -481,7 +484,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
             Calendar
           </button>
         )}
-        <div className="relative hidden flex-shrink-0 sm:block">
+        <div className={`relative hidden flex-shrink-0 ${view === 'pack' ? '' : 'sm:block'}`}>
           <input
             value={query}
             // Typing closes any open popup so the results show (Elisa, 2026-10-18:
@@ -553,6 +556,11 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
         </button>
       </header>
 
+      {view === 'pack' ? (
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <PackingSection packing={packing} passcode={passcode} />
+        </div>
+      ) : <>
       {askOpen && (
         <div className="flex-shrink-0 border-b border-white/10 bg-gray-900 px-4 py-3">
           <form onSubmit={ask} className="flex gap-2">
@@ -842,8 +850,6 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
               <PlanPanel
                 plan={plan}
                 tasks={tasks}
-                packing={packing}
-                passcode={passcode}
                 legsError={legRows.ok ? null : legRows.error}
                 day={planDayNow}
                 numbers={numbers}
@@ -885,6 +891,7 @@ export default function ItineraryClient({ trip, items: loadedItems, legs: legRow
           />
         </div>
       </div>
+      </>}
     </main>
   )
 }
