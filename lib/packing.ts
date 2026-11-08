@@ -17,11 +17,6 @@ export function stillToPack(item: PackingItem, person: Packer): boolean {
   return !(item.elisaPacked || item.cathyPacked)
 }
 
-/** Whether the item is on this person's list at all (packed or not). */
-export function onListOf(item: PackingItem, person: Packer): boolean {
-  return item.who !== (person === 'Elisa' ? 'Cathy' : 'Elisa')
-}
-
 export function isDone(item: PackingItem): boolean {
   return !stillToPack(item, 'Elisa') && !stillToPack(item, 'Cathy')
 }
