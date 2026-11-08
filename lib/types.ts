@@ -91,13 +91,15 @@ export interface TripTask {
 
 /**
  * One row of the trip's packing list (Notion Trip Packing DB). The rows are
- * per-trip copies made by /notion-trip-packing; the app only ticks the two
- * packed boxes. `who` is '' when the row has none (treated as Shared).
+ * per-trip copies made by /notion-trip-packing; the app ticks the two
+ * packed boxes and can move a row to Notion Trash. `who` is "" when unset (treated as Shared).
  */
 export interface PackingItem {
   id: string
   name: string
   category: string
+  /** Where it goes: Backpack, Carry-On, Lole, Checked Bag, Wear, NA. */
+  compartments: string[]
   who: '' | 'Each' | 'Shared' | 'Elisa' | 'Cathy'
   elisaPacked: boolean
   cathyPacked: boolean

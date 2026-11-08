@@ -240,6 +240,7 @@ export function parsePackingItem(page: any): PackingItem {
     id: page.id,
     name: getText(p['Item Name']),
     category: getText(p['Category']) || 'Other',
+    compartments: (p['Compartment']?.multi_select ?? []).map((o: any) => o.name).filter((n: string) => n && n !== 'NA'),
     who: (WHO.has(who) ? who : '') as PackingItem['who'],
     elisaPacked: getCheckbox(p['Elisa packed']),
     cathyPacked: getCheckbox(p['Cathy packed']),

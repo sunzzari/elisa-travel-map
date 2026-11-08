@@ -27,8 +27,11 @@ import { groupByCategory, isDone, stillToPack, type Packer } from '@/lib/packing
 // items, the same rule as the Notion per-person boards.
 type Status = 'all' | 'unpacked' | 'packed' | 'elisa-left' | 'cathy-left'
 type Sort = 'category' | 'name' | 'who' | 'unpacked-first'
-interface ViewPrefs { status: Status; who: string; category: string; sort: Sort; q: string }
-const DEFAULT_PREFS: ViewPrefs = { status: 'all', who: 'all', category: 'all', sort: 'category', q: '' }
+interface ViewPrefs { status: Status; who: string; category: string; compartment: string; sort: Sort; q: string }
+const DEFAULT_PREFS: ViewPrefs = { status: 'all', who: 'all', category: 'all', compartment: 'all', sort: 'category', q: '' }
+// Notion's own order for the Compartment options; an item with none reads "Not set".
+const COMPARTMENT_ORDER = ['Backpack', 'Carry-On', 'Lole', 'Checked Bag', 'Wear']
+const NO_COMPARTMENT = 'none'
 // Each person's view lives in their own browser, so changing it never
 // changes anyone else's. Elisa, 2026-11-08: "one person changing the view
 // should only change thiers."
@@ -87,6 +90,11 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
   // Rows ticked since the filters last changed stay put even under Unpacked,
   // so a tick never makes the row jump away under her finger.
   const [sticky, setSticky] = useState<Set<string>>(new Set())
+  // Remove asks once on the row, then offers Undo. Elisa, 2026-11-08: "make an
+  // option to delte something from the packing list". Only this trip's copy
+  // goes (to Notion Trash); the Master Packing List is never touched.
+  const [confirming, setConfirming] = useState<string | null>(null)
+  const [removed, setRemoved] = useState<PackingItem | null>(null)
 
   const wrap = (children: ReactNode) => <div className="mx-auto max-w-3xl px-4 py-5" data-section="packing">{children}</div>
 
@@ -122,6 +130,37 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
     }
   }
 
+  const headers = { 'content-type': 'application/json', ...(passcode ? { 'x-edit-passcode': passcode } : {}) }
+
+  async function remove(item: PackingItem) {
+    setConfirming(null)
+    setError(null)
+    setItems(list => list.filter(i => i.id !== item.id))
+    try {
+      const res = await fetch(`/api/packing/${item.id}`, { method: 'DELETE', headers })
+      const body = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(body.error ?? 'Notion did not remove this')
+      setRemoved(item)
+    } catch (err) {
+      setItems(list => [...list, item])
+      setError(`${item.name}: ${err instanceof Error ? err.message : 'not removed'}`)
+    }
+  }
+
+  async function undoRemove() {
+    const item = removed
+    if (!item) return
+    setRemoved(null)
+    try {
+      const res = await fetch(`/api/packing/${item.id}`, { method: 'PATCH', headers, body: JSON.stringify({ restore: true }) })
+      const body = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(body.error ?? 'Notion did not restore this')
+      setItems(list => [...list, body.item ?? item])
+    } catch (err) {
+      setError(`${item.name}: ${err instanceof Error ? err.message : 'not restored'}. It is in Notion Trash.`)
+    }
+  }
+
   const setPrefs = (patch: Partial<ViewPrefs>) => {
     const next = { ...prefs, ...patch }
     setPrefsState(next)
@@ -131,6 +170,8 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
   const left = { Elisa: items.filter(i => stillToPack(i, 'Elisa')).length, Cathy: items.filter(i => stillToPack(i, 'Cathy')).length }
   const done = items.filter(isDone).length
   const categories = Array.from(new Set(items.map(i => i.category))).sort()
+  const compartments = Array.from(new Set(items.flatMap(i => i.compartments)))
+    .sort((a, b) => (COMPARTMENT_ORDER.indexOf(a) + 1 || 99) - (COMPARTMENT_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b))
   const q = prefs.q.trim().toLowerCase()
   const statusOk = (i: PackingItem) => {
     switch (prefs.status) {
@@ -144,6 +185,7 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
   const shown = items
     .filter(i => prefs.who === 'all' || whoKey(i) === prefs.who)
     .filter(i => prefs.category === 'all' || i.category === prefs.category)
+    .filter(i => prefs.compartment === 'all' || (prefs.compartment === NO_COMPARTMENT ? i.compartments.length === 0 : i.compartments.includes(prefs.compartment)))
     .filter(i => !q || i.name.toLowerCase().includes(q))
     .filter(i => sticky.has(i.id) || statusOk(i))
   const byName = (a: PackingItem, b: PackingItem) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
@@ -154,7 +196,7 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
   })
   // Category sort keeps the category headings; the others are one flat list.
   const sections: [string, PackingItem[]][] = prefs.sort === 'category' ? groupByCategory(sorted) : [['', sorted]]
-  const filtered = prefs.status !== 'all' || prefs.who !== 'all' || prefs.category !== 'all' || !!q
+  const filtered = prefs.status !== 'all' || prefs.who !== 'all' || prefs.category !== 'all' || prefs.compartment !== 'all' || !!q
   const select = 'rounded-md border border-white/15 bg-gray-900 px-2 py-1 text-xs text-white/80 focus:border-amber-400/50 focus:outline-none'
 
   return wrap(
@@ -199,6 +241,11 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
           <option value="all">All categories</option>
           {categories.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
+        <select aria-label="Compartment" value={prefs.compartment} onChange={e => setPrefs({ compartment: e.target.value })} className={select}>
+          <option value="all">Any bag</option>
+          {compartments.map(c => <option key={c} value={c}>{c}</option>)}
+          <option value={NO_COMPARTMENT}>Bag not set</option>
+        </select>
         <span className="ml-1 text-[11px] text-white/40">Sort</span>
         <select aria-label="Sort" value={prefs.sort} onChange={e => setPrefs({ sort: e.target.value as Sort })} className={select}>
           <option value="category">By category</option>
@@ -206,11 +253,18 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
           <option value="who">By who</option>
           <option value="unpacked-first">Not done first</option>
         </select>
-        {filtered && <button onClick={() => setPrefs({ status: 'all', who: 'all', category: 'all', q: '' })} className="text-[11px] text-amber-400 underline">Clear filters</button>}
+        {filtered && <button onClick={() => setPrefs({ status: 'all', who: 'all', category: 'all', compartment: 'all', q: '' })} className="text-[11px] text-amber-400 underline">Clear filters</button>}
         {filtered && <span className="text-[11px] text-white/40">{shown.length} shown</span>}
       </div>
 
       {error && <p className="mb-3 rounded-md bg-red-500/10 px-3 py-2 text-xs text-red-300">{error}</p>}
+      {removed && (
+        <p className="mb-3 flex items-center gap-2 rounded-md bg-white/5 px-3 py-2 text-xs text-white/70">
+          Removed {removed.name} from this trip&apos;s list.
+          <button onClick={undoRemove} className="font-semibold text-amber-400 underline">Undo</button>
+          <button onClick={() => setRemoved(null)} className="ml-auto text-white/40 hover:text-white" aria-label="Dismiss">✕</button>
+        </p>
+      )}
       {shown.length === 0 && <p className="text-sm text-white/50">{prefs.status === 'elisa-left' || prefs.status === 'cathy-left' || prefs.status === 'unpacked' ? 'Nothing left to pack here.' : 'Nothing matches these filters.'}</p>}
 
       {shown.length > 0 && (
@@ -219,14 +273,16 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
             <tr className="border-b border-white/15 text-[11px] uppercase tracking-wider text-white/45">
               <th className="py-2 pl-1 text-left font-semibold">Item</th>
               <th className="hidden py-2 text-left font-semibold sm:table-cell">Who</th>
+              <th className="hidden py-2 text-left font-semibold md:table-cell">Bag</th>
               <th className="w-16 py-2 text-center font-semibold text-violet-300">Elisa</th>
               <th className="w-16 py-2 text-center font-semibold text-orange-300">Cathy</th>
+              <th className="w-8 py-2"><span className="sr-only">Remove</span></th>
             </tr>
           </thead>
           {sections.map(([category, list]) => (
             <tbody key={category || 'all'}>
               {category && <tr>
-                <td colSpan={4} className="pb-1 pl-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-white/40">
+                <td colSpan={6} className="pb-1 pl-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-white/40">
                   {category} <span className="font-normal text-white/25">{list.length}</span>
                 </td>
               </tr>}
@@ -240,10 +296,12 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
                     <td className="py-1.5 pl-1">
                       <span className={finished ? 'text-white/35 line-through' : 'text-white/90'}>{item.name}</span>
                       <span className={`ml-2 rounded-full px-1.5 py-0.5 text-[9px] font-semibold ring-1 sm:hidden ${w.className}`}>{w.label}</span>
+                      {item.compartments.length > 0 && <span className="block text-[10px] text-white/40 md:hidden">{item.compartments.join(', ')}</span>}
                     </td>
                     <td className="hidden py-1.5 sm:table-cell">
                       <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ${w.className}`}>{w.label}</span>
                     </td>
+                    <td className="hidden py-1.5 text-[11px] text-white/55 md:table-cell">{item.compartments.join(', ') || <span className="text-white/25">Not set</span>}</td>
                     {PEOPLE.map(person => {
                       const own = person === 'Elisa' ? item.elisaPacked : item.cathyPacked
                       const other = person === 'Elisa' ? item.cathyPacked : item.elisaPacked
@@ -260,6 +318,23 @@ export default function PackingSection({ packing, passcode }: { packing: Loaded<
                         </td>
                       )
                     })}
+                    <td className="py-1.5 pr-1 text-right">
+                      {confirming === item.id ? (
+                        <span className="whitespace-nowrap text-[11px]">
+                          <button onClick={() => remove(item)} className="font-semibold text-red-300 hover:text-red-200">Remove</button>
+                          <button onClick={() => setConfirming(null)} className="ml-2 text-white/50 hover:text-white">Keep</button>
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => setConfirming(item.id)}
+                          aria-label={`Remove ${item.name} from this trip`}
+                          title="Remove from this trip's list"
+                          className="rounded px-1 text-white/25 hover:bg-white/10 hover:text-red-300"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 )
               })}
